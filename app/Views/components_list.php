@@ -32,7 +32,7 @@
 
   <header>
     <div class="header-left">
-      <a href="index.php?page=home" class="logo">JUS<span>PC</span> BUILDER</a>
+      <a href="index.php?page=home" class="logo">GO<span>PC</span></a>
     </div>
     <nav>
       <a href="index.php?page=home">首页 Home</a>

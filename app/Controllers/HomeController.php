@@ -3,17 +3,22 @@
 namespace App\Controllers;
 
 use App\Models\PcComponentModel;
+use App\Models\ReviewModel;
 
 class HomeController
 {
     public function index()
     {
-        $model = new PcComponentModel();
+        $pcModel = new PcComponentModel();
+        $reviewModel = new ReviewModel();
 
         $data = [
-            'pageTitle'    => 'JUSPC - 官方主页 | Custom PC Specialist',
-            'presets'      => $model->getPresets(),
-            'popularItems' => $model->getPopularItems(),
+            'pageTitle'    => 'GOPC - 马来西亚高端定制电脑专家 | Custom PC Specialist',
+            'activePage'   => 'home',
+            'presets'      => $pcModel->getPresets(),
+            'popularItems' => $pcModel->getPopularItems(),
+            'reviewStats'  => $reviewModel->getStats(),
+            'topReviews'   => array_slice($reviewModel->getAll('all'), 0, 4)
         ];
 
         return $this->render('home', $data);

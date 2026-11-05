@@ -28,7 +28,10 @@ class Database {
             );
 
             $user = getenv('DB_USER') ?: self::DB_USER;
-            $pass = getenv('DB_PASS') !== false ? getenv('DB_PASS') : self::DB_PASS;
+            $passwordsToTry = [
+                getenv('DB_PASS') !== false ? getenv('DB_PASS') : self::DB_PASS,
+                ''
+            ];
 
             $options = [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -36,13 +39,21 @@ class Database {
                 PDO::ATTR_EMULATE_PREPARES   => false,
             ];
 
-            try {
-                self::$instance = new PDO($dsn, $user, $pass, $options);
-            } catch (PDOException $e) {
+            $lastException = null;
+            foreach (array_unique($passwordsToTry) as $pass) {
+                try {
+                    self::$instance = new PDO($dsn, $user, $pass, $options);
+                    break;
+                } catch (PDOException $e) {
+                    $lastException = $e;
+                }
+            }
+
+            if (self::$instance === null && $lastException !== null) {
                 // If database does not exist yet or connection fails, output a clean message
                 die("<div style='font-family: sans-serif; padding: 20px; background: #fff0f0; border-left: 5px solid #d32f2f; margin: 20px;'>
                         <h2 style='color: #d32f2f; margin-top:0;'>Database Connection Error</h2>
-                        <p><strong>Failed to connect to MySQL database:</strong> " . htmlspecialchars($e->getMessage()) . "</p>
+                        <p><strong>Failed to connect to MySQL database:</strong> " . htmlspecialchars($lastException->getMessage()) . "</p>
                         <p>Please ensure MySQL is running and the database schema from <code>database.sql</code> is imported into database <code>" . htmlspecialchars(self::DB_NAME) . "</code>.</p>
                         <pre style='background:#f5f5f5; padding:10px;'>mysql -u " . htmlspecialchars(self::DB_USER) . " -p " . htmlspecialchars(self::DB_NAME) . " &lt; database.sql</pre>
                      </div>");

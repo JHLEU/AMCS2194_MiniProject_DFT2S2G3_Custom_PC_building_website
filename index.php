@@ -18,7 +18,109 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Require Controllers
+// Autoloader for App\ namespace (Customer Storefront & Modules)
+spl_autoload_register(function ($class) {
+    $prefix = 'App\\';
+    $base_dir = __DIR__ . '/app/';
+
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) !== 0) {
+        return;
+    }
+
+    $relative_class = substr($class, $len);
+    $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+
+    if (file_exists($file)) {
+        require_once $file;
+    }
+});
+
+// If page parameter is set, or if neither route nor page is set (default entry), route to storefront
+if (isset($_GET['page']) || (!isset($_GET['route']) && empty($_SERVER['PATH_INFO']))) {
+    $page = $_GET['page'] ?? 'home';
+
+    switch ($page) {
+        case 'builder':
+            (new \App\Controllers\PcBuilderController())->index();
+            exit;
+        case 'saved-builds':
+            (new \App\Controllers\PcBuilderController())->savedBuilds();
+            exit;
+        case 'api-save-build':
+            (new \App\Controllers\PcBuilderController())->saveBuild();
+            exit;
+        case 'api-delete-build':
+            (new \App\Controllers\PcBuilderController())->deleteBuild();
+            exit;
+        case 'components':
+            (new \App\Controllers\PcBuilderController())->listAll();
+            exit;
+        case 'payment':
+            (new \App\Controllers\PaymentController())->index();
+            exit;
+        case 'api-process-payment':
+            (new \App\Controllers\PaymentController())->process();
+            exit;
+        case 'reviews':
+            (new \App\Controllers\ReviewController())->index();
+            exit;
+        case 'api-create-review':
+            (new \App\Controllers\ReviewController())->create();
+            exit;
+        case 'api-update-review':
+            (new \App\Controllers\ReviewController())->update();
+            exit;
+        case 'api-delete-review':
+            (new \App\Controllers\ReviewController())->delete();
+            exit;
+        case 'api-like-review':
+            (new \App\Controllers\ReviewController())->like();
+            exit;
+        case 'cpu-calc':
+            (new \App\Controllers\CalculatorController())->index();
+            exit;
+        case 'contact':
+            (new \App\Controllers\ContactController())->index();
+            exit;
+        case 'api-submit-ticket':
+            (new \App\Controllers\ContactController())->submitTicket();
+            exit;
+        case 'chat':
+            (new \App\Controllers\ChatController())->index();
+            exit;
+        case 'chat-send-api':
+            (new \App\Controllers\ChatController())->sendMessage();
+            exit;
+        case 'chat-history-api':
+            (new \App\Controllers\ChatController())->getHistory();
+            exit;
+        case 'chat-clear-api':
+            (new \App\Controllers\ChatController())->clearHistory();
+            exit;
+        case 'chat-del-api':
+            (new \App\Controllers\ChatController())->deleteMessage();
+            exit;
+        case 'tracking':
+            (new \App\Controllers\OrderTrackingController())->index();
+            exit;
+        case 'api-create-order':
+            (new \App\Controllers\OrderTrackingController())->create();
+            exit;
+        case 'api-update-order':
+            (new \App\Controllers\OrderTrackingController())->update();
+            exit;
+        case 'api-delete-order':
+            (new \App\Controllers\OrderTrackingController())->delete();
+            exit;
+        case 'home':
+        default:
+            (new \App\Controllers\HomeController())->index();
+            exit;
+    }
+}
+
+// Require Controllers for ERP Supply Chain Modules
 require_once __DIR__ . '/controllers/BaseController.php';
 require_once __DIR__ . '/controllers/ProductController.php';
 require_once __DIR__ . '/controllers/InventoryController.php';

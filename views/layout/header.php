@@ -10,7 +10,7 @@
 <!-- Top Unified Navbar -->
 <header class="global-navbar">
     <div class="header-left">
-        <a href="public/index.php?page=home" class="logo">JUS<span>PC</span> BUILDER</a>
+        <a href="public/index.php?page=home" class="logo">GO<span>PC</span></a>
     </div>
     <nav>
         <a href="public/index.php?page=home">首页 Home</a>
