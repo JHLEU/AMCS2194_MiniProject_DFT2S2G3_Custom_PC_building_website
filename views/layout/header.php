@@ -10,13 +10,17 @@
 <!-- Top Unified Navbar -->
 <header class="global-navbar">
     <div class="header-left">
-        <a href="public/index.php?page=home" class="logo">GO<span>PC</span></a>
+        <a href="index.php?page=home" class="logo">GO<span>PC</span></a>
+        <!-- Mobile hamburger for ERP -->
+        <button class="nav-hamburger" id="erpNavHamburger" onclick="toggleErpMobileNav()" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
     </div>
-    <nav>
-        <a href="public/index.php?page=home">首页 Home</a>
-        <a href="public/index.php?page=builder">💻 配件组装 (Builder)</a>
-        <a href="public/index.php?page=components">📦 硬件目录 (Components)</a>
-        <a href="index.php?route=inventory/dashboard" class="active" style="color: #00f2fe;">📊 ERP 后台 (Admin)</a>
+    <nav id="erpMainNav">
+        <a href="index.php?page=home">首页 Home</a>
+        <a href="index.php?page=builder">💻 配件组装</a>
+        <a href="index.php?page=components">📦 硬件目录</a>
+        <a href="index.php?route=inventory/dashboard" class="active" style="color: #00f2fe;">📊 ERP 后台</a>
     </nav>
     <div class="header-right">
         <div class="nav-actions">
@@ -24,6 +28,14 @@
         </div>
     </div>
 </header>
+<script>
+function toggleErpMobileNav() {
+    const nav = document.getElementById('erpMainNav');
+    const btn = document.getElementById('erpNavHamburger');
+    nav.classList.toggle('nav-open');
+    btn.classList.toggle('is-active');
+}
+</script>
 <div class="app-container">
     <!-- Sidebar -->
     <aside class="sidebar">
@@ -34,7 +46,7 @@
         <ul class="sidebar-nav">
             <li class="nav-section-title">Storefront</li>
             <li>
-                <a href="public/index.php?page=home" target="_blank" style="color: #00f2fe;">
+                <a href="index.php?page=home" target="_blank" style="color: #00f2fe;">
                     <span>🛒 Storefront & Builder</span>
                     <span style="font-size: 0.7rem; opacity: 0.8;">&nearr;</span>
                 </a>
