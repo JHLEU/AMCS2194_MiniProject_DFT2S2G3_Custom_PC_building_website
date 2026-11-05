@@ -13,11 +13,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
     body { background: #0a0b0e; color: #fff; font-family: 'Inter', sans-serif; margin: 0; }
-    header { height: 70px; background: #12141a; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; border-bottom: 1px solid rgba(255,255,255,0.08); }
-    .logo { font-size: 22px; font-weight: 800; color: #fff; text-decoration: none; }
+    header { height: 70px; background: #12141a; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; border-bottom: 1px solid rgba(255,255,255,0.08); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+    .header-left { flex: 1; display: flex; align-items: center; justify-content: flex-start; }
+    .logo { font-size: 22px; font-weight: 800; color: #fff; text-decoration: none; letter-spacing: -0.02em; white-space: nowrap; }
     .logo span { color: #ff334b; }
-    nav a { color: #8c93a0; text-decoration: none; margin-left: 20px; font-weight: 600; }
+    nav { flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    nav a { color: #8c93a0; text-decoration: none; margin: 0 12px; font-weight: 600; font-size: 14px; transition: color 0.15s; white-space: nowrap; }
     nav a:hover, nav a.active { color: #fff; }
+    .header-right { flex: 1; display: flex; align-items: center; justify-content: flex-end; }
+    .nav-actions { display: flex; gap: 12px; align-items: center; }
     
     .hero { text-align: center; padding: 100px 20px; background: radial-gradient(circle, rgba(255,51,75,0.15) 0%, rgba(10,11,14,1) 70%); }
     .hero h1 { font-size: 48px; font-weight: 800; margin-bottom: 16px; }
@@ -32,13 +36,20 @@
 <body>
 
   <header>
-    <a href="index.php?page=home" class="logo">JUS<span>PC</span> BUILDER</a>
+    <div class="header-left">
+      <a href="index.php?page=home" class="logo">JUS<span>PC</span> BUILDER</a>
+    </div>
     <nav>
       <a href="index.php?page=home" class="active">首页 Home</a>
       <a href="index.php?page=builder">💻 配件组装 (Builder)</a>
       <a href="index.php?page=components">📦 硬件目录 (Components)</a>
       <a href="/index.php?route=inventory/dashboard" style="color: #00f2fe;">📊 ERP 后台 (Admin)</a>
     </nav>
+    <div class="header-right">
+      <div class="nav-actions">
+        <a href="index.php?page=builder" style="display: inline-flex; align-items: center; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none; background: #ff334b; color: #fff; box-shadow: 0 4px 15px rgba(255, 51, 75, 0.4); transition: all 0.15s ease;">⚡ 开始配机</a>
+      </div>
+    </div>
   </header>
 
   <section class="hero">

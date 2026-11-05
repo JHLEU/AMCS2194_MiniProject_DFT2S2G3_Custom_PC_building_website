@@ -7,6 +7,23 @@
     <link rel="stylesheet" href="public/css/style.css">
 </head>
 <body>
+<!-- Top Unified Navbar -->
+<header class="global-navbar">
+    <div class="header-left">
+        <a href="public/index.php?page=home" class="logo">JUS<span>PC</span> BUILDER</a>
+    </div>
+    <nav>
+        <a href="public/index.php?page=home">首页 Home</a>
+        <a href="public/index.php?page=builder">💻 配件组装 (Builder)</a>
+        <a href="public/index.php?page=components">📦 硬件目录 (Components)</a>
+        <a href="index.php?route=inventory/dashboard" class="active" style="color: #00f2fe;">📊 ERP 后台 (Admin)</a>
+    </nav>
+    <div class="header-right">
+        <div class="nav-actions">
+            <span class="admin-badge">⚡ ERP 后台模式</span>
+        </div>
+    </div>
+</header>
 <div class="app-container">
     <!-- Sidebar -->
     <aside class="sidebar">

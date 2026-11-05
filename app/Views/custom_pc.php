@@ -53,11 +53,14 @@
       z-index: 100;
       backdrop-filter: blur(10px);
     }
-    .logo { font-size: 22px; font-weight: 800; color: #fff; text-decoration: none; letter-spacing: -0.02em; }
+    .header-left { flex: 1; display: flex; align-items: center; justify-content: flex-start; }
+    .logo { font-size: 22px; font-weight: 800; color: #fff; text-decoration: none; letter-spacing: -0.02em; white-space: nowrap; }
     .logo span { color: var(--primary); }
-    nav a { color: var(--text-muted); text-decoration: none; margin-left: 24px; font-weight: 600; font-size: 14px; transition: color 0.15s; }
+    nav { flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    nav a { color: var(--text-muted); text-decoration: none; margin: 0 12px; font-weight: 600; font-size: 14px; transition: color 0.15s; white-space: nowrap; }
     nav a:hover, nav a.active { color: #fff; }
-    .nav-actions { display: flex; gap: 12px; }
+    .header-right { flex: 1; display: flex; align-items: center; justify-content: flex-end; }
+    .nav-actions { display: flex; gap: 12px; align-items: center; }
 
     .btn {
       display: inline-flex;
@@ -373,16 +376,20 @@
 
   <!-- Top Navbar -->
   <header>
-    <a href="index.php?page=home" class="logo">JUS<span>PC</span> BUILDER</a>
+    <div class="header-left">
+      <a href="index.php?page=home" class="logo">JUS<span>PC</span> BUILDER</a>
+    </div>
     <nav>
       <a href="index.php?page=home">首页 Home</a>
       <a href="index.php?page=builder" class="active">💻 配件组装 (Builder)</a>
       <a href="index.php?page=components">📦 硬件目录 (Components)</a>
       <a href="/index.php?route=inventory/dashboard" style="color: #00f2fe;">📊 ERP 后台 (Admin)</a>
     </nav>
-    <div class="nav-actions">
-      <button class="btn btn-secondary" onclick="resetConfig()">重置配置</button>
-      <button class="btn btn-primary" onclick="showToast('正在保存当前专属 PC 配置清单...')">保存配置</button>
+    <div class="header-right">
+      <div class="nav-actions">
+        <button class="btn btn-secondary" onclick="resetConfig()">重置配置</button>
+        <button class="btn btn-primary" onclick="showToast('正在保存当前专属 PC 配置清单...')">保存配置</button>
+      </div>
     </div>
   </header>
 
