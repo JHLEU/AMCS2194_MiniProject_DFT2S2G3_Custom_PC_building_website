@@ -32,6 +32,7 @@
       <a href="index.php?page=home">首页 Home</a>
       <a href="index.php?page=builder">💻 配件组装 (Builder)</a>
       <a href="index.php?page=components" class="active">📦 硬件目录 (Components)</a>
+      <a href="/index.php?route=inventory/dashboard" style="color: #00f2fe;">📊 ERP 后台 (Admin)</a>
     </nav>
   </header>
 
