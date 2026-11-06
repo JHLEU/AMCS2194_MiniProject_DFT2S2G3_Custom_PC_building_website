@@ -15,15 +15,21 @@ class CompatibilityController extends Controller
     ) {}
 
     /**
-     * Evaluate a custom PC build for socket compatibility, RAM standard, TDP wattage, PSU headroom, and pricing.
+     * Evaluate a custom PC build for CPU <-> Motherboard socket compatibility and RAM compatibility.
      * Accepts `product_ids` (array of IDs) or `components` (map of category => product_id).
      */
     public function evaluate(Request $request): JsonResponse
     {
+        $request->validate([
+            'product_ids'   => ['nullable', 'array'],
+            'product_ids.*' => ['nullable', 'integer'],
+            'components'    => ['nullable', 'array'],
+        ]);
+
         $productIds = [];
 
         if ($request->has('product_ids') && is_array($request->input('product_ids'))) {
-            $productIds = array_values(array_filter($request->input('product_ids')));
+            $productIds = array_values(array_filter(array_map('intval', $request->input('product_ids'))));
         } elseif ($request->has('components') && is_array($request->input('components'))) {
             foreach ($request->input('components') as $item) {
                 if (is_numeric($item) && (int) $item > 0) {
@@ -82,49 +88,38 @@ class CompatibilityController extends Controller
     }
 
     /**
-     * Calculate CPU + GPU bottleneck, synergy, recommended PSU wattage, cooling advice, and game FPS estimates.
+     * Calculate 4-parameter performance rating scores (CPU Processing Power, GPU Performance, Memory, Storage).
      */
     public function bottleneck(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'cpu_id'     => ['nullable', 'integer', 'exists:products,id'],
             'gpu_id'     => ['nullable', 'integer', 'exists:products,id'],
+            'ram_id'     => ['nullable', 'integer', 'exists:products,id'],
+            'storage_id' => ['nullable', 'integer', 'exists:products,id'],
             'cpu'        => ['nullable', 'array'],
             'gpu'        => ['nullable', 'array'],
-            'resolution' => ['nullable', 'string', 'in:1080,1440,2160'],
-            'workload'   => ['nullable', 'string', 'in:game_3a,fps_comp,render_4k'],
+            'ram'        => ['nullable', 'array'],
+            'storage'    => ['nullable', 'array'],
         ]);
 
-        $cpu = null;
-        if (! empty($validated['cpu_id'])) {
-            $cpu = Product::findOrFail($validated['cpu_id']);
-        } elseif (! empty($validated['cpu'])) {
-            $cpu = $validated['cpu'];
-        } else {
-            $cpu = Product::where('category', 'CPU')->first() ?? [
-                'name'        => 'AMD Ryzen 7 7800X3D',
-                'tdp_wattage' => 120,
-                'score'       => 99,
-            ];
-        }
+        $cpu = ! empty($validated['cpu_id'])
+            ? Product::findOrFail($validated['cpu_id'])
+            : ($validated['cpu'] ?? (array_key_exists('cpu_id', $validated) ? null : Product::where('category', 'CPU')->first()));
 
-        $gpu = null;
-        if (! empty($validated['gpu_id'])) {
-            $gpu = Product::findOrFail($validated['gpu_id']);
-        } elseif (! empty($validated['gpu'])) {
-            $gpu = $validated['gpu'];
-        } else {
-            $gpu = Product::where('category', 'GPU')->first() ?? [
-                'name'        => 'NVIDIA GeForce RTX 4070 Super 12GB',
-                'tdp_wattage' => 220,
-                'score'       => 84,
-            ];
-        }
+        $gpu = ! empty($validated['gpu_id'])
+            ? Product::findOrFail($validated['gpu_id'])
+            : ($validated['gpu'] ?? (array_key_exists('gpu_id', $validated) ? null : Product::where('category', 'GPU')->first()));
 
-        $resolution = $validated['resolution'] ?? '1440';
-        $workload = $validated['workload'] ?? 'game_3a';
+        $ram = ! empty($validated['ram_id'])
+            ? Product::findOrFail($validated['ram_id'])
+            : ($validated['ram'] ?? (array_key_exists('ram_id', $validated) ? null : Product::where('category', 'RAM')->first()));
 
-        $report = $this->compatibilityService->calculateBottleneck($cpu, $gpu, $resolution, $workload);
+        $storage = ! empty($validated['storage_id'])
+            ? Product::findOrFail($validated['storage_id'])
+            : ($validated['storage'] ?? (array_key_exists('storage_id', $validated) ? null : Product::where('category', 'Storage')->first()));
+
+        $report = $this->compatibilityService->calculatePerformance($cpu, $gpu, $ram, $storage);
 
         return response()->json($report);
     }

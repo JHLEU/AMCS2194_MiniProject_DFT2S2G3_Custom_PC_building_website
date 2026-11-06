@@ -83,6 +83,11 @@
             </div>
 
             <div class="form-group">
+                <label class="form-label">Performance Rating Score (0-100)</label>
+                <input type="number" name="performance_score" class="form-input" value="{{ old('performance_score', $product->performance_score) }}" min="0" max="100" placeholder="For CPU, GPU, RAM, Storage">
+            </div>
+
+            <div class="form-group">
                 <label class="form-label">Low-Stock Safety Threshold *</label>
                 <input type="number" name="low_stock_threshold" class="form-input" value="{{ old('low_stock_threshold', $product->low_stock_threshold) }}" min="1" required>
                 <small style="color: var(--text-muted); font-size: 0.78rem;">Current In-Stock SN Count: <strong>{{ (int) $product->in_stock_count }}</strong></small>

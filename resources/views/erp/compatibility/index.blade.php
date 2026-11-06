@@ -1,16 +1,16 @@
 @extends('layouts.erp')
 
-@section('title', 'Hardware Compatibility & Power Engine')
-@section('page-title', 'Hardware Compatibility & Power Estimation Engine')
+@section('title', 'Hardware Compatibility & Performance Engine')
+@section('page-title', 'Hardware Compatibility & Performance Rating Engine')
 
 @section('content')
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
     <div>
         <h1 style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 4px;">
-            ⚡ Compatibility & Power Test Bench
+            ⚡ Compatibility & Performance Test Bench
         </h1>
         <p style="color: var(--text-muted); font-size: 0.9rem;">
-            Validate CPU/Motherboard sockets, DDR4/DDR5 RAM standards, total TDP wattage, PSU transient headroom, and CPU/GPU synergy.
+            Validate CPU/Motherboard socket compatibility, DDR4/DDR5 RAM compatibility, and 4-parameter component performance ratings.
         </p>
     </div>
     <div style="display: flex; gap: 10px; align-items: center;">
@@ -41,31 +41,15 @@
 
     <div class="stat-card">
         <div>
-            <div class="stat-label">Estimated Peak TDP</div>
-            <div class="stat-val" id="liveTotalWattage" style="color: var(--warning);">
-                {{ $evaluation['power']['estimated_total_wattage'] }}W
+            <div class="stat-label">Overall Performance Rating</div>
+            <div class="stat-val" id="liveOverallScore" style="color: var(--info);">
+                {{ $performanceReport['overall_score'] ?? 0 }} / 100
             </div>
-            <div id="liveWattageBreakdown" style="font-size: 0.75rem; color: var(--text-muted);">
-                Components: {{ $evaluation['power']['component_tdp_wattage'] }}W + {{ $evaluation['power']['base_overhead_wattage'] }}W Base
-            </div>
-        </div>
-        <div class="stat-icon">⚡</div>
-    </div>
-
-    <div class="stat-card">
-        <div>
-            <div class="stat-label">Recommended PSU (1.25x)</div>
-            <div class="stat-val" id="liveRecPsu" style="color: var(--info);">
-                {{ $evaluation['power']['recommended_psu_wattage'] }}W+
-            </div>
-            <div id="livePsuInfo" style="font-size: 0.75rem; color: var(--text-muted);">
-                Selected PSU: {{ $evaluation['power']['selected_psu_wattage'] ? $evaluation['power']['selected_psu_wattage'] . 'W' : 'None' }}
-                @if($evaluation['power']['psu_load_percent'] !== null)
-                    ({{ $evaluation['power']['psu_load_percent'] }}% load)
-                @endif
+            <div id="liveVerdictInfo" style="font-size: 0.75rem; color: var(--text-muted);">
+                {{ $performanceReport['verdict'] ?? 'Rated across 4 parameters' }}
             </div>
         </div>
-        <div class="stat-icon">🔋</div>
+        <div class="stat-icon">🎯</div>
     </div>
 
     <div class="stat-card">
@@ -109,11 +93,7 @@
                                 {{ $item->name }}
                                 @if($item->socket_type) [Socket: {{ $item->socket_type }}] @endif
                                 @if($item->ram_type) [{{ $item->ram_type }}] @endif
-                                @if($item->category === 'PSU')
-                                    ({{ $item->tdp_wattage }}W Rated)
-                                @elseif($item->tdp_wattage > 0)
-                                    ({{ $item->tdp_wattage }}W TDP)
-                                @endif
+                                @if($item->performance_score > 0) (Rating: {{ $item->performance_score }}/100) @endif
                                 — RM {{ number_format($item->selling_price, 2) }}
                                 (Stock: {{ $item->in_stock_count }})
                             </option>
@@ -122,17 +102,8 @@
                 </div>
             @endforeach
 
-            <div class="form-group" style="margin-bottom: 18px;">
-                <label for="select_resolution">Target Display Resolution (For Bottleneck Check)</label>
-                <select name="resolution" id="select_resolution" class="form-control">
-                    <option value="1080" {{ $resolution === '1080' ? 'selected' : '' }}>1080p Full HD (CPU Intensive)</option>
-                    <option value="1440" {{ $resolution === '1440' ? 'selected' : '' }}>1440p 2K QHD (Balanced)</option>
-                    <option value="2160" {{ $resolution === '2160' ? 'selected' : '' }}>2160p 4K UHD (GPU Intensive)</option>
-                </select>
-            </div>
-
-            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
-                🔍 Run Compatibility & Power Diagnostics
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 8px;">
+                🔍 Run Socket, RAM & Performance Check
             </button>
         </form>
     </div>
@@ -141,13 +112,13 @@
     <div style="display: flex; flex-direction: column; gap: 24px;">
         <!-- Compatibility Rules Report -->
         <div class="card">
-            <h3 class="card-title" style="margin-bottom: 16px;">📋 2. Compatibility & Power Headroom Report</h3>
+            <h3 class="card-title" style="margin-bottom: 16px;">📋 2. Socket & RAM Compatibility Report</h3>
 
             <div id="compatIssues">
                 @if(count($evaluation['errors']) === 0 && count($evaluation['warnings']) === 0)
                     <div class="alert alert-success" style="margin-bottom: 16px;">
                         <strong>✔ All Hardware Compatibility Checks Passed!</strong><br>
-                        CPU socket, Motherboard chipset, RAM generation, and PSU wattage headroom are 100% compatible.
+                        CPU socket type matches Motherboard socket type, and RAM generation (DDR4/DDR5) is compatible.
                     </div>
                 @endif
 
@@ -178,16 +149,6 @@
                 @endif
             </div>
 
-            <!-- Cooling Recommendation -->
-            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; margin-bottom: 16px;">
-                <div style="font-size: 0.8rem; font-weight: 700; color: var(--info); text-transform: uppercase; margin-bottom: 4px;">
-                    ❄️ Thermal & Cooling Recommendation
-                </div>
-                <div id="coolingAdvice" style="font-size: 0.9rem; color: var(--text-main);">
-                    {{ $evaluation['cooling_advice'] }}
-                </div>
-            </div>
-
             <!-- Selected Components Breakdown Table -->
             <div class="table-responsive">
                 <table class="table">
@@ -196,7 +157,7 @@
                             <th>Category</th>
                             <th>Component</th>
                             <th>Socket / RAM</th>
-                            <th>TDP / Rating</th>
+                            <th>Performance Score</th>
                             <th>Stock</th>
                             <th>Price</th>
                         </tr>
@@ -218,10 +179,10 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if(strcasecmp($part['category'], 'PSU') === 0)
-                                        <strong style="color: var(--info);">{{ $part['tdp_wattage'] }}W Rated</strong>
+                                    @if(!empty($part['performance_score']) && $part['performance_score'] > 0)
+                                        <strong style="color: var(--success);">{{ $part['performance_score'] }} / 100</strong>
                                     @else
-                                        {{ $part['tdp_wattage'] }}W
+                                        <span style="color: var(--text-muted);">—</span>
                                     @endif
                                 </td>
                                 <td>
@@ -239,56 +200,45 @@
             </div>
         </div>
 
-        <!-- CPU + GPU Bottleneck & Synergy Card -->
-        <div class="card" id="bottleneckCard" style="{{ $bottleneckReport ? '' : 'display: none;' }}">
+        <!-- 4-Parameter Performance Rating Calculator Card -->
+        <div class="card" id="bottleneckCard">
             <h3 class="card-title" style="margin-bottom: 12px;">
-                🎮 3. CPU & GPU Synergy (<span id="bnResolution">{{ $bottleneckReport['resolution'] ?? $resolution }}</span>p Benchmark)
+                🎯 3. 4-Parameter Performance Rating Calculator
             </h3>
-            @php
-                $bnTier = $bottleneckReport['tier'] ?? 'optimal';
-                $bnColor = $bnTier === 'optimal' ? 'var(--success)' : ($bnTier === 'minor' ? 'var(--warning)' : 'var(--danger)');
-            @endphp
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px;">
-                <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; text-align: center;">
-                    <div style="font-size: 0.75rem; color: var(--text-muted);">Bottleneck Index</div>
-                    <div id="bnPercent" style="font-size: 1.35rem; font-weight: 800; color: {{ $bnColor }};">
-                        {{ $bottleneckReport['bottleneck_percent'] ?? 0 }}%
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 14px;">
+                <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <div style="font-size: 0.78rem; color: var(--text-muted);">🔲 CPU Processing Power</div>
+                    <div id="bnCpuScore" style="font-size: 1.4rem; font-weight: 800; color: #60a5fa; margin: 4px 0;">
+                        {{ $performanceReport['cpu_processing_power'] ?? 0 }} / 100
                     </div>
-                    <div id="bnTag" style="font-size: 0.75rem;">{{ $bottleneckReport['tag'] ?? '' }}</div>
+                    <div id="bnCpuName" style="font-size: 0.78rem; color: var(--text-light);">{{ $performanceReport['cpu_name'] ?? '—' }}</div>
                 </div>
-                <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; text-align: center;">
-                    <div style="font-size: 0.75rem; color: var(--text-muted);">Synergy Utilization</div>
-                    <div id="bnUtil" style="font-size: 1.35rem; font-weight: 800; color: var(--info);">
-                        {{ $bottleneckReport['utilization_percent'] ?? 0 }}%
+                <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <div style="font-size: 0.78rem; color: var(--text-muted);">🎮 GPU Performance</div>
+                    <div id="bnGpuScore" style="font-size: 1.4rem; font-weight: 800; color: #a78bfa; margin: 4px 0;">
+                        {{ $performanceReport['gpu_performance'] ?? 0 }} / 100
                     </div>
-                    <div id="bnScores" style="font-size: 0.75rem;">CPU {{ $bottleneckReport['cpu_score'] ?? 0 }} / GPU {{ $bottleneckReport['gpu_score'] ?? 0 }}</div>
+                    <div id="bnGpuName" style="font-size: 0.78rem; color: var(--text-light);">{{ $performanceReport['gpu_name'] ?? '—' }}</div>
                 </div>
-                <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; text-align: center;">
-                    <div style="font-size: 0.75rem; color: var(--text-muted);">Suggested PSU</div>
-                    <div id="bnPsu" style="font-size: 1.35rem; font-weight: 800; color: var(--warning);">
-                        {{ $bottleneckReport['recommended_psu_wattage'] ?? 0 }}W
+                <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <div style="font-size: 0.78rem; color: var(--text-muted);">⚡ Memory</div>
+                    <div id="bnRamScore" style="font-size: 1.4rem; font-weight: 800; color: #10b981; margin: 4px 0;">
+                        {{ $performanceReport['memory'] ?? 0 }} / 100
                     </div>
-                    <div style="font-size: 0.75rem;">80+ Gold Modular</div>
+                    <div id="bnRamName" style="font-size: 0.78rem; color: var(--text-light);">{{ $performanceReport['ram_name'] ?? '—' }}</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <div style="font-size: 0.78rem; color: var(--text-muted);">💾 Storage</div>
+                    <div id="bnStorageScore" style="font-size: 1.4rem; font-weight: 800; color: #f59e0b; margin: 4px 0;">
+                        {{ $performanceReport['storage'] ?? 0 }} / 100
+                    </div>
+                    <div id="bnStorageName" style="font-size: 0.78rem; color: var(--text-light);">{{ $performanceReport['storage_name'] ?? '—' }}</div>
                 </div>
             </div>
 
-            <p id="bnAdvice" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">
-                {{ $bottleneckReport['advice'] ?? '' }}
+            <p id="bnAdvice" style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">
+                {{ $performanceReport['advice'] ?? '' }}
             </p>
-
-            <div id="bnGames" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px;">
-                @foreach($bottleneckReport['games_fps'] ?? [] as $game)
-                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <div style="font-size: 0.8rem; font-weight: 600; color: #fff;">{{ $game['name'] }}</div>
-                            <div style="font-size: 0.7rem; color: var(--text-muted);">{{ $game['tag'] }}</div>
-                        </div>
-                        <div style="font-size: 1rem; font-weight: 800; color: var(--success);">
-                            {{ $game['fps'] }} <span style="font-size: 0.7rem; color: var(--text-muted);">FPS</span>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
         </div>
     </div>
 </div>

@@ -2,91 +2,6 @@
 
 @section('title', 'Interactive Custom PC Builder')
 
-@section('styles')
-<style>
-    .builder-grid {
-        display: grid;
-        grid-template-columns: 1fr 380px;
-        gap: 28px;
-        align-items: start;
-    }
-
-    @media (max-width: 992px) {
-        .builder-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    .slot-card {
-        background-color: var(--bg-card);
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius-md);
-        padding: 20px;
-        margin-bottom: 16px;
-        transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    .slot-card:hover {
-        border-color: rgba(59, 130, 246, 0.4);
-    }
-
-    .slot-card.has-selection {
-        border-left: 4px solid #3b82f6;
-    }
-
-    .modal-backdrop {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.75);
-        backdrop-filter: blur(4px);
-        z-index: 1000;
-        display: none;
-    }
-
-    .modal-content-box {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: var(--bg-darker);
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius-lg);
-        width: 90%;
-        max-width: 760px;
-        max-height: 85vh;
-        z-index: 1001;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-    }
-
-    .modal-product-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius-md);
-        padding: 16px 20px;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        transition: all 0.15s;
-    }
-
-    .modal-product-card:hover {
-        border-color: var(--primary);
-        background: rgba(30, 41, 59, 0.8);
-    }
-
-    .modal-product-card.selected {
-        border-color: #10b981;
-        background: rgba(16, 185, 129, 0.08);
-    }
-</style>
-@endsection
-
 @section('content')
 <div class="container" style="padding-top: 40px; padding-bottom: 60px;">
     <!-- Page Header -->
@@ -98,11 +13,11 @@
                 <span class="badge badge-primary">v2.0 Configurator</span>
             </div>
             <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">
-                Select your core components below. The algorithm continuously verifies socket alignment, memory standard, and PSU wattage buffer in real-time.
+                Select your components below. The compatibility engine verifies CPU &amp; Motherboard socket alignment and RAM (DDR4/DDR5) compatibility in real-time.
             </p>
         </div>
         <div style="display: flex; gap: 10px;">
-            <a href="{{ route('calculator.index') }}" class="btn btn-secondary btn-sm">🎯 Bottleneck Calculator</a>
+            <a href="{{ route('calculator.index') }}" class="btn btn-secondary btn-sm">🎯 Performance Calculator</a>
             <button type="button" id="clear-build-btn" class="btn btn-outline btn-sm">Reset All Slots</button>
         </div>
     </div>
@@ -128,7 +43,7 @@
                     </div>
 
                     <!-- State 1: Empty Slot -->
-                    <div class="empty-slot-state" style="{{ $preselectedId ? 'display: none;' : 'display: block;' }}">
+                    <div class="empty-slot-state" style="@if($preselectedId) display: none; @else display: block; @endif">
                         <div style="border: 1px dashed var(--border-color); border-radius: 8px; padding: 18px; text-align: center; background: rgba(0,0,0,0.15);">
                             <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0 0 12px 0;">No component selected for this slot.</p>
                             <button type="button" class="btn btn-secondary btn-sm open-picker-btn">
@@ -138,7 +53,7 @@
                     </div>
 
                     <!-- State 2: Selected Component Card -->
-                    <div class="selected-slot-state" style="{{ $preselectedId ? 'display: block;' : 'display: none;' }}">
+                    <div class="selected-slot-state" style="@if($preselectedId) display: block; @else display: none; @endif">
                         <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                             <div style="flex: 1; min-width: 220px;">
                                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
@@ -185,27 +100,92 @@
                 <!-- Dynamic Compatibility Status Box -->
                 <div id="compatibility-status-box" style="margin-bottom: 20px;">
                     <div style="background: rgba(255,255,255,0.03); border: 1px dashed var(--border-color); border-radius: 8px; padding: 14px; text-align: center; font-size: 0.85rem; color: var(--text-muted);">
-                        Select components on the left to activate real-time compatibility checks.
+                        Select CPU, Motherboard, and RAM to check socket &amp; memory compatibility.
                     </div>
                 </div>
 
-                <!-- PSU Wattage Headroom Meter -->
-                <div id="psu-meter-container" style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 24px; display: none;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span style="font-size: 0.85rem; font-weight: 600; color: #fff;">⚡ Power & Headroom</span>
-                        <div id="psu-status-badge"></div>
+                <!-- 4-Parameter Performance Rating Panel (Horizontal Bars + 4 Tiers) -->
+                <div id="builder-performance-panel" style="background: rgba(0,0,0,0.28); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="font-size: 0.9rem; font-weight: 700; color: #fff;">📊 Performance Rating</span>
+                        <span id="summary-overall-badge" style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted);">0 / 100</span>
                     </div>
 
-                    <!-- Graphical Progress Bar -->
-                    <div style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 12px;">
-                        <div id="psu-headroom-bar" style="height: 100%; width: 0%; transition: width 0.3s, background-color 0.3s; background-color: #10b981;"></div>
+                    <!-- 4-Tier Legend: Poor (Red), Average (Yellow), Good (Green), Excellent (Cyan) -->
+                    <div style="display: flex; justify-content: space-between; gap: 6px; flex-wrap: wrap; padding: 6px 10px; background: rgba(255,255,255,0.03); border-radius: 6px; margin-bottom: 14px; font-size: 0.7rem;">
+                        <span style="color: #ef4444; font-weight: 600;">● Poor</span>
+                        <span style="color: #f59e0b; font-weight: 600;">● Average</span>
+                        <span style="color: #10b981; font-weight: 600;">● Good</span>
+                        <span style="color: #06b6d4; font-weight: 600;">● Excellent</span>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.75rem; color: var(--text-muted);">
-                        <div>Estimated TDP: <strong id="meter-tdp" style="color: #fff;">0 W</strong></div>
-                        <div>Recommended PSU: <strong id="meter-recommended-psu" style="color: #60a5fa;">0 W</strong></div>
-                        <div>Selected PSU: <strong id="meter-selected-psu" style="color: #fff;">-</strong></div>
-                        <div>Headroom: <strong id="psu-headroom-pct" style="color: #10b981;">-</strong></div>
+                    <!-- 1. CPU Processing Power -->
+                    <div style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; margin-bottom: 5px;">
+                            <span style="color: #fff; font-weight: 600;">🔲 CPU Processing Power</span>
+                            <span>
+                                <strong id="summary-score-cpu" style="color: var(--text-muted);">0/100</strong>
+                                <span id="summary-tier-cpu" style="font-size: 0.7rem; margin-left: 4px; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); color: var(--text-muted);">None</span>
+                            </span>
+                        </div>
+                        <div style="position: relative; background: rgba(255,255,255,0.08); height: 10px; border-radius: 5px; overflow: hidden;">
+                            <div id="summary-bar-cpu" style="height: 100%; width: 0%; background-color: #64748b; transition: width 0.3s ease, background-color 0.3s ease;"></div>
+                            <!-- 4-tier visual segment dividers -->
+                            <div style="position: absolute; top: 0; left: 49%; width: 1px; height: 100%; background: rgba(15,23,42,0.7);"></div>
+                            <div style="position: absolute; top: 0; left: 69%; width: 1px; height: 100%; background: rgba(15,23,42,0.7);"></div>
+                            <div style="position: absolute; top: 0; left: 84%; width: 1px; height: 100%; background: rgba(15,23,42,0.7);"></div>
+                        </div>
+                    </div>
+
+                    <!-- 2. GPU Performance -->
+                    <div style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; margin-bottom: 5px;">
+                            <span style="color: #fff; font-weight: 600;">🎮 GPU Performance</span>
+                            <span>
+                                <strong id="summary-score-gpu" style="color: var(--text-muted);">0/100</strong>
+                                <span id="summary-tier-gpu" style="font-size: 0.7rem; margin-left: 4px; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); color: var(--text-muted);">None</span>
+                            </span>
+                        </div>
+                        <div style="position: relative; background: rgba(255,255,255,0.08); height: 10px; border-radius: 5px; overflow: hidden;">
+                            <div id="summary-bar-gpu" style="height: 100%; width: 0%; background-color: #64748b; transition: width 0.3s ease, background-color 0.3s ease;"></div>
+                            <div style="position: absolute; top: 0; left: 49%; width: 1px; height: 100%; background: rgba(15,23,42,0.7);"></div>
+                            <div style="position: absolute; top: 0; left: 69%; width: 1px; height: 100%; background: rgba(15,23,42,0.7);"></div>
+                            <div style="position: absolute; top: 0; left: 84%; width: 1px; height: 100%; background: rgba(15,23,42,0.7);"></div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Memory -->
+                    <div style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; margin-bottom: 5px;">
+                            <span style="color: #fff; font-weight: 600;">⚡ Memory</span>
+                            <span>
+                                <strong id="summary-score-ram" style="color: var(--text-muted);">0/100</strong>
+                                <span id="summary-tier-ram" style="font-size: 0.7rem; margin-left: 4px; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); color: var(--text-muted);">None</span>
+                            </span>
+                        </div>
+                        <div style="position: relative; background: rgba(255,255,255,0.08); height: 10px; border-radius: 5px; overflow: hidden;">
+                            <div id="summary-bar-ram" style="height: 100%; width: 0%; background-color: #64748b; transition: width 0.3s ease, background-color 0.3s ease;"></div>
+                            <div style="position: absolute; top: 0; left: 49%; width: 1px; height: 100%; background: rgba(15,23,42,0.7);"></div>
+                            <div style="position: absolute; top: 0; left: 69%; width: 1px; height: 100%; background: rgba(15,23,42,0.7);"></div>
+                            <div style="position: absolute; top: 0; left: 84%; width: 1px; height: 100%; background: rgba(15,23,42,0.7);"></div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Storage -->
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; margin-bottom: 5px;">
+                            <span style="color: #fff; font-weight: 600;">💾 Storage</span>
+                            <span>
+                                <strong id="summary-score-storage" style="color: var(--text-muted);">0/100</strong>
+                                <span id="summary-tier-storage" style="font-size: 0.7rem; margin-left: 4px; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); color: var(--text-muted);">None</span>
+                            </span>
+                        </div>
+                        <div style="position: relative; background: rgba(255,255,255,0.08); height: 10px; border-radius: 5px; overflow: hidden;">
+                            <div id="summary-bar-storage" style="height: 100%; width: 0%; background-color: #64748b; transition: width 0.3s ease, background-color 0.3s ease;"></div>
+                            <div style="position: absolute; top: 0; left: 49%; width: 1px; height: 100%; background: rgba(15,23,42,0.7);"></div>
+                            <div style="position: absolute; top: 0; left: 69%; width: 1px; height: 100%; background: rgba(15,23,42,0.7);"></div>
+                            <div style="position: absolute; top: 0; left: 84%; width: 1px; height: 100%; background: rgba(15,23,42,0.7);"></div>
+                        </div>
                     </div>
                 </div>
 

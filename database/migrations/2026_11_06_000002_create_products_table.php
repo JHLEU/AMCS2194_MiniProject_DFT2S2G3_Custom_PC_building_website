@@ -21,6 +21,7 @@ return new class extends Migration
             $table->text('specs')->nullable();
             $table->string('image_url', 500)->nullable();
             $table->integer('tdp_wattage')->default(0);
+            $table->integer('performance_score')->default(0); // 0-100 performance rating score for CPU, GPU, RAM, Storage
             $table->string('socket_type', 50)->nullable(); // e.g. LGA1700, AM5, AM4
             $table->string('ram_type', 20)->nullable();    // e.g. DDR4, DDR5
             $table->decimal('cost_price', 10, 2)->default(0.00);

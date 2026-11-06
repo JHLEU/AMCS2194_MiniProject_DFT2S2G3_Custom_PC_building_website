@@ -34,13 +34,22 @@ class PcBuilderController extends Controller
             ->get()
             ->groupBy('category');
 
-        // Preselected items from query (e.g. from Bottleneck calculator or featured builds)
+        // Preselected items from query (e.g. from Performance calculator or featured builds)
         $preselectedIds = [];
         if ($request->filled('cpu_id')) {
             $preselectedIds['CPU'] = (int) $request->input('cpu_id');
         }
         if ($request->filled('gpu_id')) {
             $preselectedIds['GPU'] = (int) $request->input('gpu_id');
+        }
+        if ($request->filled('ram_id')) {
+            $preselectedIds['RAM'] = (int) $request->input('ram_id');
+        }
+        if ($request->filled('storage_id')) {
+            $preselectedIds['Storage'] = (int) $request->input('storage_id');
+        }
+        if ($request->filled('motherboard_id')) {
+            $preselectedIds['Motherboard'] = (int) $request->input('motherboard_id');
         }
         if ($request->filled('product_ids')) {
             $ids = is_array($request->input('product_ids'))

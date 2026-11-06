@@ -1,109 +1,182 @@
 @extends('layouts.app')
 
-@section('title', 'CPU & GPU Bottleneck & Gaming FPS Calculator')
+@section('title', 'PC Performance Calculator')
 
 @section('content')
 <div class="container" style="padding-top: 40px; padding-bottom: 60px; max-width: 960px;">
     <!-- Title & Header -->
     <div style="text-align: center; margin-bottom: 36px;">
-        <span class="badge badge-primary" style="margin-bottom: 8px;">Hardware Synergy Estimator</span>
+        <span class="badge badge-primary" style="margin-bottom: 8px;">Hardware Performance Rating Calculator</span>
         <h1 style="font-size: 2.2rem; font-weight: 800; color: #fff; margin-bottom: 10px;">
-            🎯 CPU & GPU Bottleneck Calculator
+            🎯 PC Performance Calculator
         </h1>
-        <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 620px; margin: 0 auto;">
-            Ensure your processor and graphics card complement each other without leaving performance on the table.
+        <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 640px; margin: 0 auto;">
+            Evaluate your build across 4 core performance parameters: CPU Processing Power, GPU Performance, Memory, and Storage.
         </p>
     </div>
 
-    <!-- Selection Card -->
+    <!-- Component Selection Card -->
     <div class="card" style="padding: 28px; margin-bottom: 32px;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
-            <!-- CPU Dropdown -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 20px; margin-bottom: 24px;">
+            <!-- 1. CPU Dropdown -->
             <div class="form-group">
                 <label for="calc-cpu" class="form-label" style="font-weight: 700; color: #fff;">
-                    🔲 Select Processor (CPU)
+                    🔲 1. CPU Processing Power (Processor)
                 </label>
                 <select id="calc-cpu" class="form-control" style="font-size: 0.95rem;">
                     @foreach($cpus as $cpu)
-                        <option value="{{ $cpu->id }}" {{ $loop->first ? 'selected' : '' }}>
-                            {{ $cpu->name }} [{{ $cpu->brand }}] - RM {{ number_format($cpu->selling_price, 2) }}
+                        <option value="{{ $cpu->id }}" data-score="{{ $cpu->performance_score }}" {{ $loop->first ? 'selected' : '' }}>
+                            {{ $cpu->name }} (Rating: {{ $cpu->performance_score }}/100) — RM {{ number_format($cpu->selling_price, 2) }}
                         </option>
                     @endforeach
                 </select>
             </div>
 
-            <!-- GPU Dropdown -->
+            <!-- 2. GPU Dropdown -->
             <div class="form-group">
                 <label for="calc-gpu" class="form-label" style="font-weight: 700; color: #fff;">
-                    🎮 Select Graphics Card (GPU)
+                    🎮 2. GPU Performance (Graphics Card)
                 </label>
                 <select id="calc-gpu" class="form-control" style="font-size: 0.95rem;">
                     @foreach($gpus as $gpu)
-                        <option value="{{ $gpu->id }}" {{ $loop->first ? 'selected' : '' }}>
-                            {{ $gpu->name }} [{{ $gpu->brand }}] - RM {{ number_format($gpu->selling_price, 2) }}
+                        <option value="{{ $gpu->id }}" data-score="{{ $gpu->performance_score }}" {{ $loop->first ? 'selected' : '' }}>
+                            {{ $gpu->name }} (Rating: {{ $gpu->performance_score }}/100) — RM {{ number_format($gpu->selling_price, 2) }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- 3. Memory (RAM) Dropdown -->
+            <div class="form-group">
+                <label for="calc-ram" class="form-label" style="font-weight: 700; color: #fff;">
+                    ⚡ 3. Memory (RAM)
+                </label>
+                <select id="calc-ram" class="form-control" style="font-size: 0.95rem;">
+                    @foreach($rams as $ram)
+                        <option value="{{ $ram->id }}" data-score="{{ $ram->performance_score }}" {{ $loop->first ? 'selected' : '' }}>
+                            {{ $ram->name }} (Rating: {{ $ram->performance_score }}/100) — RM {{ number_format($ram->selling_price, 2) }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- 4. Storage Dropdown -->
+            <div class="form-group">
+                <label for="calc-storage" class="form-label" style="font-weight: 700; color: #fff;">
+                    💾 4. Storage (SSD)
+                </label>
+                <select id="calc-storage" class="form-control" style="font-size: 0.95rem;">
+                    @foreach($storages as $storage)
+                        <option value="{{ $storage->id }}" data-score="{{ $storage->performance_score }}" {{ $loop->first ? 'selected' : '' }}>
+                            {{ $storage->name }} (Rating: {{ $storage->performance_score }}/100) — RM {{ number_format($storage->selling_price, 2) }}
                         </option>
                     @endforeach
                 </select>
             </div>
         </div>
 
-        <!-- Resolution Selector -->
-        <div style="margin-bottom: 24px;">
-            <label class="form-label" style="font-weight: 700; color: #fff; margin-bottom: 8px; display: block;">
-                🖥️ Target Gaming Resolution
-            </label>
-            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                <button type="button" class="btn res-btn btn-secondary" data-res="1080p">
-                    1080p (FHD Competitive)
-                </button>
-                <button type="button" class="btn res-btn btn-primary" data-res="1440p">
-                    1440p (2K Ultra Gaming)
-                </button>
-                <button type="button" class="btn res-btn btn-secondary" data-res="4k">
-                    2160p (4K UHD Immersion)
-                </button>
-            </div>
-            <small style="color: var(--text-muted); display: block; margin-top: 8px;">
-                Higher resolutions shift the performance load more heavily onto the GPU.
-            </small>
-        </div>
-
         <button type="button" id="evaluate-calc-btn" class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 700; font-size: 1rem;">
-            Calculate Bottleneck & FPS →
+            Calculate Performance Rating Scores →
         </button>
     </div>
 
-    <!-- Results Display -->
+    <!-- Results Display: 4 Parameters -->
     <div id="calc-results-card" class="card" style="padding: 32px; display: none;">
-        <div style="text-align: center; margin-bottom: 28px;">
+        <!-- Overall Score Header -->
+        <div style="text-align: center; margin-bottom: 30px;">
             <div style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 4px;">
-                System Synergy Score
+                Overall Performance Score
             </div>
-            <div id="synergy-score-display" style="font-size: 3.2rem; font-weight: 800; color: #10b981; line-height: 1;">
-                95%
+            <div id="overall-score-display" style="font-size: 3.2rem; font-weight: 800; color: #10b981; line-height: 1;">
+                0 / 100
             </div>
             <div id="verdict-badge-container" style="margin-top: 10px;">
-                <span class="badge badge-success" style="font-size: 0.9rem; padding: 6px 14px;">Optimal Hardware Balance</span>
+                <span id="verdict-badge" class="badge badge-success" style="font-size: 0.9rem; padding: 6px 14px;">High Performance Balance</span>
             </div>
-            <p id="advice-text" style="color: var(--text-light); max-width: 580px; margin: 14px auto 0; font-size: 0.95rem; line-height: 1.5;">
-                This CPU and GPU combination works in near-perfect equilibrium.
-            </p>
+            <p id="advice-text" style="color: var(--text-light); max-width: 600px; margin: 12px auto 0; font-size: 0.95rem; line-height: 1.5;"></p>
         </div>
 
-        <!-- FPS Estimates Grid -->
-        <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
-            🎮 Estimated Gaming Frame Rates
-        </h3>
-        <div id="fps-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px;">
-            <!-- Populated via AJAX -->
+        <!-- 4 Core Performance Parameters -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin: 0;">
+                📊 4 Core Component Performance Parameters
+            </h3>
+            <div style="display: flex; gap: 12px; font-size: 0.78rem;">
+                <span style="color: #ef4444; font-weight: 700;">● Poor (Red)</span>
+                <span style="color: #f59e0b; font-weight: 700;">● Average (Yellow)</span>
+                <span style="color: #10b981; font-weight: 700;">● Good (Green)</span>
+                <span style="color: #06b6d4; font-weight: 700;">● Excellent (Cyan)</span>
+            </div>
+        </div>
+
+        <div id="parameters-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-bottom: 28px;">
+            <!-- Parameter 1: CPU Processing Power -->
+            <div style="background: rgba(0,0,0,0.28); border: 1px solid var(--border-color); border-radius: 10px; padding: 18px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-weight: 700; color: #fff; font-size: 1rem;">🔲 CPU Processing Power</span>
+                    <span>
+                        <span id="param-cpu-score" style="font-size: 1.25rem; font-weight: 800; color: #06b6d4;">0 / 100</span>
+                        <span id="param-cpu-tier" style="font-size: 0.75rem; font-weight: 700; margin-left: 6px; padding: 2px 8px; border-radius: 4px;"></span>
+                    </span>
+                </div>
+                <div id="param-cpu-name" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">—</div>
+                <div style="position: relative; background: rgba(255,255,255,0.08); height: 10px; border-radius: 5px; overflow: hidden;">
+                    <div id="param-cpu-bar" style="height: 100%; width: 0%; background-color: #06b6d4; transition: width 0.3s, background-color 0.3s;"></div>
+                </div>
+            </div>
+
+            <!-- Parameter 2: GPU Performance -->
+            <div style="background: rgba(0,0,0,0.28); border: 1px solid var(--border-color); border-radius: 10px; padding: 18px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-weight: 700; color: #fff; font-size: 1rem;">🎮 GPU Performance</span>
+                    <span>
+                        <span id="param-gpu-score" style="font-size: 1.25rem; font-weight: 800; color: #06b6d4;">0 / 100</span>
+                        <span id="param-gpu-tier" style="font-size: 0.75rem; font-weight: 700; margin-left: 6px; padding: 2px 8px; border-radius: 4px;"></span>
+                    </span>
+                </div>
+                <div id="param-gpu-name" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">—</div>
+                <div style="position: relative; background: rgba(255,255,255,0.08); height: 10px; border-radius: 5px; overflow: hidden;">
+                    <div id="param-gpu-bar" style="height: 100%; width: 0%; background-color: #06b6d4; transition: width 0.3s, background-color 0.3s;"></div>
+                </div>
+            </div>
+
+            <!-- Parameter 3: Memory -->
+            <div style="background: rgba(0,0,0,0.28); border: 1px solid var(--border-color); border-radius: 10px; padding: 18px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-weight: 700; color: #fff; font-size: 1rem;">⚡ Memory</span>
+                    <span>
+                        <span id="param-ram-score" style="font-size: 1.25rem; font-weight: 800; color: #06b6d4;">0 / 100</span>
+                        <span id="param-ram-tier" style="font-size: 0.75rem; font-weight: 700; margin-left: 6px; padding: 2px 8px; border-radius: 4px;"></span>
+                    </span>
+                </div>
+                <div id="param-ram-name" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">—</div>
+                <div style="position: relative; background: rgba(255,255,255,0.08); height: 10px; border-radius: 5px; overflow: hidden;">
+                    <div id="param-ram-bar" style="height: 100%; width: 0%; background-color: #06b6d4; transition: width 0.3s, background-color 0.3s;"></div>
+                </div>
+            </div>
+
+            <!-- Parameter 4: Storage -->
+            <div style="background: rgba(0,0,0,0.28); border: 1px solid var(--border-color); border-radius: 10px; padding: 18px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-weight: 700; color: #fff; font-size: 1rem;">💾 Storage</span>
+                    <span>
+                        <span id="param-storage-score" style="font-size: 1.25rem; font-weight: 800; color: #06b6d4;">0 / 100</span>
+                        <span id="param-storage-tier" style="font-size: 0.75rem; font-weight: 700; margin-left: 6px; padding: 2px 8px; border-radius: 4px;"></span>
+                    </span>
+                </div>
+                <div id="param-storage-name" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">—</div>
+                <div style="position: relative; background: rgba(255,255,255,0.08); height: 10px; border-radius: 5px; overflow: hidden;">
+                    <div id="param-storage-bar" style="height: 100%; width: 0%; background-color: #06b6d4; transition: width 0.3s, background-color 0.3s;"></div>
+                </div>
+            </div>
         </div>
 
         <!-- Action: Open Builder with this combo -->
         <div style="border-top: 1px solid var(--border-color); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
             <div>
-                <h4 style="color: #fff; font-size: 1rem; font-weight: 700; margin: 0 0 4px 0;">Build with this pair</h4>
+                <h4 style="color: #fff; font-size: 1rem; font-weight: 700; margin: 0 0 4px 0;">Build with these 4 components</h4>
                 <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">
-                    Carry this CPU and GPU directly into the PC Builder to pick matching motherboard, RAM, and PSU.
+                    Carry your selected CPU, GPU, Memory, and Storage directly into the PC Builder.
                 </p>
             </div>
             <a id="build-with-combo-btn" href="{{ route('builder.index') }}" class="btn btn-primary" style="padding: 10px 24px; font-weight: 600;">
@@ -117,30 +190,22 @@
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        let activeResolution = '1440p';
+        const cpuSelect = document.getElementById('calc-cpu');
+        const gpuSelect = document.getElementById('calc-gpu');
+        const ramSelect = document.getElementById('calc-ram');
+        const storageSelect = document.getElementById('calc-storage');
 
-        // Resolution pills
-        document.querySelectorAll('.res-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                document.querySelectorAll('.res-btn').forEach(b => {
-                    b.classList.remove('btn-primary');
-                    b.classList.add('btn-secondary');
-                });
-                this.classList.remove('btn-secondary');
-                this.classList.add('btn-primary');
-                activeResolution = this.dataset.res;
-                performCalculation();
-            });
-        });
-
-        // Trigger on button click or dropdown change
         document.getElementById('evaluate-calc-btn').addEventListener('click', performCalculation);
-        document.getElementById('calc-cpu').addEventListener('change', performCalculation);
-        document.getElementById('calc-gpu').addEventListener('change', performCalculation);
+        cpuSelect.addEventListener('change', performCalculation);
+        gpuSelect.addEventListener('change', performCalculation);
+        ramSelect.addEventListener('change', performCalculation);
+        storageSelect.addEventListener('change', performCalculation);
 
         function performCalculation() {
-            const cpuId = document.getElementById('calc-cpu').value;
-            const gpuId = document.getElementById('calc-gpu').value;
+            const cpuId = cpuSelect.value;
+            const gpuId = gpuSelect.value;
+            const ramId = ramSelect.value;
+            const storageId = storageSelect.value;
 
             if (!cpuId || !gpuId) return;
 
@@ -153,79 +218,78 @@
                 body: JSON.stringify({
                     cpu_id: cpuId,
                     gpu_id: gpuId,
-                    resolution: activeResolution
+                    ram_id: ramId,
+                    storage_id: storageId
                 })
             })
             .then(res => res.json())
             .then(data => {
-                renderResults(data, cpuId, gpuId);
+                renderResults(data, cpuId, gpuId, ramId, storageId);
             })
             .catch(err => {
-                console.error('Error calculating bottleneck:', err);
+                console.error('Error calculating performance:', err);
             });
         }
 
-        function renderResults(data, cpuId, gpuId) {
+        function getTierStyle(score) {
+            const s = parseInt(score, 10) || 0;
+            if (s <= 0) return { label: 'None', color: '#64748b', bg: 'rgba(255,255,255,0.06)' };
+            if (s >= 85) return { label: 'Excellent', color: '#06b6d4', bg: 'rgba(6, 182, 212, 0.16)' }; // Cyan
+            if (s >= 70) return { label: 'Good', color: '#10b981', bg: 'rgba(16, 185, 129, 0.16)' };      // Green
+            if (s >= 50) return { label: 'Average', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.16)' };   // Yellow
+            return { label: 'Poor', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.16)' };                        // Red
+        }
+
+        function applyParam(prefix, score, name) {
+            const tier = getTierStyle(score);
+            const scoreEl = document.getElementById(`param-${prefix}-score`);
+            const tierEl = document.getElementById(`param-${prefix}-tier`);
+            const barEl = document.getElementById(`param-${prefix}-bar`);
+
+            scoreEl.textContent = score + ' / 100';
+            scoreEl.style.color = tier.color;
+            tierEl.textContent = tier.label;
+            tierEl.style.color = tier.color;
+            tierEl.style.background = tier.bg;
+            document.getElementById(`param-${prefix}-name`).textContent = name || '';
+            barEl.style.width = Math.min(100, score) + '%';
+            barEl.style.backgroundColor = tier.color;
+        }
+
+        function renderResults(data, cpuId, gpuId, ramId, storageId) {
             const resultsCard = document.getElementById('calc-results-card');
             resultsCard.style.display = 'block';
 
-            const scoreDisplay = document.getElementById('synergy-score-display');
-            const verdictContainer = document.getElementById('verdict-badge-container');
+            const overallScore = data.overall_score ?? data.synergy_score ?? 0;
+            const overallTier = getTierStyle(overallScore);
+            const scoreDisplay = document.getElementById('overall-score-display');
+            const verdictBadge = document.getElementById('verdict-badge');
             const adviceText = document.getElementById('advice-text');
 
-            const score = data.synergy_score || 90;
-            scoreDisplay.textContent = score + '%';
+            scoreDisplay.textContent = overallScore + ' / 100';
+            scoreDisplay.style.color = overallTier.color;
+            verdictBadge.textContent = data.verdict || overallTier.label;
+            verdictBadge.style.color = overallTier.color;
+            verdictBadge.style.background = overallTier.bg;
+            adviceText.textContent = data.advice || '';
 
-            let badgeClass = 'badge-success';
-            let color = '#10b981';
-
-            if (score < 75) {
-                badgeClass = 'badge-danger';
-                color = '#ef4444';
-            } else if (score < 88) {
-                badgeClass = 'badge-warning';
-                color = '#f59e0b';
-            }
-
-            scoreDisplay.style.color = color;
-            verdictContainer.innerHTML = `<span class="badge ${badgeClass}" style="font-size: 0.9rem; padding: 6px 14px;">${data.verdict}</span>`;
-            adviceText.textContent = data.advice || 'Hardware operates smoothly under selected resolution.';
-
-            // Render FPS cards
-            const fpsGrid = document.getElementById('fps-grid');
-            fpsGrid.innerHTML = '';
-
-            const games = data.fps_estimates || {
-                'Cyberpunk 2077 (Ultra)': '95 FPS',
-                'Call of Duty: Warzone': '165 FPS',
-                'Valorant / CS2': '320+ FPS',
-                'Apex Legends': '180 FPS'
-            };
-
-            Object.entries(games).forEach(([game, fps]) => {
-                const card = document.createElement('div');
-                card.style.background = 'rgba(0,0,0,0.25)';
-                card.style.border = '1px solid var(--border-color)';
-                card.style.borderRadius = '8px';
-                card.style.padding = '14px 18px';
-                card.style.textAlign = 'center';
-
-                card.innerHTML = `
-                    <small style="color: var(--text-muted); font-size: 0.8rem; display: block; margin-bottom: 4px;">${game}</small>
-                    <div style="font-size: 1.4rem; font-weight: 800; color: #60a5fa;">${fps}</div>
-                `;
-                fpsGrid.appendChild(card);
-            });
+            // Update the 4 parameters with 4-tier colors
+            applyParam('cpu', data.cpu_processing_power ?? data.cpu_score ?? 0, data.cpu_name);
+            applyParam('gpu', data.gpu_performance ?? data.gpu_score ?? 0, data.gpu_name);
+            applyParam('ram', data.memory ?? data.memory_score ?? 0, data.ram_name);
+            applyParam('storage', data.storage ?? data.storage_score ?? 0, data.storage_name);
 
             // Update "Build with this Combo" link
-            const buildBtn = document.getElementById('build-with-combo-btn');
-            buildBtn.href = "{{ route('builder.index') }}?cpu_id=" + cpuId + "&gpu_id=" + gpuId;
+            const params = new URLSearchParams();
+            if (cpuId) params.set('cpu_id', cpuId);
+            if (gpuId) params.set('gpu_id', gpuId);
+            if (ramId) params.set('ram_id', ramId);
+            if (storageId) params.set('storage_id', storageId);
 
-            // Smooth scroll to results
-            resultsCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            document.getElementById('build-with-combo-btn').href = "{{ route('builder.index') }}?" + params.toString();
         }
 
-        // Run initial calculation
+        // Run initial calculation on page load
         performCalculation();
     });
 </script>

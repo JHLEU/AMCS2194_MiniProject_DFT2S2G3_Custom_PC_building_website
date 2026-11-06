@@ -15,7 +15,7 @@ class CompatibilityController extends Controller
     ) {}
 
     /**
-     * Render the ERP Hardware Compatibility, Power Headroom & Bottleneck Test Bench.
+     * Render the ERP Hardware Compatibility & Performance Test Bench.
      */
     public function index(Request $request): View
     {
@@ -40,36 +40,20 @@ class CompatibilityController extends Controller
         if (empty($selectedIds)) {
             foreach ($categories as $cat) {
                 if (isset($groupedProducts[$cat]) && $groupedProducts[$cat]->isNotEmpty()) {
-                    // Pick first item in each category by default
                     $selectedIds[$cat] = $groupedProducts[$cat]->first()->id;
                 }
             }
         }
 
         $evaluation = $this->compatibilityService->evaluateBuild(array_values($selectedIds));
-
-        $selectedCpu = isset($selectedIds['CPU']) ? $catalog->firstWhere('id', $selectedIds['CPU']) : null;
-        $selectedGpu = isset($selectedIds['GPU']) ? $catalog->firstWhere('id', $selectedIds['GPU']) : null;
-        $resolution = in_array($request->input('resolution'), ['1080', '1440', '2160'], true)
-            ? $request->input('resolution')
-            : '1440';
-
-        $bottleneckReport = null;
-        if ($selectedCpu && $selectedGpu) {
-            $bottleneckReport = $this->compatibilityService->calculateBottleneck(
-                $selectedCpu,
-                $selectedGpu,
-                $resolution
-            );
-        }
+        $performanceReport = $evaluation['performance'];
 
         return view('erp.compatibility.index', [
-            'categories'       => $categories,
-            'groupedProducts'  => $groupedProducts,
-            'selectedIds'      => $selectedIds,
-            'evaluation'       => $evaluation,
-            'bottleneckReport' => $bottleneckReport,
-            'resolution'       => $resolution,
+            'categories'        => $categories,
+            'groupedProducts'   => $groupedProducts,
+            'selectedIds'       => $selectedIds,
+            'evaluation'        => $evaluation,
+            'performanceReport' => $performanceReport,
         ]);
     }
 }

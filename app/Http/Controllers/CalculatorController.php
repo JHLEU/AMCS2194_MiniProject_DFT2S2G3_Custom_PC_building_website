@@ -18,8 +18,10 @@ class CalculatorController extends Controller
     {
         $cpus = Product::where('category', 'CPU')->orderBy('selling_price', 'desc')->get();
         $gpus = Product::where('category', 'GPU')->orderBy('selling_price', 'desc')->get();
+        $rams = Product::where('category', 'RAM')->orderBy('selling_price', 'desc')->get();
+        $storages = Product::where('category', 'Storage')->orderBy('selling_price', 'desc')->get();
 
-        return view('calculator.index', compact('cpus', 'gpus'));
+        return view('calculator.index', compact('cpus', 'gpus', 'rams', 'storages'));
     }
 
     public function calculate(Request $request): JsonResponse
@@ -27,40 +29,26 @@ class CalculatorController extends Controller
         $validated = $request->validate([
             'cpu_id'     => 'required|exists:products,id',
             'gpu_id'     => 'required|exists:products,id',
-            'resolution' => 'nullable|in:1080p,1440p,4k,2160p',
+            'ram_id'     => 'nullable|exists:products,id',
+            'storage_id' => 'nullable|exists:products,id',
         ]);
-
-        $resolution = $validated['resolution'] ?? '1440p';
-        if ($resolution === '2160p') {
-            $resolution = '4k';
-        }
 
         $cpu = Product::findOrFail((int) $validated['cpu_id']);
         $gpu = Product::findOrFail((int) $validated['gpu_id']);
+        $ram = ! empty($validated['ram_id'])
+            ? Product::findOrFail((int) $validated['ram_id'])
+            : Product::where('category', 'RAM')->orderBy('selling_price', 'desc')->first();
+        $storage = ! empty($validated['storage_id'])
+            ? Product::findOrFail((int) $validated['storage_id'])
+            : Product::where('category', 'Storage')->orderBy('selling_price', 'desc')->first();
 
-        $resKey = str_replace('p', '', strtolower($resolution));
-
-        $result = $this->compatibilityService->calculateBottleneck(
+        $result = $this->compatibilityService->calculatePerformance(
             $cpu,
             $gpu,
-            $resKey
+            $ram,
+            $storage
         );
 
-        $synergyScore = (int) round($result['utilization_percent'] ?? (100 - ($result['bottleneck_percent'] ?? 5)));
-        $fpsEstimates = [];
-        if (!empty($result['games'])) {
-            foreach ($result['games'] as $g) {
-                $fpsEstimates[$g['name']] = $g['fps'] . ' FPS';
-            }
-        }
-
-        return response()->json([
-            'synergy_score'      => $synergyScore,
-            'verdict'            => $result['tag'] ?? 'Optimal Hardware Balance',
-            'bottleneck_percent' => $result['bottleneck_percent'] ?? 0,
-            'advice'             => $result['advice'] ?? '',
-            'fps_estimates'      => $fpsEstimates,
-            'games'              => $result['games'] ?? [],
-        ]);
+        return response()->json($result);
     }
 }
