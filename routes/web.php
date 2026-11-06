@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CompatibilityController as ApiCompatibilityController;
+use App\Http\Controllers\Api\LiveChatController as ApiLiveChatController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CalculatorController;
 use App\Http\Controllers\CheckoutController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\Erp\CompatibilityController as ErpCompatibilityControll
 use App\Http\Controllers\Erp\DashboardController as ErpDashboardController;
 use App\Http\Controllers\Erp\FinanceController as ErpFinanceController;
 use App\Http\Controllers\Erp\InventoryController;
+use App\Http\Controllers\Erp\LiveChatController as ErpLiveChatController;
 use App\Http\Controllers\Erp\OrderController as ErpOrderController;
 use App\Http\Controllers\Erp\ProductController;
 use App\Http\Controllers\Erp\RestockController;
@@ -59,6 +61,12 @@ Route::prefix('api/compatibility')->name('api.compatibility.')->group(function (
     Route::post('/evaluate', [ApiCompatibilityController::class, 'evaluate'])->name('evaluate');
     Route::get('/compatible-parts', [ApiCompatibilityController::class, 'compatibleParts'])->name('compatible-parts');
     Route::post('/bottleneck', [ApiCompatibilityController::class, 'bottleneck'])->name('bottleneck');
+});
+
+// Customer Live Chat Service API (Module 8: live-chat-service)
+Route::prefix('api/chat')->name('api.chat.')->group(function () {
+    Route::get('/messages', [ApiLiveChatController::class, 'messages'])->name('messages');
+    Route::post('/send', [ApiLiveChatController::class, 'send'])->name('send');
 });
 
 // Authentication Routes
@@ -162,5 +170,12 @@ Route::prefix('erp')->name('erp.')->middleware(['auth', 'role:staff'])->group(fu
         Route::post('/tickets/{ticket}/assign', [ErpSupportTicketController::class, 'assignSchedule'])->name('assign');
         Route::get('/schedules', [ErpTechScheduleController::class, 'index'])->name('schedules');
         Route::get('/warranties', [ErpSupportTicketController::class, 'warranties'])->name('warranties');
+    });
+
+    // Customer Service Live Chat Desk (Module 8: live-chat-service)
+    Route::prefix('chat')->name('chat.')->middleware('role:Admin,Staff_Tech')->group(function () {
+        Route::get('/', [ErpLiveChatController::class, 'index'])->name('index');
+        Route::get('/{sessionId}/history', [ErpLiveChatController::class, 'history'])->name('history');
+        Route::post('/{sessionId}/reply', [ErpLiveChatController::class, 'reply'])->name('reply');
     });
 });

@@ -72,8 +72,8 @@
                     <a href="{{ route('erp.support.warranties') }}" class="{{ request()->routeIs('erp.support.warranties') ? 'active' : '' }}">
                         <span>🛡️</span> Warranty Registry
                     </a>
-                    <a href="#" style="color: var(--text-muted);">
-                        <span>💬</span> Customer Chat Logs
+                    <a href="{{ route('erp.chat.index') }}" class="{{ request()->routeIs('erp.chat.*') ? 'active' : '' }}">
+                        <span>💬</span> Customer Live Chat
                     </a>
                 @endif
 

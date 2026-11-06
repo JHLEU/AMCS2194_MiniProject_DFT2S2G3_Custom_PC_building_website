@@ -67,6 +67,8 @@
 
     <script src="{{ asset('js/vendor/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('js/app.js') }}"></script>
+    @include('partials.chat-widget')
+    <script src="{{ asset('js/chat-widget.js') }}"></script>
     @yield('scripts')
 </body>
 </html>

@@ -71,6 +71,11 @@ class User extends Authenticatable
         return $this->hasMany(TechSchedule::class, 'technician_id');
     }
 
+    public function chatLogs(): HasMany
+    {
+        return $this->hasMany(ChatLog::class, 'customer_id');
+    }
+
     public function hasRole(string|array $roles): bool
     {
         if (!$this->role) {
