@@ -74,9 +74,10 @@
             Hardware specifications, warehouse physical serial numbers, cost pricing, and restock purchase orders.
         </p>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <a href="{{ route('erp.inventory.index') }}" class="btn btn-primary btn-sm">Stock Catalog</a>
-            <a href="#" class="btn btn-outline btn-sm">Serial Tracking</a>
-            <a href="#" class="btn btn-outline btn-sm">Restock Orders</a>
+            <a href="{{ route('erp.products.index') }}" class="btn btn-primary btn-sm">Stock Catalog</a>
+            <a href="{{ route('erp.serials.index') }}" class="btn btn-outline btn-sm">Serial Tracking</a>
+            <a href="{{ route('erp.restock.index') }}" class="btn btn-outline btn-sm">Restock Orders</a>
+            <a href="{{ route('erp.inventory.low-stock') }}" class="btn btn-outline btn-sm">Low Stock</a>
         </div>
     </div>
     @endif
@@ -88,8 +89,8 @@
             Order lifecycle progression: Pending &rarr; Paid &rarr; Assembling &rarr; Testing &rarr; Shipped &rarr; Completed.
         </p>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <a href="#" class="btn btn-primary btn-sm">Orders Queue</a>
-            <a href="#" class="btn btn-outline btn-sm">Shipping & Tracking</a>
+            <a href="{{ route('erp.orders.index') }}" class="btn btn-primary btn-sm">Orders Queue</a>
+            <a href="{{ route('erp.compatibility.index') }}" class="btn btn-outline btn-sm">Compatibility Engine</a>
         </div>
     </div>
 

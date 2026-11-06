@@ -1,36 +1,76 @@
-# Tasks: core-infra-auth
+# Tasks: finance-cashflow
 
-- [x] Task 1: Archive legacy raw PHP files into `legacy/`
-  - Acceptance: Existing `app/`, `config/`, `controllers/`, `models/`, `views/`, `public/`, `index.php`, and `run_server.bat` are safely moved into `legacy/`, leaving the root directory clean for Laravel installation.
-  - Verify: Directory check shows `legacy/` contains original files and root no longer has legacy raw PHP files.
-  - Files: `legacy/*`
+## Task 1: Financial Report Service Layer (`FinancialReportService`)
+**Description:** Implement `App\Services\FinancialReportService` providing business logic for overall financial KPI metrics (Revenue, COGS from batch costs, Gross Profit, Gross Margin %, Procurement Expenditure, Inventory Valuation, Net Cashflow), 12-month calendar P&L statement aggregation, hardware category margin breakdown, and a unified chronological cashflow transaction stream (Inflows from customer payments & Outflows from restock purchase orders).
 
-- [x] Task 2: Scaffold Laravel 11 application
-  - Acceptance: Laravel 11 files (artisan, composer.json, bootstrap, config, routes, etc.) initialized at root, `.env` configured with `APP_NAME="Custom PC & ERP"`, and SQLite configured for test environment.
-  - Verify: Run `php artisan --version` succeeds.
-  - Files: `composer.json`, `.env`, `artisan`, `bootstrap/app.php`
+**Acceptance criteria:**
+- [x] `getOverviewMetrics()` computes Revenue, COGS, Gross Profit, Gross Margin %, Procurement Outflow, Inventory Valuation, and Net Cashflow.
+- [x] `getMonthlyPnL(int $year)` returns monthly financial figures for all 12 months with annual summary totals.
+- [x] `getCategoryBreakdown()` groups item sales and batch costs by hardware category with gross margin %.
+- [x] `getTransactionsLedger()` unifies customer payments (Inflows) and completed restock PO disbursements (Outflows) sorted by date.
 
-- [x] Task 3: Create complete database migrations based on `database.sql`
-  - Acceptance: Migrations created for `roles`, `users`, `categories`, `suppliers`, `products`, `supplier_hardware_mapping`, `restock_orders`, `restock_order_items`, `serial_numbers`, `orders`, `order_items`, `payments`, `warranties`, `support_tickets`, `tech_schedules`, `saved_builds`, and `chat_logs`.
-  - Verify: `php artisan migrate` executes with 0 errors.
-  - Files: `database/migrations/*`
+**Verification:**
+- [x] Tested via service methods and automated feature tests.
 
-- [x] Task 4: Implement Eloquent Models and Seeders
-  - Acceptance: Models `Role` and `User` (and base models) defined with relationships and role constants. `DatabaseSeeder` & `RoleAndUserSeeder` seed the 4 roles (`Admin`, `Staff_Warehouse`, `Staff_Tech`, `Customer`) and initial development accounts with password `password123`.
-  - Verify: `php artisan migrate:fresh --seed` runs cleanly and populates database.
-  - Files: `app/Models/Role.php`, `app/Models/User.php`, `database/seeders/DatabaseSeeder.php`, `database/seeders/RoleAndUserSeeder.php`
+**Dependencies:** None
 
-- [x] Task 5: Build Multi-Role Auth, RBAC Middleware, and Controllers
-  - Acceptance: `RoleMiddleware` restricts routes based on role name/permission. `AuthController` handles login, register, and logout with role-based redirection (`Admin`/`Staff_*` → `/erp/dashboard`, `Customer` → `/`).
-  - Verify: Role middleware correctly allows authorized roles and returns 403 on unauthorized access.
-  - Files: `app/Http/Middleware/RoleMiddleware.php`, `app/Http/Controllers/AuthController.php`, `app/Http/Controllers/Erp/DashboardController.php`, `routes/web.php`
+**Files likely touched:**
+- `app/Services/FinancialReportService.php`
 
-- [x] Task 6: Implement Blade Layouts, Auth Views, and Dark Theme ERP Dashboard
-  - Acceptance: Public layout (`layouts/app.blade.php`), dark sidebar ERP layout (`layouts/erp.blade.php`), login (`auth/login.blade.php`), register (`auth/register.blade.php`), and ERP dashboard view created using Plain CSS & Plain JS.
-  - Verify: Pages render cleanly with dark theme on `/erp/dashboard` and proper navigation.
-  - Files: `resources/views/layouts/app.blade.php`, `resources/views/layouts/erp.blade.php`, `resources/views/auth/login.blade.php`, `resources/views/auth/register.blade.php`, `resources/views/erp/dashboard.blade.php`, `public/css/style.css`
+**Estimated scope:** Medium (1 file)
 
-- [x] Task 7: Automated Feature Tests
-  - Acceptance: Feature tests verifying registration, login authentication, role redirection, and route protection gates.
-  - Verify: `php artisan test` passes with green results.
-  - Files: `tests/Feature/AuthTest.php`, `tests/Feature/RoleAccessTest.php`
+---
+
+## Task 2: ERP Finance Controller & Blade Views
+**Description:** Implement `App\Http\Controllers\Erp\FinanceController` (`index`, `pnl`, `cashflow`) and views in `resources/views/erp/finance/`:
+- `index.blade.php`: Financial Dashboard with KPI cards, category margin breakdown, and recent cashflow stream.
+- `pnl.blade.php`: Profit & Loss (P&L) Statement with year selector and monthly table.
+- `cashflow.blade.php`: Cashflow Ledger with Inflow/Outflow filtering and date search.
+Wire sidebar links in `resources/views/layouts/erp.blade.php` and register routes in `routes/web.php` under `role:Admin`.
+
+**Acceptance criteria:**
+- [x] `GET /erp/finance` renders Financial Dashboard with correct KPI summaries and category margins.
+- [x] `GET /erp/finance/pnl` displays 12-month P&L table with revenue, COGS, and gross profit.
+- [x] `GET /erp/finance/cashflow` displays unified transaction stream with filter by type (`Inflow` / `Outflow`).
+- [x] Sidebar links in `layouts/erp.blade.php` point to active financial routes.
+
+**Verification:**
+- [x] `php artisan route:list --path=erp/finance` shows all financial routes.
+
+**Dependencies:** Task 1
+
+**Files likely touched:**
+- `app/Http/Controllers/Erp/FinanceController.php`
+- `resources/views/erp/finance/index.blade.php`
+- `resources/views/erp/finance/pnl.blade.php`
+- `resources/views/erp/finance/cashflow.blade.php`
+- `resources/views/layouts/erp.blade.php`
+- `routes/web.php`
+
+**Estimated scope:** Large (6 files)
+
+---
+
+## Task 3: Automated Feature Tests (`FinanceCashflowTest`)
+**Description:** Create `tests/Feature/FinanceCashflowTest.php` covering calculations for overview metrics, monthly P&L structure, category margin breakdown, cashflow ledger inflow/outflow balance, and strict RBAC enforcement (`Admin` allowed, `Staff_Tech` / `Customer` blocked).
+
+**Acceptance criteria:**
+- [x] All financial feature tests pass with 100% success rate.
+- [x] Zero regressions across the full test suite (`php artisan test`).
+
+**Verification:**
+- [x] `php artisan test` completes with 0 errors.
+
+**Dependencies:** Task 1, Task 2
+
+**Files likely touched:**
+- `tests/Feature/FinanceCashflowTest.php`
+
+**Estimated scope:** Small (1 file)
+
+---
+
+## Checkpoint: Complete (`finance-cashflow`)
+- [x] All acceptance criteria in `SPEC-finance-cashflow.md` met
+- [x] `php artisan migrate:fresh --seed` and `php artisan test` pass 100%
+- [x] Ready for human review

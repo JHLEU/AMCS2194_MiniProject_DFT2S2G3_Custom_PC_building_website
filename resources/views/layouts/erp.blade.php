@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'ERP Dashboard') | Custom PC Enterprise</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     @yield('styles')
@@ -21,30 +22,44 @@
                 <a href="{{ route('erp.dashboard') }}" class="{{ request()->routeIs('erp.dashboard') ? 'active' : '' }}">
                     <span>📊</span> Dashboard
                 </a>
+                <a href="{{ route('erp.compatibility.index') }}" class="{{ request()->routeIs('erp.compatibility.*') ? 'active' : '' }}">
+                    <span>⚡</span> Compatibility Engine
+                </a>
 
                 @if(Auth::user()->isAdmin() || Auth::user()->isWarehouse())
                     <div class="erp-nav-group-title">Supply Chain & Warehouse</div>
-                    <a href="{{ route('erp.inventory.index') }}" class="{{ request()->is('erp/inventory*') ? 'active' : '' }}">
-                        <span>📦</span> Inventory & Stock
+                    <a href="{{ route('erp.inventory.index') }}" class="{{ request()->routeIs('erp.inventory.index') ? 'active' : '' }}">
+                        <span>📦</span> Inventory Dashboard
                     </a>
-                    <a href="#" style="color: var(--text-muted);">
+                    <a href="{{ route('erp.products.index') }}" class="{{ request()->routeIs('erp.products.*') ? 'active' : '' }}">
+                        <span>💻</span> Hardware Catalog
+                    </a>
+                    <a href="{{ route('erp.inventory.low-stock') }}" class="{{ request()->routeIs('erp.inventory.low-stock') ? 'active' : '' }}">
                         <span>⚠️</span> Low Stock Alerts
                     </a>
-                    <a href="#" style="color: var(--text-muted);">
-                        <span>🏭</span> Suppliers & POs
+                    <a href="{{ route('erp.inventory.costing') }}" class="{{ request()->routeIs('erp.inventory.costing') ? 'active' : '' }}">
+                        <span>📊</span> Costing & Valuation
                     </a>
-                    <a href="#" style="color: var(--text-muted);">
+                    <a href="{{ route('erp.suppliers.index') }}" class="{{ request()->routeIs('erp.suppliers.*') ? 'active' : '' }}">
+                        <span>🏭</span> Suppliers & Mapping
+                    </a>
+                    <a href="{{ route('erp.restock.index') }}" class="{{ request()->routeIs('erp.restock.*') ? 'active' : '' }}">
+                        <span>🚚</span> Restock Purchase Orders
+                    </a>
+                    <a href="{{ route('erp.serials.index') }}" class="{{ request()->routeIs('erp.serials.*') ? 'active' : '' }}">
                         <span>🏷️</span> Serial Numbers
                     </a>
                 @endif
 
                 <div class="erp-nav-group-title">Sales & Fulfillment</div>
-                <a href="#" style="color: var(--text-muted);">
+                <a href="{{ route('erp.orders.index') }}" class="{{ request()->routeIs('erp.orders.*') ? 'active' : '' }}">
                     <span>🛒</span> Orders Management
                 </a>
-                <a href="#" style="color: var(--text-muted);">
-                    <span>💵</span> Financials & Cashflow
-                </a>
+                @if(Auth::user()->isAdmin())
+                    <a href="{{ route('erp.finance.index') }}" class="{{ request()->routeIs('erp.finance.*') ? 'active' : '' }}">
+                        <span>💵</span> Financials & Cashflow
+                    </a>
+                @endif
 
                 @if(Auth::user()->isAdmin() || Auth::user()->isTech())
                     <div class="erp-nav-group-title">Support & Service</div>
@@ -113,6 +128,7 @@
         </div>
     </div>
 
+    <script src="{{ asset('js/vendor/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('js/app.js') }}"></script>
     @yield('scripts')
 </body>

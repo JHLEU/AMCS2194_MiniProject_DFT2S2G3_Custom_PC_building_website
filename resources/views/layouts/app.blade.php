@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Custom PC Building Platform')</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     @yield('styles')
@@ -14,11 +15,12 @@
                 ⚡ Custom PC Builder
             </a>
             <nav style="display: flex; gap: 16px; font-size: 0.9rem;">
-                <a href="{{ route('home') }}" style="color: var(--text-light);">Home</a>
-                <a href="#" style="color: var(--text-muted);">PC Builder</a>
-                <a href="#" style="color: var(--text-muted);">CPU Calculator</a>
-                <a href="#" style="color: var(--text-muted);">Reviews</a>
-                <a href="#" style="color: var(--text-muted);">Track Order</a>
+                <a href="{{ route('home') }}" style="color: {{ request()->routeIs('home') ? '#fff' : 'var(--text-light)' }};">Home</a>
+                <a href="{{ route('checkout.index') }}" style="color: {{ request()->routeIs('checkout.*') ? 'var(--accent)' : 'var(--text-muted)' }};">Checkout</a>
+                <a href="{{ route('orders.track') }}" style="color: {{ request()->routeIs('orders.track') ? 'var(--info)' : 'var(--text-muted)' }};">Track Order</a>
+                @auth
+                    <a href="{{ route('customer.orders') }}" style="color: {{ request()->routeIs('customer.orders') ? '#fff' : 'var(--text-muted)' }};">My Orders</a>
+                @endauth
             </nav>
         </div>
 
@@ -58,6 +60,7 @@
         <p>&copy; {{ date('Y') }} Custom PC Building & ERP Supply Chain Platform. All rights reserved.</p>
     </footer>
 
+    <script src="{{ asset('js/vendor/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('js/app.js') }}"></script>
     @yield('scripts')
 </body>
