@@ -65,6 +65,7 @@ CREATE TABLE `products` (
     `brand` VARCHAR(100) NULL,
     `specs` TEXT NULL,                           -- Detailed specifications & compatibility notes
     `tdp_wattage` INT DEFAULT 0,                 -- TDP for PSU calculation & custom builder
+    `performance_score` INT DEFAULT 0,           -- 0-100 performance rating score for CPU, GPU, RAM, Storage
     `socket_type` VARCHAR(50) NULL,              -- e.g., LGA1700, AM5
     `ram_type` VARCHAR(20) NULL,                 -- e.g., DDR4, DDR5
     `cost_price` DECIMAL(10, 2) NOT NULL DEFAULT 0.00,

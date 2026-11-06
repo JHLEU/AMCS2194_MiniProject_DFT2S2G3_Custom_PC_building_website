@@ -189,12 +189,11 @@ $(function () {
         }
     });
 
-    // 7. ERP Compatibility & Power Test Bench (live AJAX re-evaluation)
+    // 7. ERP Compatibility & Performance Test Bench (live AJAX re-evaluation)
     const $compatForm = $('#compatibilityForm');
 
     if ($compatForm.length) {
         const evaluateUrl = $compatForm.data('evaluate-url');
-        const bottleneckUrl = $compatForm.data('bottleneck-url');
         let pendingRequest = 0;
 
         function renderStatus(status) {
@@ -207,20 +206,6 @@ $(function () {
             $('#compatStatusVal').html(
                 `<div class="stat-val" style="color: ${color}; font-size: 1.35rem;">${label}</div>`
             );
-        }
-
-        function renderPower(power) {
-            $('#liveTotalWattage').text(power.estimated_total_wattage + 'W');
-            $('#liveWattageBreakdown').text(
-                `Components: ${power.component_tdp_wattage}W + ${power.base_overhead_wattage}W Base`
-            );
-            $('#liveRecPsu').text(power.recommended_psu_wattage + 'W+');
-
-            let psuInfo = 'Selected PSU: ' + (power.selected_psu_wattage ? power.selected_psu_wattage + 'W' : 'None');
-            if (power.psu_load_percent !== null) {
-                psuInfo += ` (${power.psu_load_percent}% load)`;
-            }
-            $('#livePsuInfo').text(psuInfo);
         }
 
         function renderPricing(pricing) {
@@ -236,7 +221,7 @@ $(function () {
             if (!errors.length && !warnings.length) {
                 html += `<div class="alert alert-success" style="margin-bottom: 16px;">
                     <strong>✔ All Hardware Compatibility Checks Passed!</strong><br>
-                    CPU socket, Motherboard chipset, RAM generation, and PSU wattage headroom are 100% compatible.
+                    CPU socket type matches Motherboard socket type, and RAM generation (DDR4/DDR5) is compatible.
                 </div>`;
             }
 
@@ -272,10 +257,9 @@ $(function () {
                 if (part.ram_type) compat += `<span class="badge badge-primary">${esc(part.ram_type)}</span>`;
                 if (!compat) compat = '<span style="color: var(--text-muted);">—</span>';
 
-                const isPsu = String(part.category).toUpperCase() === 'PSU';
-                const tdp = isPsu
-                    ? `<strong style="color: var(--info);">${part.tdp_wattage}W Rated</strong>`
-                    : `${part.tdp_wattage}W`;
+                const scoreHtml = (part.performance_score && part.performance_score > 0)
+                    ? `<strong style="color: var(--success);">${part.performance_score} / 100</strong>`
+                    : '<span style="color: var(--text-muted);">—</span>';
 
                 const stock = part.in_stock_count > 0
                     ? `<span class="badge badge-success">${part.in_stock_count} In-Stock</span>`
@@ -285,7 +269,7 @@ $(function () {
                     <td><span class="badge badge-info">${esc(part.category)}</span></td>
                     <td style="font-weight: 600;">${esc(part.name)}</td>
                     <td>${compat}</td>
-                    <td>${tdp}</td>
+                    <td>${scoreHtml}</td>
                     <td>${stock}</td>
                     <td>RM ${formatMoney(part.selling_price)}</td>
                 </tr>`;
@@ -293,38 +277,20 @@ $(function () {
             $('#compatComponentsBody').html(rows.join(''));
         }
 
-        function renderBottleneck(report) {
-            const $card = $('#bottleneckCard');
-            if (!report) {
-                $card.hide();
-                return;
-            }
+        function renderPerformance(report) {
+            if (!report) return;
 
-            const tierColor = report.tier === 'optimal'
-                ? 'var(--success)'
-                : (report.tier === 'minor' ? 'var(--warning)' : 'var(--danger)');
-
-            $('#bnResolution').text(report.resolution);
-            $('#bnPercent').text(report.bottleneck_percent + '%').css('color', tierColor);
-            $('#bnTag').text(report.tag);
-            $('#bnUtil').text(report.utilization_percent + '%');
-            $('#bnScores').text(`CPU ${report.cpu_score} / GPU ${report.gpu_score}`);
-            $('#bnPsu').text(report.recommended_psu_wattage + 'W');
-            $('#bnAdvice').text(report.advice);
-
-            const games = $.map(report.games_fps, function (g) {
-                return `<div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <div style="font-size: 0.8rem; font-weight: 600; color: #fff;">${esc(g.name)}</div>
-                        <div style="font-size: 0.7rem; color: var(--text-muted);">${esc(g.tag)}</div>
-                    </div>
-                    <div style="font-size: 1rem; font-weight: 800; color: var(--success);">
-                        ${g.fps} <span style="font-size: 0.7rem; color: var(--text-muted);">FPS</span>
-                    </div>
-                </div>`;
-            });
-            $('#bnGames').html(games.join(''));
-            $card.show();
+            $('#liveOverallScore').text((report.overall_score || 0) + ' / 100');
+            $('#liveVerdictInfo').text(report.verdict || '');
+            $('#bnCpuScore').text((report.cpu_processing_power || 0) + ' / 100');
+            $('#bnCpuName').text(report.cpu_name || '—');
+            $('#bnGpuScore').text((report.gpu_performance || 0) + ' / 100');
+            $('#bnGpuName').text(report.gpu_name || '—');
+            $('#bnRamScore').text((report.memory || 0) + ' / 100');
+            $('#bnRamName').text(report.ram_name || '—');
+            $('#bnStorageScore').text((report.storage || 0) + ' / 100');
+            $('#bnStorageName').text(report.storage_name || '—');
+            $('#bnAdvice').text(report.advice || '');
         }
 
         function runEvaluation() {
@@ -334,47 +300,24 @@ $(function () {
                 if ($(this).val()) productIds.push(parseInt($(this).val(), 10));
             });
 
-            const cpuId = $('#select_cpu_id').val();
-            const gpuId = $('#select_gpu_id').val();
-            const resolution = $('#select_resolution').val();
-
-            // Keep the URL in sync so a page refresh / shared link reproduces the same build
             history.replaceState(null, '', '?' + $compatForm.serialize());
             $('#compatLoading').show();
 
-            const evaluateReq = $.ajax({
+            $.ajax({
                 url: evaluateUrl,
                 method: 'POST',
                 contentType: 'application/json',
                 dataType: 'json',
                 data: JSON.stringify({ product_ids: productIds })
-            });
-
-            const bottleneckReq = (cpuId && gpuId)
-                ? $.ajax({
-                    url: bottleneckUrl,
-                    method: 'POST',
-                    contentType: 'application/json',
-                    dataType: 'json',
-                    data: JSON.stringify({ cpu_id: parseInt(cpuId, 10), gpu_id: parseInt(gpuId, 10), resolution: resolution })
-                })
-                : $.Deferred().resolve(null).promise();
-
-            $.when(evaluateReq, bottleneckReq)
-                .done(function (evalRes, bnRes) {
-                    if (requestId !== pendingRequest) return; // a newer request superseded this one
-
-                    // $.ajax results arrive as [data, status, xhr]; the resolved Deferred passes data directly
-                    const evaluation = evalRes[0];
-                    const bottleneck = Array.isArray(bnRes) ? bnRes[0] : bnRes;
+            })
+                .done(function (evaluation) {
+                    if (requestId !== pendingRequest) return;
 
                     renderStatus(evaluation.status);
-                    renderPower(evaluation.power);
                     renderPricing(evaluation.pricing);
                     renderIssues(evaluation.errors, evaluation.warnings);
-                    $('#coolingAdvice').text(evaluation.cooling_advice);
                     renderComponents(evaluation.components);
-                    renderBottleneck(bottleneck);
+                    renderPerformance(evaluation.performance);
                 })
                 .fail(function () {
                     if (requestId !== pendingRequest) return;

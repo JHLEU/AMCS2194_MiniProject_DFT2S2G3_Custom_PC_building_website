@@ -23,7 +23,7 @@
                 ⚡ Launch Custom PC Builder
             </a>
             <a href="{{ route('calculator.index') }}" class="btn btn-secondary" style="padding: 14px 28px; font-size: 1.05rem;">
-                🎯 Check Bottlenecks & Game FPS
+                🎯 Performance Calculator
             </a>
             <a href="{{ route('orders.track') }}" class="btn btn-outline" style="padding: 14px 24px; font-size: 1.05rem;">
                 📦 Track Order

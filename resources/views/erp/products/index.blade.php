@@ -73,6 +73,9 @@
                                     @if($p->ram_type)
                                         <span class="badge badge-accent">RAM: {{ $p->ram_type }}</span>
                                     @endif
+                                    @if($p->performance_score > 0)
+                                        <span class="badge badge-success">Score: {{ $p->performance_score }}/100</span>
+                                    @endif
                                     @if($p->tdp_wattage > 0)
                                         <span class="badge badge-warning">{{ $p->category === 'PSU' ? 'Cap:' : 'TDP:' }} {{ $p->tdp_wattage }}W</span>
                                     @endif

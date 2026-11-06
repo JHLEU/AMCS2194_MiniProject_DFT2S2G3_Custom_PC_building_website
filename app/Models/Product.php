@@ -44,6 +44,7 @@ class Product extends Model
         'specs',
         'image_url',
         'tdp_wattage',
+        'performance_score',
         'socket_type',
         'ram_type',
         'cost_price',
@@ -56,6 +57,7 @@ class Product extends Model
     {
         return [
             'tdp_wattage'         => 'integer',
+            'performance_score'   => 'integer',
             'cost_price'          => 'decimal:2',
             'selling_price'       => 'decimal:2',
             'warranty_months'     => 'integer',

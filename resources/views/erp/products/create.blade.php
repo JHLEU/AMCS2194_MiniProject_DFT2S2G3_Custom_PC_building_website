@@ -82,6 +82,11 @@
             </div>
 
             <div class="form-group">
+                <label class="form-label">Performance Rating Score (0-100)</label>
+                <input type="number" name="performance_score" class="form-input" value="{{ old('performance_score', 0) }}" min="0" max="100" placeholder="For CPU, GPU, RAM, Storage">
+            </div>
+
+            <div class="form-group">
                 <label class="form-label">Low-Stock Safety Threshold *</label>
                 <input type="number" name="low_stock_threshold" class="form-input" value="{{ old('low_stock_threshold', 5) }}" min="1" required>
             </div>

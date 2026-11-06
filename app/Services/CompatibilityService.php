@@ -3,24 +3,20 @@
 namespace App\Services;
 
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
 class CompatibilityService
 {
     /**
-     * Base system power overhead (fans, RGB controllers, VRM losses, USB devices, NVMe/SATA controllers).
+     * Base system power overhead (kept for informational metrics).
      */
     public const BASE_SYSTEM_WATTAGE = 60;
 
     /**
-     * Recommended PSU headroom multiplier (1.25x = 25% safety margin above peak load).
+     * Recommended PSU headroom multiplier.
      */
     public const PSU_RECOMMENDED_MULTIPLIER = 1.25;
-
-    /**
-     * Minimum safe PSU multiplier before emitting a tight headroom warning (1.15x = 15% margin).
-     */
-    public const PSU_MIN_SAFE_MULTIPLIER = 1.15;
 
     /**
      * Standard retail PSU wattage tiers in watts.
@@ -28,7 +24,10 @@ class CompatibilityService
     public const PSU_TIERS = [550, 650, 750, 850, 1000, 1200, 1600];
 
     /**
-     * Evaluate a custom PC build for hardware compatibility, TDP wattage, PSU headroom, cooling, and pricing.
+     * Evaluate a custom PC build for hardware compatibility:
+     * Only checks:
+     * 1. Selected Motherboard socket_type vs selected CPU socket_type
+     * 2. RAM compatibility (e.g., DDR4 motherboard with DDR5 memory selected is flagged)
      *
      * @param  iterable<Product|int|string>  $components
      * @return array<string, mixed>
@@ -55,10 +54,10 @@ class CompatibilityService
         $rams = $byCategory['RAM'] ?? [];
         /** @var Product|null $gpu */
         $gpu = $byCategory['GPU'][0] ?? null;
+        /** @var Product|null $storage */
+        $storage = $byCategory['STORAGE'][0] ?? null;
         /** @var Product|null $psu */
         $psu = $byCategory['PSU'][0] ?? null;
-        /** @var Product|null $cooler */
-        $cooler = $byCategory['COOLING'][0] ?? null;
 
         // 1. Socket Compatibility Check (CPU <-> Motherboard)
         if ($cpu && $motherboard) {
@@ -88,17 +87,17 @@ class CompatibilityService
             }
         }
 
-        // 2. CPU <-> Motherboard RAM Support Check (if both specify a RAM standard)
+        // 2. RAM Compatibility Check (Motherboard <-> CPU and Motherboard/CPU <-> RAM)
         if ($cpu && $motherboard) {
             $cpuRam = $this->normalizeToken($cpu->ram_type);
             $mbRam = $this->normalizeToken($motherboard->ram_type);
 
             if ($cpuRam && $mbRam && $cpuRam !== $mbRam) {
                 $errors[] = [
-                    'code'     => 'cpu_motherboard_ram_mismatch',
+                    'code'     => 'ram_mismatch',
                     'category' => 'Motherboard',
                     'message'  => sprintf(
-                        'Memory controller mismatch: CPU "%s" supports %s, but Motherboard "%s" is configured for %s.',
+                        'RAM type mismatch: CPU "%s" supports %s memory, but Motherboard "%s" requires %s.',
                         $cpu->name,
                         $cpuRam,
                         $motherboard->name,
@@ -108,7 +107,6 @@ class CompatibilityService
             }
         }
 
-        // 3. RAM Compatibility Check (Motherboard <-> RAM and CPU <-> RAM)
         foreach ($rams as $ram) {
             $ramType = $this->normalizeToken($ram->ram_type);
 
@@ -138,8 +136,6 @@ class CompatibilityService
             if ($cpu) {
                 $cpuRam = $this->normalizeToken($cpu->ram_type);
                 if ($ramType && $cpuRam && $ramType !== $cpuRam) {
-                    // Avoid duplicate message if motherboard already flagged the exact same RAM mismatch,
-                    // or include if motherboard wasn't selected yet
                     $alreadyFlagged = collect($errors)->contains('code', 'ram_mismatch');
                     if (! $alreadyFlagged) {
                         $errors[] = [
@@ -158,94 +154,25 @@ class CompatibilityService
             }
         }
 
-        // 4. TDP Wattage & Power Headroom Calculation
-        $componentTdp = 0;
-        foreach ($products as $product) {
-            if ($this->isPsu($product)) {
-                continue; // PSU tdp_wattage represents capacity supplied, not consumed
-            }
-            $componentTdp += max(0, (int) $product->tdp_wattage);
-        }
-
-        $baseOverhead = $products->isEmpty() ? 0 : self::BASE_SYSTEM_WATTAGE;
-        $estimatedTotalWattage = $componentTdp + $baseOverhead;
-        $recommendedPsuWattage = $this->calculateRecommendedPsuWattage($estimatedTotalWattage);
-
-        $selectedPsuWattage = $psu ? $this->extractPsuCapacityWatts($psu) : null;
-        $psuHeadroomWatts = null;
-        $psuHeadroomPercent = null;
-        $psuLoadPercent = null;
-        $psuStatus = 'none';
-
-        if ($psu && $selectedPsuWattage !== null && $selectedPsuWattage > 0) {
-            $psuHeadroomWatts = $selectedPsuWattage - $estimatedTotalWattage;
-            $psuHeadroomPercent = $estimatedTotalWattage > 0
-                ? round((($selectedPsuWattage - $estimatedTotalWattage) / $estimatedTotalWattage) * 100, 1)
-                : 100.0;
-            $psuLoadPercent = round(($estimatedTotalWattage / $selectedPsuWattage) * 100, 1);
-
-            $minSafeWattage = (int) ceil($estimatedTotalWattage * self::PSU_MIN_SAFE_MULTIPLIER);
-
-            if ($selectedPsuWattage < $estimatedTotalWattage) {
-                $psuStatus = 'insufficient';
-                $errors[] = [
-                    'code'     => 'psu_insufficient',
-                    'category' => 'PSU',
-                    'message'  => sprintf(
-                        'Insufficient PSU wattage: Estimated system peak load is %dW, which exceeds "%s" rated capacity (%dW). Recommended PSU: %dW+.',
-                        $estimatedTotalWattage,
-                        $psu->name,
-                        $selectedPsuWattage,
-                        $recommendedPsuWattage
-                    ),
-                ];
-            } elseif ($selectedPsuWattage < $minSafeWattage) {
-                $psuStatus = 'tight';
-                $warnings[] = [
-                    'code'     => 'psu_tight_headroom',
-                    'category' => 'PSU',
-                    'message'  => sprintf(
-                        'Tight PSU headroom: Estimated load is %dW on a %dW PSU (%.1f%% load). We recommend at least %dW for safe transient power spikes.',
-                        $estimatedTotalWattage,
-                        $selectedPsuWattage,
-                        $psuLoadPercent,
-                        $recommendedPsuWattage
-                    ),
-                ];
-            } else {
-                $psuStatus = 'ok';
-            }
-        }
-
-        // 5. Thermal & Cooling Check
-        $cpuTdp = $cpu ? (int) $cpu->tdp_wattage : 0;
-        $coolingAdvice = $this->generateCoolingAdvice($cpu);
-
-        if ($cpu && $cooler && $cpuTdp >= 200) {
-            $coolerTdpMetric = (int) $cooler->tdp_wattage;
-            $isAio360 = str_contains(strtolower($cooler->name . ' ' . $cooler->specs), '360');
-            if ($coolerTdpMetric < 25 && ! $isAio360) {
-                $warnings[] = [
-                    'code'     => 'cooling_underpowered',
-                    'category' => 'Cooling',
-                    'message'  => sprintf(
-                        'Thermal warning: "%s" has a high peak TDP (%dW). A 360mm AIO liquid cooler is strongly recommended over "%s" to prevent thermal throttling.',
-                        $cpu->name,
-                        $cpuTdp,
-                        $cooler->name
-                    ),
-                ];
-            }
-        }
-
-        // 6. Pricing & Stock Availability Summary
+        // Pricing & Stock Availability Summary
         $estimatedPrice = 0.0;
         $allInStock = $products->isNotEmpty();
+        $componentTdp = 0;
+
+        if ($products->contains(fn (Product $p) => $p->getAttribute('in_stock_count') === null)) {
+            (new EloquentCollection($products->all()))->loadCount([
+                'serialNumbers as in_stock_count' => fn ($q) => $q->where('status', 'In-Stock'),
+            ]);
+        }
 
         $selectedPartsSummary = [];
         foreach ($products as $product) {
             $price = (float) $product->selling_price;
             $estimatedPrice += $price;
+
+            if (! $this->isPsu($product)) {
+                $componentTdp += max(0, (int) $product->tdp_wattage);
+            }
 
             $inStockCount = $product->getAttribute('in_stock_count');
             if ($inStockCount === null) {
@@ -259,41 +186,54 @@ class CompatibilityService
             }
 
             $selectedPartsSummary[] = [
-                'id'             => $product->id,
-                'name'           => $product->name,
-                'category'       => $product->category,
-                'brand'          => $product->brand,
-                'socket_type'    => $product->socket_type,
-                'ram_type'       => $product->ram_type,
-                'tdp_wattage'    => (int) $product->tdp_wattage,
-                'selling_price'  => round($price, 2),
-                'in_stock_count' => (int) $inStockCount,
+                'id'                => $product->id,
+                'name'              => $product->name,
+                'category'          => $product->category,
+                'brand'             => $product->brand,
+                'socket_type'       => $product->socket_type,
+                'ram_type'          => $product->ram_type,
+                'tdp_wattage'       => (int) $product->tdp_wattage,
+                'performance_score' => $this->estimatePerformanceScore($product, (string) $product->category),
+                'selling_price'     => round($price, 2),
+                'in_stock_count'    => (int) $inStockCount,
             ];
         }
+
+        $baseOverhead = $products->isEmpty() ? 0 : self::BASE_SYSTEM_WATTAGE;
+        $estimatedTotalWattage = $componentTdp + $baseOverhead;
+        $recommendedPsuWattage = $this->calculateRecommendedPsuWattage($estimatedTotalWattage);
+        $selectedPsuWattage = $psu ? $this->extractPsuCapacityWatts($psu) : null;
 
         $compatible = count($errors) === 0;
         $status = ! $compatible
             ? 'incompatible'
             : (count($warnings) > 0 ? 'warning' : 'compatible');
 
+        $performance = $this->calculatePerformance($cpu, $gpu, $rams[0] ?? null, $storage);
+
         return [
-            'compatible' => $compatible,
-            'status'     => $status,
-            'errors'     => $errors,
-            'warnings'   => $warnings,
-            'power'      => [
+            'compatible'    => $compatible,
+            'is_compatible' => $compatible,
+            'status'        => $status,
+            'errors'        => $errors,
+            'warnings'      => $warnings,
+            'performance'   => $performance,
+            'power'         => [
                 'component_tdp_wattage'   => $componentTdp,
                 'base_overhead_wattage'   => $baseOverhead,
                 'estimated_total_wattage' => $estimatedTotalWattage,
                 'recommended_psu_wattage' => $recommendedPsuWattage,
                 'selected_psu_wattage'    => $selectedPsuWattage,
-                'psu_headroom_watts'      => $psuHeadroomWatts,
-                'psu_headroom_percent'    => $psuHeadroomPercent,
-                'psu_load_percent'        => $psuLoadPercent,
-                'psu_status'              => $psuStatus,
+                'psu_headroom_watts'      => $selectedPsuWattage !== null ? ($selectedPsuWattage - $estimatedTotalWattage) : null,
+                'psu_headroom_percent'    => ($selectedPsuWattage !== null && $estimatedTotalWattage > 0)
+                    ? round((($selectedPsuWattage - $estimatedTotalWattage) / $estimatedTotalWattage) * 100, 1)
+                    : null,
+                'psu_load_percent'        => ($selectedPsuWattage !== null && $selectedPsuWattage > 0)
+                    ? round(($estimatedTotalWattage / $selectedPsuWattage) * 100, 1)
+                    : null,
+                'psu_status'              => $selectedPsuWattage ? 'ok' : 'none',
             ],
-            'cooling_advice' => $coolingAdvice,
-            'pricing'        => [
+            'pricing' => [
                 'estimated_total_price' => round($estimatedPrice, 2),
                 'component_count'       => $products->count(),
                 'all_in_stock'          => $allInStock,
@@ -304,6 +244,7 @@ class CompatibilityService
 
     /**
      * Annotate all catalog products with compatibility status relative to currently selected anchor components.
+     * Only checks CPU <-> Motherboard socket compatibility and Motherboard/CPU <-> RAM compatibility.
      *
      * @param  array<string, int|Product|null>  $anchorSelection
      * @return Collection<int, array<string, mixed>>
@@ -319,18 +260,12 @@ class CompatibilityService
         /** @var Product|null $selectedRam */
         $selectedRam = $anchorProducts->first(fn (Product $p) => strcasecmp($p->category, 'RAM') === 0);
 
-        // Compute current non-PSU wattage to evaluate candidate PSUs
-        $nonPsuProducts = $anchorProducts->reject(fn (Product $p) => $this->isPsu($p));
-        $currentEstimatedWattage = $nonPsuProducts->isEmpty()
-            ? 0
-            : ($nonPsuProducts->sum(fn (Product $p) => max(0, (int) $p->tdp_wattage)) + self::BASE_SYSTEM_WATTAGE);
-
         $catalog = Product::withStockCounts()
             ->orderBy('category')
             ->orderBy('selling_price')
             ->get();
 
-        return $catalog->map(function (Product $candidate) use ($selectedCpu, $selectedMb, $selectedRam, $currentEstimatedWattage) {
+        return $catalog->map(function (Product $candidate) use ($selectedCpu, $selectedMb, $selectedRam) {
             $reasons = [];
             $cat = strtoupper(trim((string) $candidate->category));
 
@@ -345,7 +280,7 @@ class CompatibilityService
                     $cpuRam = $this->normalizeToken($selectedCpu->ram_type);
                     $mbRam = $this->normalizeToken($candidate->ram_type);
                     if ($cpuRam && $mbRam && $cpuRam !== $mbRam) {
-                        $reasons[] = "RAM type {$mbRam} conflicts with selected CPU ({$cpuRam}).";
+                        $reasons[] = "Motherboard supports {$mbRam}, but selected CPU requires {$cpuRam}.";
                     }
                 }
                 if ($selectedRam) {
@@ -366,7 +301,7 @@ class CompatibilityService
                     $mbRam = $this->normalizeToken($selectedMb->ram_type);
                     $cpuRam = $this->normalizeToken($candidate->ram_type);
                     if ($mbRam && $cpuRam && $mbRam !== $cpuRam) {
-                        $reasons[] = "CPU memory type {$cpuRam} conflicts with selected Motherboard ({$mbRam}).";
+                        $reasons[] = "CPU supports {$cpuRam}, but selected Motherboard requires {$mbRam}.";
                     }
                 }
                 if ($selectedRam) {
@@ -390,11 +325,6 @@ class CompatibilityService
                         $reasons[] = "RAM is {$candRam}, but selected CPU requires {$cpuRam}.";
                     }
                 }
-            } elseif ($cat === 'PSU' && $currentEstimatedWattage > 0) {
-                $psuWatts = $this->extractPsuCapacityWatts($candidate);
-                if ($psuWatts > 0 && $psuWatts < $currentEstimatedWattage) {
-                    $reasons[] = "Rated capacity ({$psuWatts}W) is below estimated system load ({$currentEstimatedWattage}W).";
-                }
             }
 
             return [
@@ -406,6 +336,7 @@ class CompatibilityService
                 'socket_type'             => $candidate->socket_type,
                 'ram_type'                => $candidate->ram_type,
                 'tdp_wattage'             => (int) $candidate->tdp_wattage,
+                'performance_score'       => $this->estimatePerformanceScore($candidate, (string) $candidate->category),
                 'selling_price'           => (float) $candidate->selling_price,
                 'in_stock_count'          => (int) ($candidate->in_stock_count ?? 0),
                 'compatible'              => count($reasons) === 0,
@@ -415,148 +346,269 @@ class CompatibilityService
     }
 
     /**
-     * Calculate CPU + GPU bottleneck, synergy, power requirement, and estimated game FPS.
+     * Calculate simplified 4-parameter system performance scores:
+     * 1. CPU Processing Power
+     * 2. GPU Performance
+     * 3. Memory (RAM)
+     * 4. Storage
+     *
+     * @param  Product|array<string, mixed>|null  $cpu
+     * @param  Product|array<string, mixed>|null  $gpu
+     * @param  Product|array<string, mixed>|null  $ram
+     * @param  Product|array<string, mixed>|null  $storage
+     * @return array<string, mixed>
+     */
+    public function calculatePerformance(
+        Product|array|null $cpu = null,
+        Product|array|null $gpu = null,
+        Product|array|null $ram = null,
+        Product|array|null $storage = null
+    ): array {
+        $cpuName = $this->extractName($cpu, 'CPU');
+        $gpuName = $this->extractName($gpu, 'GPU');
+        $ramName = $this->extractName($ram, 'RAM');
+        $storageName = $this->extractName($storage, 'Storage');
+
+        $cpuScore = $cpu ? $this->estimatePerformanceScore($cpu, 'CPU') : 0;
+        $gpuScore = $gpu ? $this->estimatePerformanceScore($gpu, 'GPU') : 0;
+        $ramScore = $ram ? $this->estimatePerformanceScore($ram, 'RAM') : 0;
+        $storageScore = $storage ? $this->estimatePerformanceScore($storage, 'Storage') : 0;
+
+        $activeScores = array_filter([$cpuScore, $gpuScore, $ramScore, $storageScore], fn (int $s) => $s > 0);
+        $overallScore = count($activeScores) > 0
+            ? (int) round(array_sum($activeScores) / count($activeScores))
+            : 0;
+
+        $cpuTier = $this->getPerformanceTier($cpuScore);
+        $gpuTier = $this->getPerformanceTier($gpuScore);
+        $ramTier = $this->getPerformanceTier($ramScore);
+        $storageTier = $this->getPerformanceTier($storageScore);
+        $overallTier = $this->getPerformanceTier($overallScore);
+
+        if ($overallScore >= 85) {
+            $verdict = 'Excellent Performance';
+            $advice = 'All four core subsystems deliver flagship-tier processing, rendering, memory bandwidth, and storage throughput.';
+        } elseif ($overallScore >= 70) {
+            $verdict = 'Good Performance';
+            $advice = 'Strong overall hardware ratings across CPU processing power, GPU rendering, system memory, and storage speed.';
+        } elseif ($overallScore >= 50) {
+            $verdict = 'Average Performance';
+            $advice = 'Solid everyday and mainstream gaming configuration. Upgrading lower-scored components will boost responsiveness.';
+        } else {
+            $verdict = 'Poor / Entry Performance';
+            $advice = 'Select or upgrade core components to achieve higher processing, graphics, memory, and storage performance.';
+        }
+
+        $parameters = [
+            'cpu_processing_power' => [
+                'key'        => 'cpu_processing_power',
+                'label'      => 'CPU Processing Power',
+                'category'   => 'CPU',
+                'name'       => $cpuName,
+                'score'      => $cpuScore,
+                'tier'       => $cpuTier['tier'],
+                'tier_label' => $cpuTier['label'],
+                'color'      => $cpuTier['color'],
+            ],
+            'gpu_performance' => [
+                'key'        => 'gpu_performance',
+                'label'      => 'GPU Performance',
+                'category'   => 'GPU',
+                'name'       => $gpuName,
+                'score'      => $gpuScore,
+                'tier'       => $gpuTier['tier'],
+                'tier_label' => $gpuTier['label'],
+                'color'      => $gpuTier['color'],
+            ],
+            'memory' => [
+                'key'        => 'memory',
+                'label'      => 'Memory',
+                'category'   => 'RAM',
+                'name'       => $ramName,
+                'score'      => $ramScore,
+                'tier'       => $ramTier['tier'],
+                'tier_label' => $ramTier['label'],
+                'color'      => $ramTier['color'],
+            ],
+            'storage' => [
+                'key'        => 'storage',
+                'label'      => 'Storage',
+                'category'   => 'Storage',
+                'name'       => $storageName,
+                'score'      => $storageScore,
+                'tier'       => $storageTier['tier'],
+                'tier_label' => $storageTier['label'],
+                'color'      => $storageTier['color'],
+            ],
+        ];
+
+        return [
+            'overall_score'        => $overallScore,
+            'overall_tier'         => $overallTier['tier'],
+            'overall_tier_label'   => $overallTier['label'],
+            'overall_color'        => $overallTier['color'],
+            'synergy_score'        => $overallScore,
+            'verdict'              => $verdict,
+            'advice'               => $advice,
+            'cpu_name'             => $cpuName,
+            'gpu_name'             => $gpuName,
+            'ram_name'             => $ramName,
+            'storage_name'         => $storageName,
+            'cpu_processing_power' => $cpuScore,
+            'gpu_performance'      => $gpuScore,
+            'memory'               => $ramScore,
+            'storage'              => $storageScore,
+            'cpu_score'            => $cpuScore,
+            'gpu_score'            => $gpuScore,
+            'memory_score'         => $ramScore,
+            'storage_score'        => $storageScore,
+            'parameters'           => $parameters,
+        ];
+    }
+
+    /**
+     * Map a 0-100 performance score into one of 4 tiers:
+     * - Poor (Red: #ef4444)
+     * - Average (Yellow: #f59e0b)
+     * - Good (Green: #10b981)
+     * - Excellent (Cyan: #06b6d4)
+     *
+     * @return array{tier: string, label: string, color: string}
+     */
+    public function getPerformanceTier(int $score): array
+    {
+        if ($score <= 0) {
+            return [
+                'tier'  => 'none',
+                'label' => 'Not Selected',
+                'color' => '#64748b',
+            ];
+        }
+
+        if ($score >= 85) {
+            return [
+                'tier'  => 'excellent',
+                'label' => 'Excellent',
+                'color' => '#06b6d4', // Cyan
+            ];
+        }
+
+        if ($score >= 70) {
+            return [
+                'tier'  => 'good',
+                'label' => 'Good',
+                'color' => '#10b981', // Green
+            ];
+        }
+
+        if ($score >= 50) {
+            return [
+                'tier'  => 'average',
+                'label' => 'Average',
+                'color' => '#f59e0b', // Yellow
+            ];
+        }
+
+        return [
+            'tier'  => 'poor',
+            'label' => 'Poor',
+            'color' => '#ef4444', // Red
+        ];
+    }
+
+    /**
+     * Legacy/shared method for bottleneck/performance endpoint compatibility.
      *
      * @param  Product|array<string, mixed>  $cpu
      * @param  Product|array<string, mixed>  $gpu
-     * @param  string  $resolution  '1080' | '1440' | '2160'
-     * @param  string  $workload    'game_3a' | 'fps_comp' | 'render_4k'
+     * @param  string  $resolution
+     * @param  string  $workload
+     * @param  Product|array<string, mixed>|null  $ram
+     * @param  Product|array<string, mixed>|null  $storage
      * @return array<string, mixed>
      */
     public function calculateBottleneck(
         Product|array $cpu,
         Product|array $gpu,
         string $resolution = '1440',
-        string $workload = 'game_3a'
+        string $workload = 'game_3a',
+        Product|array|null $ram = null,
+        Product|array|null $storage = null
     ): array {
-        $cpuName = $cpu instanceof Product ? $cpu->name : (string) ($cpu['name'] ?? 'CPU');
-        $gpuName = $gpu instanceof Product ? $gpu->name : (string) ($gpu['name'] ?? 'GPU');
+        $ram ??= Product::where('category', 'RAM')->orderBy('selling_price', 'desc')->first();
+        $storage ??= Product::where('category', 'Storage')->orderBy('selling_price', 'desc')->first();
 
-        $cpuTdp = $cpu instanceof Product ? (int) $cpu->tdp_wattage : (int) ($cpu['tdp_wattage'] ?? $cpu['tdp'] ?? 120);
-        $gpuTdp = $gpu instanceof Product ? (int) $gpu->tdp_wattage : (int) ($gpu['tdp_wattage'] ?? $gpu['tdp'] ?? 220);
+        $perf = $this->calculatePerformance($cpu, $gpu, $ram, $storage);
 
-        $cpuScore = $this->estimatePerformanceScore($cpu, 'CPU');
-        $gpuScore = $this->estimatePerformanceScore($gpu, 'GPU');
-
-        // System wattage for CPU + GPU + standard system base (70W)
-        $totalWattage = $cpuTdp + $gpuTdp + 70;
-        $recommendedPsu = $this->calculateRecommendedPsuWattage($totalWattage);
-
-        // Resolution-weighted bottleneck calculation
-        $diff = abs($cpuScore - $gpuScore);
-        if ($resolution === '1080' && $cpuScore < $gpuScore) {
-            $diff += 6;
-        } elseif ($resolution === '2160' && $gpuScore < $cpuScore) {
-            $diff += 4;
-        }
-
-        if ($workload === 'fps_comp' && $cpuScore < $gpuScore) {
-            $diff += 3;
-        } elseif ($workload === 'render_4k' && $cpuScore < $gpuScore) {
-            $diff += 4;
-        }
-
-        $bottleneckPercent = round(min(28.0, max(1.8, $diff * 0.95)), 1);
-        $utilizationPercent = round(100.0 - $bottleneckPercent, 1);
-
-        if ($bottleneckPercent < 6.0) {
-            $tier = 'optimal';
-            $tag = 'Optimal Synergy (Balanced)';
-            $advice = sprintf(
-                '%s and %s are ideally balanced at %sp. Both components can operate above %.1f%% theoretical potential without bottlenecking.',
-                $cpuName,
-                $gpuName,
-                $resolution,
-                $utilizationPercent
-            );
-        } elseif ($bottleneckPercent < 14.0) {
-            $tier = 'minor';
-            $tag = 'Minor Bottleneck (Recommended)';
-            $limitingPart = $cpuScore < $gpuScore ? $cpuName : $gpuName;
-            $advice = sprintf(
-                'There is a minor %.1f%% bottleneck leaning toward %s at %sp, which is negligible in real-world gaming and productivity.',
-                $bottleneckPercent,
-                $limitingPart,
-                $resolution
-            );
-        } else {
-            $tier = 'noticeable';
-            $tag = 'Performance Bottleneck Detected';
-            $limitingPart = $cpuScore < $gpuScore ? $cpuName : $gpuName;
-            $advice = sprintf(
-                'A %.1f%% performance gap was detected (%s is limiting peak output at %sp). Consider pairing a closer performance tier.',
-                $bottleneckPercent,
-                $limitingPart,
-                $resolution
-            );
-        }
-
-        $coolingAdvice = $cpu instanceof Product
-            ? $this->generateCoolingAdvice($cpu)
-            : $this->generateCoolingAdviceFromTdp($cpuTdp, $cpuName);
-
-        // Estimate average FPS across benchmark titles
-        $multiplier = match ($resolution) {
-            '1080'  => 1.35,
-            '2160'  => 0.62,
-            default => 1.0,
-        };
-
-        $games = [
-            [
-                'name' => 'Cyberpunk 2077 (RT Ultra)',
-                'tag'  => 'AAA Ray Tracing',
-                'fps'  => (int) round(($gpuScore * 0.95 + $cpuScore * 0.2) * $multiplier * 0.9),
-            ],
-            [
-                'name' => 'Black Myth: Wukong (High)',
-                'tag'  => 'Unreal Engine 5',
-                'fps'  => (int) round(($gpuScore * 0.9 + $cpuScore * 0.25) * $multiplier * 0.95),
-            ],
-            [
-                'name' => 'Valorant',
-                'tag'  => 'Competitive Esports',
-                'fps'  => (int) round(($cpuScore * 2.8 + $gpuScore * 1.5) * ($resolution === '2160' ? 0.8 : 1.2)),
-            ],
-            [
-                'name' => 'Counter-Strike 2',
-                'tag'  => 'Tactical Shooter',
-                'fps'  => (int) round(($cpuScore * 2.0 + $gpuScore * 1.2) * $multiplier),
-            ],
-            [
-                'name' => 'Apex Legends',
-                'tag'  => 'Battle Royale',
-                'fps'  => (int) round(($gpuScore * 1.4 + $cpuScore * 0.4) * $multiplier),
-            ],
-            [
-                'name' => 'GTA V / Open World Ultra',
-                'tag'  => 'Open World',
-                'fps'  => (int) round(($gpuScore * 1.2 + $cpuScore * 0.5) * $multiplier),
-            ],
-        ];
-
-        return [
-            'cpu_name'                => $cpuName,
-            'gpu_name'                => $gpuName,
-            'cpu_score'               => $cpuScore,
-            'gpu_score'               => $gpuScore,
-            'resolution'              => $resolution,
-            'workload'                => $workload,
-            'bottleneck_percent'      => $bottleneckPercent,
-            'utilization_percent'     => $utilizationPercent,
-            'tier'                    => $tier,
-            'tag'                     => $tag,
-            'advice'                  => $advice,
-            'estimated_wattage'       => $totalWattage,
-            'recommended_psu_wattage' => $recommendedPsu,
-            'cooling_advice'          => $coolingAdvice,
-            'games_fps'               => $games,
-        ];
+        return array_merge($perf, [
+            'resolution'          => $resolution,
+            'workload'            => $workload,
+            'bottleneck_percent'  => max(0, abs($perf['cpu_score'] - $perf['gpu_score'])),
+            'utilization_percent' => $perf['overall_score'],
+            'tier'                => $perf['overall_score'] >= 85 ? 'optimal' : 'minor',
+            'tag'                 => $perf['verdict'],
+        ]);
     }
 
     /**
-     * Calculate recommended standard PSU tier with 25% headroom.
+     * Get the 1-100 performance rating score for a component (CPU, GPU, RAM, Storage).
+     * Uses the stored `performance_score` attribute on the Product model first.
+     *
+     * @param  Product|array<string, mixed>  $component
      */
+    public function estimatePerformanceScore(Product|array $component, string $type = 'CPU'): int
+    {
+        if ($component instanceof Product && (int) $component->performance_score > 0) {
+            return min(100, max(1, (int) $component->performance_score));
+        }
+
+        if (is_array($component)) {
+            if (isset($component['performance_score']) && (int) $component['performance_score'] > 0) {
+                return min(100, max(1, (int) $component['performance_score']));
+            }
+            if (isset($component['score']) && (int) $component['score'] > 0) {
+                return min(100, max(1, (int) $component['score']));
+            }
+        }
+
+        $name = strtoupper($component instanceof Product ? $component->name : (string) ($component['name'] ?? ''));
+        $price = (float) ($component instanceof Product ? $component->selling_price : ($component['selling_price'] ?? $component['price'] ?? 0));
+        $cat = strtoupper(trim($component instanceof Product ? (string) $component->category : $type));
+
+        $knownScores = [
+            '14900K'      => 99,
+            '7800X3D'     => 98,
+            '9800X3D'     => 100,
+            '7950X'       => 98,
+            '14700K'      => 95,
+            '13700K'      => 92,
+            '14600K'      => 88,
+            '7700X'       => 88,
+            '7600X'       => 84,
+            '4090'        => 100,
+            '4080 SUPER'  => 98,
+            '4080'        => 96,
+            '4070 TI'     => 91,
+            '4070 SUPER'  => 88,
+            '4070'        => 82,
+            '990 PRO'     => 96,
+            'VENGEANCE'   => 92,
+            'FURY BEAST'  => 75,
+        ];
+
+        foreach ($knownScores as $keyword => $score) {
+            if (str_contains($name, $keyword)) {
+                return $score;
+            }
+        }
+
+        if (! in_array($cat, ['CPU', 'GPU', 'RAM', 'STORAGE'], true)) {
+            return 0;
+        }
+
+        return max(50, min(99, (int) round(60 + ($price * 0.06))));
+    }
+
     public function calculateRecommendedPsuWattage(int $estimatedTotalWattage): int
     {
         if ($estimatedTotalWattage <= 0) {
@@ -574,9 +626,6 @@ class CompatibilityService
         return (int) (ceil($targetWithHeadroom / 100) * 100);
     }
 
-    /**
-     * Extract rated PSU wattage capacity from a PSU Product.
-     */
     public function extractPsuCapacityWatts(Product $psu): int
     {
         $tdpColumn = (int) $psu->tdp_wattage;
@@ -590,97 +639,6 @@ class CompatibilityService
         }
 
         return max(0, $tdpColumn);
-    }
-
-    /**
-     * Generate thermal cooling advice for a given CPU.
-     */
-    public function generateCoolingAdvice(?Product $cpu): string
-    {
-        if (! $cpu) {
-            return 'Select a CPU to receive thermal dissipation and cooler sizing recommendations.';
-        }
-
-        return $this->generateCoolingAdviceFromTdp((int) $cpu->tdp_wattage, $cpu->name);
-    }
-
-    private function generateCoolingAdviceFromTdp(int $cpuTdp, string $cpuName): string
-    {
-        if ($cpuTdp >= 200) {
-            return sprintf(
-                '%s reaches a high peak TDP of %dW. A 360mm AIO Liquid Cooler (e.g., DeepCool LT720 360mm) is strongly recommended to prevent thermal throttling under sustained loads.',
-                $cpuName,
-                $cpuTdp
-            );
-        }
-
-        if ($cpuTdp >= 120) {
-            return sprintf(
-                '%s operates at %dW TDP. A Dual-Tower 6-Heatpipe Air Cooler (e.g., Thermalright Peerless Assassin 120 SE) or 240mm/360mm AIO is recommended.',
-                $cpuName,
-                $cpuTdp
-            );
-        }
-
-        return sprintf(
-            '%s has an efficient %dW TDP profile. A standard single-tower air cooler or dual-tower air cooler will easily maintain quiet, low-temperature operation.',
-            $cpuName,
-            $cpuTdp
-        );
-    }
-
-    /**
-     * Estimate a normalized 1-100 performance score for a CPU or GPU product or array.
-     *
-     * @param  Product|array<string, mixed>  $component
-     */
-    public function estimatePerformanceScore(Product|array $component, string $type = 'CPU'): int
-    {
-        if (is_array($component) && isset($component['score'])) {
-            return (int) $component['score'];
-        }
-
-        $name = strtoupper($component instanceof Product ? $component->name : (string) ($component['name'] ?? ''));
-        $price = (float) ($component instanceof Product ? $component->selling_price : ($component['selling_price'] ?? $component['price'] ?? 0));
-        $tdp = (int) ($component instanceof Product ? $component->tdp_wattage : ($component['tdp_wattage'] ?? $component['tdp'] ?? 100));
-
-        // Known benchmark profiles matching legacy CalculatorController & catalog SKUs
-        $knownScores = [
-            '14900K'      => 99,
-            '7800X3D'     => 99,
-            '9800X3D'     => 100,
-            '7950X'       => 98,
-            '14700K'      => 96,
-            '13700K'      => 92,
-            '14600K'      => 88,
-            '7700X'       => 88,
-            '7600X'       => 84,
-            '13400'       => 75,
-            '12400'       => 72,
-            '5600'        => 70,
-            '4090'        => 100,
-            '4080 SUPER'  => 98,
-            '4080'        => 96,
-            '4070 TI'     => 91,
-            '4070 SUPER'  => 84,
-            '4070'        => 80,
-            '7800 XT'     => 82,
-            '4060 TI'     => 68,
-            '4060'        => 62,
-        ];
-
-        foreach ($knownScores as $keyword => $score) {
-            if (str_contains($name, $keyword)) {
-                return $score;
-            }
-        }
-
-        // Heuristic fallback from TDP & price
-        if (strtoupper($type) === 'CPU') {
-            return max(55, min(99, (int) round(55 + ($tdp * 0.12) + ($price * 0.04))));
-        }
-
-        return max(50, min(100, (int) round(50 + ($tdp * 0.14) + ($price * 0.03))));
     }
 
     /**
@@ -712,6 +670,18 @@ class CompatibilityService
         }
 
         return $models->unique('id')->values();
+    }
+
+    private function extractName(Product|array|null $component, string $fallback): string
+    {
+        if ($component instanceof Product) {
+            return $component->name;
+        }
+        if (is_array($component) && ! empty($component['name'])) {
+            return (string) $component['name'];
+        }
+
+        return $fallback;
     }
 
     private function isPsu(Product $product): bool

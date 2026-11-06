@@ -17,7 +17,7 @@
             <nav style="display: flex; gap: 16px; font-size: 0.9rem; align-items: center; flex-wrap: wrap;">
                 <a href="{{ route('home') }}" style="color: {{ request()->routeIs('home') ? '#fff' : 'var(--text-light)' }}; font-weight: {{ request()->routeIs('home') ? '600' : 'normal' }};">Home</a>
                 <a href="{{ route('builder.index') }}" style="color: {{ request()->routeIs('builder.*') ? 'var(--primary-hover)' : 'var(--text-light)' }}; font-weight: {{ request()->routeIs('builder.*') ? '600' : 'normal' }};">⚡ PC Builder</a>
-                <a href="{{ route('calculator.index') }}" style="color: {{ request()->routeIs('calculator.*') ? 'var(--primary-hover)' : 'var(--text-light)' }}; font-weight: {{ request()->routeIs('calculator.*') ? '600' : 'normal' }};">🎯 Bottleneck Calc</a>
+                <a href="{{ route('calculator.index') }}" style="color: {{ request()->routeIs('calculator.*') ? 'var(--primary-hover)' : 'var(--text-light)' }}; font-weight: {{ request()->routeIs('calculator.*') ? '600' : 'normal' }};">🎯 Performance Calc</a>
                 <a href="{{ route('orders.track') }}" style="color: {{ request()->routeIs('orders.track') ? 'var(--info)' : 'var(--text-muted)' }};">Track Order</a>
                 <a href="{{ route('contact') }}" style="color: {{ request()->routeIs('contact') ? '#fff' : 'var(--text-muted)' }};">Contact</a>
                 <a href="{{ route('checkout.index') }}" style="color: {{ request()->routeIs('checkout.*') ? 'var(--accent)' : 'var(--text-muted)' }};">🛒 Checkout</a>
