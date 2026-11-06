@@ -15,6 +15,7 @@ use App\Services\SupportTicketService;
 use App\Services\WarrantyService;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class WarrantyTechSupportTest extends TestCase
@@ -196,7 +197,7 @@ class WarrantyTechSupportTest extends TestCase
 
         foreach ($routes as $url) {
             // Guest redirected
-            auth()->logout();
+            Auth::logout();
             $this->get($url)->assertRedirect(route('login'));
 
             // Customer forbidden

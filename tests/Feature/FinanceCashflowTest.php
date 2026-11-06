@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\FinancialReportService;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class FinanceCashflowTest extends TestCase
@@ -134,7 +135,7 @@ class FinanceCashflowTest extends TestCase
 
         foreach ($routes as $url) {
             // Guest redirected
-            auth()->logout();
+            Auth::logout();
             $this->get($url)->assertRedirect(route('login'));
 
             // Customer forbidden
