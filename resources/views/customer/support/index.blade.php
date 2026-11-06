@@ -71,7 +71,7 @@
                                 <td>
                                     @if($ticket->warranty && $product)
                                         <div style="font-size: 0.85rem;">{{ $product->name }}</div>
-                                        <small class="font-mono" style="color: var(--text-muted);">SN: {{ $ticket->warranty->serialNumber->serial_number }}</small>
+                                        <small class="font-mono" style="color: var(--text-muted);">SN: {{ $ticket->warranty->serialNumber->sn_code }}</small>
                                     @else
                                         <span style="color: var(--text-muted); font-size: 0.85rem;">General Inquiries / Custom PC</span>
                                     @endif

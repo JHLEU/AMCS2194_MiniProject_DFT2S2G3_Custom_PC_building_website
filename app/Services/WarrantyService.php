@@ -57,7 +57,7 @@ class WarrantyService
      */
     public function lookupBySerialNumber(string $serialNumberCode): ?Warranty
     {
-        $serial = SerialNumber::where('serial_number', trim($serialNumberCode))->first();
+        $serial = SerialNumber::where('sn_code', trim($serialNumberCode))->first();
 
         if (!$serial) {
             return null;

@@ -270,4 +270,18 @@ class InventorySupplyTest extends TestCase
             ->assertOk()
             ->assertSee('RO-20261101-001');
     }
+
+    public function test_cannot_delete_sold_or_order_linked_serial_number(): void
+    {
+        $this->actingAs($this->warehouseStaff);
+
+        $soldSn = SerialNumber::where('status', SerialNumber::STATUS_SOLD)->firstOrFail();
+
+        $response = $this->delete(route('erp.serials.destroy', $soldSn));
+        $response->assertRedirect(route('erp.serials.index'));
+        $response->assertSessionHas('error');
+
+        // Confirm database still contains the serial number
+        $this->assertDatabaseHas('serial_numbers', ['id' => $soldSn->id]);
+    }
 }

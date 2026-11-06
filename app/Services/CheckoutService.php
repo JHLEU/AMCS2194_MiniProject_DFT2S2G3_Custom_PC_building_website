@@ -59,9 +59,8 @@ class CheckoutService
                 }
 
                 $qty = max(1, (int) ($item['quantity'] ?? 1));
-                $price = isset($item['unit_price']) && is_numeric($item['unit_price'])
-                    ? (float) $item['unit_price']
-                    : (float) $product->selling_price;
+                // Compute price strictly from database catalog to prevent client-side tampering
+                $price = (float) $product->selling_price;
 
                 OrderItem::create([
                     'order_id'   => $order->id,
@@ -182,11 +181,23 @@ class CheckoutService
         $actualHardwareCost = 0.00;
 
         foreach ($order->items as $item) {
-            $neededQty = (int) $item->quantity;
+            $alreadyReserved = SerialNumber::where('order_id', $order->id)
+                ->where('product_id', $item->product_id)
+                ->get();
 
-            // Find In-Stock serial numbers for this product
+            foreach ($alreadyReserved as $existingSn) {
+                $actualHardwareCost += (float) $existingSn->batch_cost;
+            }
+
+            $neededQty = max(0, (int) $item->quantity - $alreadyReserved->count());
+            if ($neededQty === 0) {
+                continue;
+            }
+
+            // Find In-Stock serial numbers for this product with row-level locking
             $availableSerials = SerialNumber::where('product_id', $item->product_id)
                 ->where('status', SerialNumber::STATUS_IN_STOCK)
+                ->lockForUpdate()
                 ->limit($neededQty)
                 ->get();
 

@@ -96,6 +96,18 @@
                 </div>
             @endif
 
+            @php
+                $canViewFullDetails = Auth::check() && (Auth::id() === $trackedOrder->customer_id || Auth::user()->isStaff());
+                $maskedPhone = $canViewFullDetails 
+                    ? $trackedOrder->customer_phone 
+                    : (strlen($trackedOrder->customer_phone) > 6 
+                        ? substr($trackedOrder->customer_phone, 0, 4) . ' •••• ' . substr($trackedOrder->customer_phone, -4) 
+                        : '••••••••');
+                $maskedAddress = $canViewFullDetails 
+                    ? $trackedOrder->shipping_address 
+                    : \Illuminate\Support\Str::mask($trackedOrder->shipping_address, '•', 6, max(0, strlen($trackedOrder->shipping_address) - 16));
+            @endphp
+
             <!-- Shipping & Logistics Card -->
             <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 18px; margin-bottom: 24px;">
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; font-size: 0.85rem;">
@@ -105,7 +117,7 @@
                     </div>
                     <div>
                         <span style="color: var(--text-muted);">Contact Phone:</span>
-                        <div style="font-weight: 700; color: #fff;">{{ $trackedOrder->customer_phone }}</div>
+                        <div style="font-weight: 700; color: #fff;">{{ $maskedPhone }}</div>
                     </div>
                     <div>
                         <span style="color: var(--text-muted);">Courier Carrier:</span>
@@ -121,7 +133,7 @@
 
                 <div style="margin-top: 12px; font-size: 0.85rem; border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 10px;">
                     <span style="color: var(--text-muted);">Delivery Address:</span>
-                    <span style="color: #fff; margin-left: 6px;">{{ $trackedOrder->shipping_address }}</span>
+                    <span style="color: #fff; margin-left: 6px;">{{ $maskedAddress }}</span>
                 </div>
             </div>
 

@@ -43,7 +43,7 @@ class SupportTicketController extends Controller
                          ->orWhere('email', 'like', $term);
                   })
                   ->orWhereHas('warranty.serialNumber', function ($sq) use ($term) {
-                      $sq->where('serial_number', 'like', $term);
+                      $sq->where('sn_code', 'like', $term);
                   });
             });
         }
@@ -110,7 +110,7 @@ class SupportTicketController extends Controller
             $term = '%' . trim($search) . '%';
             $query->where(function ($q) use ($term) {
                 $q->whereHas('serialNumber', function ($sq) use ($term) {
-                    $sq->where('serial_number', 'like', $term);
+                    $sq->where('sn_code', 'like', $term);
                 })->orWhereHas('order', function ($oq) use ($term) {
                     $oq->where('order_number', 'like', $term)
                        ->orWhere('customer_name', 'like', $term);

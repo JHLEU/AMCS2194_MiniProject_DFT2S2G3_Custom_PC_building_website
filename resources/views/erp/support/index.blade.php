@@ -117,7 +117,7 @@
                                     </div>
                                     @if($ticket->warranty && $product)
                                         <small style="color: #93c5fd;">
-                                            {{ $product->name }} (SN: {{ $ticket->warranty->serialNumber->serial_number }})
+                                            {{ $product->name }} (SN: {{ $ticket->warranty->serialNumber->sn_code }})
                                         </small>
                                     @else
                                         <small style="color: var(--text-muted);">General Consultation</small>

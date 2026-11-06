@@ -66,7 +66,7 @@
                                 </td>
                                 <td>
                                     <span class="font-mono" style="background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 4px;">
-                                        {{ $warranty->serialNumber->serial_number ?? 'N/A' }}
+                                        {{ $warranty->serialNumber->sn_code ?? 'N/A' }}
                                     </span>
                                 </td>
                                 <td>

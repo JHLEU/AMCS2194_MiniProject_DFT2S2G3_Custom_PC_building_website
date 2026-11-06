@@ -39,7 +39,7 @@
                     @foreach($warranties as $warranty)
                         @php
                             $prod = $warranty->serialNumber->product ?? null;
-                            $sn = $warranty->serialNumber->serial_number ?? '';
+                            $sn = $warranty->serialNumber->sn_code ?? '';
                             $isSelected = old('warranty_id', $selectedWarrantyId) == $warranty->id;
                         @endphp
                         <option value="{{ $warranty->id }}" {{ $isSelected ? 'selected' : '' }}>

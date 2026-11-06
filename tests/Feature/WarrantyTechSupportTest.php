@@ -213,4 +213,26 @@ class WarrantyTechSupportTest extends TestCase
             $this->actingAs($this->admin)->get($url)->assertOk();
         }
     }
+
+    public function test_warranty_search_by_serial_number_query_works_without_sql_errors(): void
+    {
+        $this->actingAs($this->techStaff);
+
+        // Search warranties registry by serial number prefix
+        $respWarranties = $this->get(route('erp.support.warranties', ['search' => 'SN-']));
+        $respWarranties->assertOk();
+
+        // Search support ticket queue by serial number prefix
+        $respTickets = $this->get(route('erp.support.index', ['search' => 'SN-']));
+        $respTickets->assertOk();
+
+        // Test lookupBySerialNumber in WarrantyService
+        $service = app(WarrantyService::class);
+        $firstWarranty = Warranty::first();
+        if ($firstWarranty && $firstWarranty->serialNumber) {
+            $found = $service->lookupBySerialNumber($firstWarranty->serialNumber->sn_code);
+            $this->assertNotNull($found);
+            $this->assertSame($firstWarranty->id, $found->id);
+        }
+    }
 }

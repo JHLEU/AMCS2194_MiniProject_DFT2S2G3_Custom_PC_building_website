@@ -178,6 +178,13 @@ class InventoryController extends Controller
     public function destroySerial(SerialNumber $serialNumber): RedirectResponse
     {
         $code = $serialNumber->sn_code;
+
+        if ($serialNumber->status !== SerialNumber::STATUS_IN_STOCK || $serialNumber->order_id !== null || $serialNumber->warranty()->exists()) {
+            return redirect()
+                ->route('erp.serials.index')
+                ->with('error', "Cannot delete serial number '{$code}' because it is assigned to an order or warranty coverage.");
+        }
+
         $serialNumber->delete();
 
         return redirect()

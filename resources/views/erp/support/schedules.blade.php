@@ -108,7 +108,7 @@
                                 <td>
                                     @if($prod)
                                         <div style="font-size: 0.85rem;">{{ $prod->name }}</div>
-                                        <small class="font-mono" style="color: var(--text-muted);">SN: {{ $ticket->warranty->serialNumber->serial_number }}</small>
+                                        <small class="font-mono" style="color: var(--text-muted);">SN: {{ $ticket->warranty->serialNumber->sn_code }}</small>
                                     @else
                                         <small style="color: var(--text-muted);">General PC Inspection</small>
                                     @endif

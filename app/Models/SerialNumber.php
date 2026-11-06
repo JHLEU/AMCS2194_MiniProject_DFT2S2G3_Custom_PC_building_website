@@ -60,6 +60,14 @@ class SerialNumber extends Model
     }
 
     /**
+     * Accessor alias for backward compatibility with views and callers.
+     */
+    public function getSerialNumberAttribute(): string
+    {
+        return (string) $this->sn_code;
+    }
+
+    /**
      * Bulk register serial numbers while skipping existing duplicates.
      *
      * @param  int        $productId

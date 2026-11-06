@@ -95,7 +95,6 @@
                         @foreach($items as $i => $item)
                             <input type="hidden" name="items[{{ $i }}][product_id]" value="{{ $item['product']->id }}">
                             <input type="hidden" name="items[{{ $i }}][quantity]" value="{{ $item['quantity'] }}">
-                            <input type="hidden" name="items[{{ $i }}][unit_price]" value="{{ $item['unit_price'] }}">
 
                             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(255,255,255,0.08); padding-bottom: 8px; font-size: 0.85rem;">
                                 <div style="max-width: 240px;">

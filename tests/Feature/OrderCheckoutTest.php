@@ -256,4 +256,57 @@ class OrderCheckoutTest extends TestCase
         $this->assertSame('Ninja Van Cargo', $updated->carrier);
         $this->assertSame('NINJA-887766MY', $updated->tracking_number);
     }
+
+    public function test_checkout_ignores_client_side_price_tampering_and_uses_catalog_price(): void
+    {
+        $product = Product::firstOrFail();
+        $this->assertGreaterThan(1.00, (float) $product->selling_price);
+
+        $payload = [
+            'customer_name'    => 'Security Tester',
+            'customer_phone'   => '+60 12-345 6789',
+            'customer_email'   => 'tester@security.org',
+            'shipping_address' => '404 Pentest Lane, Cyberjaya',
+            'payment_method'   => Payment::METHOD_DUMMY_SANDBOX,
+            'items'            => [
+                [
+                    'product_id' => $product->id,
+                    'quantity'   => 2,
+                    'unit_price' => 0.01, // Malicious price tampering attempt
+                ],
+            ],
+        ];
+
+        $response = $this->post(route('checkout.process'), $payload);
+        $response->assertRedirect();
+
+        $order = Order::where('customer_email', 'tester@security.org')->latest()->first();
+        $this->assertNotNull($order);
+        // Selling price should be trusted catalog price * 2, not 0.02
+        $expectedTotal = (float) $product->selling_price * 2;
+        $this->assertSame($expectedTotal, (float) $order->total_selling_amount);
+    }
+
+    public function test_public_tracking_prevents_wildcard_leakage_for_short_queries(): void
+    {
+        // Short queries with < 8 digits must not match arbitrary phone numbers
+        $respSingleDigit = $this->get(route('orders.track', ['query' => '0']));
+        $respSingleDigit->assertOk()->assertSee('No active or archived order found matching');
+
+        $respCountryCode = $this->get(route('orders.track', ['query' => '60']));
+        $respCountryCode->assertOk()->assertSee('No active or archived order found matching');
+    }
+
+    public function test_reserve_serial_numbers_is_idempotent(): void
+    {
+        $order = Order::where('order_number', 'ORD-20261105-002')->firstOrFail();
+        $initialSerialsCount = SerialNumber::where('order_id', $order->id)->count();
+
+        $checkoutService = app(\App\Services\CheckoutService::class);
+        $checkoutService->reserveSerialNumbers($order);
+        $checkoutService->reserveSerialNumbers($order);
+
+        $afterSerialsCount = SerialNumber::where('order_id', $order->id)->count();
+        $this->assertSame($initialSerialsCount, $afterSerialsCount);
+    }
 }

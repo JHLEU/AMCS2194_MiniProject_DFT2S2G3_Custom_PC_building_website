@@ -25,11 +25,11 @@ class OrderTrackingController extends Controller
                 ->first();
 
             if (! $trackedOrder) {
-                // Try phone match only if digits exist in query
+                // Try phone match only if query has at least 8 digits to prevent wildcard data leakage
                 $cleanPhone = preg_replace('/[^\d]/', '', $query);
-                if ($cleanPhone !== '') {
-                    $trackedOrder = Order::where('customer_phone', 'like', '%' . $query . '%')
-                        ->orWhereRaw("REPLACE(REPLACE(REPLACE(customer_phone, ' ', ''), '-', ''), '+', '') LIKE ?", ['%' . $cleanPhone . '%'])
+                if (strlen($cleanPhone) >= 8) {
+                    $trackedOrder = Order::whereRaw("REPLACE(REPLACE(REPLACE(REPLACE(customer_phone, ' ', ''), '-', ''), '+', ''), '(', '') = ?", [$cleanPhone])
+                        ->orWhereRaw("REPLACE(REPLACE(REPLACE(REPLACE(customer_phone, ' ', ''), '-', ''), '+', ''), '(', '') LIKE ?", ['%' . $cleanPhone])
                         ->latest()
                         ->with(['items.product', 'payment', 'serialNumbers'])
                         ->first();

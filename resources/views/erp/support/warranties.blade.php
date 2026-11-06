@@ -80,7 +80,7 @@
                             <tr>
                                 <td>
                                     <span class="font-mono" style="font-weight: 600; color: #60a5fa; background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 4px;">
-                                        {{ $warranty->serialNumber->serial_number ?? 'N/A' }}
+                                        {{ $warranty->serialNumber->sn_code ?? 'N/A' }}
                                     </span>
                                     <small style="display: block; color: var(--text-muted); margin-top: 4px;">
                                         Unit: {{ $warranty->serialNumber->status ?? 'Sold' }}

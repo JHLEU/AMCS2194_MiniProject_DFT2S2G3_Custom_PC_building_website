@@ -189,12 +189,12 @@
                     <div style="margin-bottom: 12px;">
                         <small style="color: var(--text-muted);">Product Item</small>
                         <div style="font-weight: 600;">{{ $prod->name ?? 'Hardware Component' }}</div>
-                        <small style="color: var(--text-muted);">SKU: {{ $prod->sku ?? 'N/A' }}</small>
+                        <small style="color: var(--text-muted);">Category: {{ $prod->category->name ?? 'Component' }}</small>
                     </div>
                     <div style="margin-bottom: 12px;">
                         <small style="color: var(--text-muted);">Serial Number</small>
                         <div class="font-mono" style="font-size: 0.9rem; color: #60a5fa;">
-                            {{ $warranty->serialNumber->serial_number ?? 'N/A' }}
+                            {{ $warranty->serialNumber->sn_code ?? 'N/A' }}
                         </div>
                         <small style="color: var(--text-muted);">
                             Physical Unit State: <strong style="color: #f59e0b;">{{ $warranty->serialNumber->status }}</strong>
