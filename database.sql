@@ -155,12 +155,19 @@ DROP TABLE IF EXISTS `Orders`;
 
 CREATE TABLE `Orders` (
     `OrderID` INT AUTO_INCREMENT PRIMARY KEY,
-    `CustomerID` INT NOT NULL,
+    `CustomerID` INT NULL,
+    `CustomerName` VARCHAR(100) NULL,
+    `CustomerPhone` VARCHAR(50) NULL,
+    `CustomerEmail` VARCHAR(100) NULL,
+    `ShippingAddress` TEXT NULL,
     `OrderNumber` VARCHAR(50) UNIQUE NOT NULL,
     `TotalSellingAmount` DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     `TotalCostAmount` DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     `OrderStatus` ENUM('Pending', 'Paid', 'Assembling', 'Testing', 'Shipped', 'Completed', 'Cancelled') DEFAULT 'Pending',
+    `TrackingNumber` VARCHAR(100) NULL,
+    `Carrier` VARCHAR(50) NULL,
     `CreatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `UpdatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT `fk_orders_customer` FOREIGN KEY (`CustomerID`) REFERENCES `Users` (`UserID`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -231,13 +238,29 @@ CREATE TABLE `TechSchedules` (
 DROP TABLE IF EXISTS `SavedBuilds`;
 CREATE TABLE `SavedBuilds` (
     `BuildID` INT AUTO_INCREMENT PRIMARY KEY,
-    `CustomerID` INT NOT NULL,
+    `CustomerID` INT NULL,
     `BuildName` VARCHAR(100) NULL,
+    `CustomerName` VARCHAR(100) NULL,
+    `ContactPhone` VARCHAR(50) NULL,
     `ComponentsJSON` JSON NOT NULL,
     `TotalWattage` INT DEFAULT 0,
     `EstimatedPrice` DECIMAL(10, 2) DEFAULT 0.00,
+    `Notes` TEXT NULL,
     `CreatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `UpdatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT `fk_builds_customer` FOREIGN KEY (`CustomerID`) REFERENCES `Users` (`UserID`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS `reviews`;
+CREATE TABLE `reviews` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `author_name` VARCHAR(100) NOT NULL,
+    `rating` INT NOT NULL DEFAULT 5,
+    `review_text` TEXT NOT NULL,
+    `specs_built` VARCHAR(255) NULL,
+    `is_verified` TINYINT(1) DEFAULT 1,
+    `likes_count` INT DEFAULT 0,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `ChatLogs`;

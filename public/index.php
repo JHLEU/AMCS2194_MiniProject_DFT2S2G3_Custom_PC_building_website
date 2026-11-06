@@ -1,43 +1,20 @@
 <?php
 
-// 自动加载类
-spl_autoload_register(function ($class) {
-    $prefix = 'App\\';
-    $base_dir = __DIR__ . '/../app/';
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 
-    $len = strlen($prefix);
-    if (strncmp($prefix, $class, $len) !== 0) {
-        return;
-    }
+define('LARAVEL_START', microtime(true));
 
-    $relative_class = substr($class, $len);
-    $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-
-    if (file_exists($file)) {
-        require $file;
-    }
-});
-
-// 在顶部引入 Controller 类
-use App\Controllers\HomeController;
-use App\Controllers\PcBuilderController;
-
-$page = $_GET['page'] ?? 'home';
-
-switch ($page) {
-    case 'builder':
-        $controller = new PcBuilderController();
-        $controller->index();
-        break;
-
-    case 'components':
-        $controller = new PcBuilderController();
-        $controller->listAll();
-        break;
-
-    case 'home':
-    default:
-        $controller = new HomeController();
-        $controller->index();
-        break;
+// Determine if the application is in maintenance mode...
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
 }
+
+// Register the Composer autoloader...
+require __DIR__.'/../vendor/autoload.php';
+
+// Bootstrap Laravel and handle the request...
+/** @var Application $app */
+$app = require_once __DIR__.'/../bootstrap/app.php';
+
+$app->handleRequest(Request::capture());
