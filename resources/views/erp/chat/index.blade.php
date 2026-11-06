@@ -142,7 +142,7 @@
                         @csrf
                         <textarea name="message" rows="2" placeholder="Write an official customer support reply..." required
                                   style="flex: 1; background: #0f172a; border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; padding: 10px 14px; font-size: 0.9rem; color: #f8fafc; resize: none; outline: none;"></textarea>
-                        <button type="submit" style="background: #10b981; hover:background: #059669; color: #ffffff; border: none; border-radius: 8px; padding: 0 24px; font-weight: 600; font-size: 0.92rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;">
+                        <button type="submit" style="background: #10b981; color: #ffffff; border: none; border-radius: 8px; padding: 0 24px; font-weight: 600; font-size: 0.92rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;">
                             <span>Send Reply</span>
                         </button>
                     </form>

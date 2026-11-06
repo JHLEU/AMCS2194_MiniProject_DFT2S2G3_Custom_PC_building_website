@@ -544,3 +544,88 @@ a:hover {
     color: #67e8f9;
     border: 1px solid rgba(6, 182, 212, 0.3);
 }
+
+/* --------------------------------------------------------------------------
+   Interactive PC Builder & Modal Styles
+   -------------------------------------------------------------------------- */
+.builder-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 28px;
+    align-items: start;
+}
+
+@media (max-width: 992px) {
+    .builder-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.slot-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.slot-card:hover {
+    border-color: rgba(59, 130, 246, 0.4);
+}
+
+.slot-card.has-selection {
+    border-left: 4px solid #3b82f6;
+}
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: none;
+}
+
+.modal-content-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--bg-darker);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 760px;
+    max-height: 85vh;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+.modal-product-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.15s;
+}
+
+.modal-product-card:hover {
+    border-color: var(--primary);
+    background: rgba(30, 41, 59, 0.8);
+}
+
+.modal-product-card.selected {
+    border-color: #10b981;
+    background: rgba(16, 185, 129, 0.08);
+}
+
