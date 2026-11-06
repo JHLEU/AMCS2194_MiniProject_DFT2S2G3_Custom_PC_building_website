@@ -77,6 +77,11 @@ class Order extends Model
         return $this->hasMany(SerialNumber::class);
     }
 
+    public function warranties(): HasMany
+    {
+        return $this->hasMany(Warranty::class);
+    }
+
     /**
      * Scope for active in-progress orders (Paid, Assembling, Testing, Shipped).
      */

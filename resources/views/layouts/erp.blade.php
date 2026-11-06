@@ -63,11 +63,14 @@
 
                 @if(Auth::user()->isAdmin() || Auth::user()->isTech())
                     <div class="erp-nav-group-title">Support & Service</div>
-                    <a href="{{ route('erp.support.index') }}" class="{{ request()->is('erp/support*') ? 'active' : '' }}">
+                    <a href="{{ route('erp.support.index') }}" class="{{ request()->routeIs('erp.support.index') || request()->routeIs('erp.support.show') ? 'active' : '' }}">
                         <span>🛠️</span> Tech Support & RMA
                     </a>
-                    <a href="#" style="color: var(--text-muted);">
+                    <a href="{{ route('erp.support.schedules') }}" class="{{ request()->routeIs('erp.support.schedules') ? 'active' : '' }}">
                         <span>📅</span> Technician Dispatch
+                    </a>
+                    <a href="{{ route('erp.support.warranties') }}" class="{{ request()->routeIs('erp.support.warranties') ? 'active' : '' }}">
+                        <span>🛡️</span> Warranty Registry
                     </a>
                     <a href="#" style="color: var(--text-muted);">
                         <span>💬</span> Customer Chat Logs

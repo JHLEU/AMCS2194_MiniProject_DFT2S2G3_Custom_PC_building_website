@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\DB;
 
 class SerialNumber extends Model
@@ -51,6 +52,11 @@ class SerialNumber extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
+    }
+
+    public function warranty(): HasOne
+    {
+        return $this->hasOne(Warranty::class);
     }
 
     /**

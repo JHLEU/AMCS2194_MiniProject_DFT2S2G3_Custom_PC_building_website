@@ -218,6 +218,9 @@ class CheckoutService
         SerialNumber::where('order_id', $order->id)
             ->where('status', SerialNumber::STATUS_RESERVED)
             ->update(['status' => SerialNumber::STATUS_SOLD]);
+
+        // Auto-provision warranty coverage for all hardware units in completed order
+        app(WarrantyService::class)->registerWarrantiesForOrder($order);
     }
 
     /**

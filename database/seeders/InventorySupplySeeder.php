@@ -12,7 +12,11 @@ use App\Models\RestockOrderItem;
 use App\Models\SerialNumber;
 use App\Models\Supplier;
 use App\Models\SupplierHardwareMapping;
+use App\Models\SupportTicket;
+use App\Models\TechSchedule;
 use App\Models\User;
+use App\Models\Warranty;
+use App\Services\WarrantyService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -538,6 +542,32 @@ class InventorySupplySeeder extends Seeder
                     'status'   => SerialNumber::STATUS_RESERVED,
                 ]);
             }
+
+            if ($custOrder->order_status === Order::STATUS_COMPLETED) {
+                app(WarrantyService::class)->registerWarrantiesForOrder($custOrder);
+            }
+        }
+
+        // 7. Seed Initial Support Ticket & Technician Dispatch Schedule
+        $firstWarranty = Warranty::with('order')->first();
+        $techUser = User::where('email', 'tech@custompc.local')->first();
+
+        if ($firstWarranty && $techUser && SupportTicket::count() === 0) {
+            $sampleTicket = SupportTicket::create([
+                'customer_id'       => $firstWarranty->order->customer_id ?? 4,
+                'warranty_id'       => $firstWarranty->id,
+                'subject'           => 'GPU display artifacts under heavy gaming load',
+                'issue_description' => 'When running intensive benchmarks or games, pink and green checkerboard artifacts appear across the screen before crashing with driver timeout error.',
+                'status'            => SupportTicket::STATUS_DIAGNOSING,
+            ]);
+
+            TechSchedule::create([
+                'support_ticket_id'        => $sampleTicket->id,
+                'technician_id'            => $techUser->id,
+                'scheduled_datetime'       => now()->addDay()->setTime(14, 0),
+                'estimated_duration_hours' => 2,
+                'notes'                    => 'Mount onto test bench rig, run FurMark stress cycle, verify PCIe 4.0 lanes.',
+            ]);
         }
     }
 }

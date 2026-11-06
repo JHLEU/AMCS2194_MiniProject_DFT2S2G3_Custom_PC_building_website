@@ -61,6 +61,16 @@ class User extends Authenticatable
         return $this->hasMany(Order::class, 'customer_id');
     }
 
+    public function supportTickets(): HasMany
+    {
+        return $this->hasMany(SupportTicket::class, 'customer_id');
+    }
+
+    public function techSchedules(): HasMany
+    {
+        return $this->hasMany(TechSchedule::class, 'technician_id');
+    }
+
     public function hasRole(string|array $roles): bool
     {
         if (!$this->role) {

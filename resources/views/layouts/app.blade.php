@@ -20,6 +20,8 @@
                 <a href="{{ route('orders.track') }}" style="color: {{ request()->routeIs('orders.track') ? 'var(--info)' : 'var(--text-muted)' }};">Track Order</a>
                 @auth
                     <a href="{{ route('customer.orders') }}" style="color: {{ request()->routeIs('customer.orders') ? '#fff' : 'var(--text-muted)' }};">My Orders</a>
+                    <a href="{{ route('customer.warranties.index') }}" style="color: {{ request()->routeIs('customer.warranties.*') ? '#fff' : 'var(--text-muted)' }};">My Warranties</a>
+                    <a href="{{ route('customer.support.index') }}" style="color: {{ request()->routeIs('customer.support.*') ? '#fff' : 'var(--text-muted)' }};">Support</a>
                 @endauth
             </nav>
         </div>

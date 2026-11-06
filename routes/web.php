@@ -3,6 +3,8 @@
 use App\Http\Controllers\Api\CompatibilityController as ApiCompatibilityController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\Customer\SupportTicketController as CustomerSupportTicketController;
+use App\Http\Controllers\Customer\WarrantyController as CustomerWarrantyController;
 use App\Http\Controllers\Erp\CompatibilityController as ErpCompatibilityController;
 use App\Http\Controllers\Erp\DashboardController as ErpDashboardController;
 use App\Http\Controllers\Erp\FinanceController as ErpFinanceController;
@@ -11,6 +13,8 @@ use App\Http\Controllers\Erp\OrderController as ErpOrderController;
 use App\Http\Controllers\Erp\ProductController;
 use App\Http\Controllers\Erp\RestockController;
 use App\Http\Controllers\Erp\SupplierController;
+use App\Http\Controllers\Erp\SupportTicketController as ErpSupportTicketController;
+use App\Http\Controllers\Erp\TechScheduleController as ErpTechScheduleController;
 use App\Http\Controllers\OrderTrackingController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +37,15 @@ Route::get('/checkout/success/{order_number}', [CheckoutController::class, 'succ
 // Public Order Tracking & Customer Order History (Module 4: order-checkout)
 Route::get('/orders/track', [OrderTrackingController::class, 'track'])->name('orders.track');
 Route::get('/customer/orders', [OrderTrackingController::class, 'myOrders'])->name('customer.orders')->middleware('auth');
+
+// Customer Hardware Warranties & RMA / Support Tickets (Module 6: warranty-techsupport)
+Route::middleware('auth')->prefix('customer')->name('customer.')->group(function () {
+    Route::get('/warranties', [CustomerWarrantyController::class, 'index'])->name('warranties.index');
+    Route::get('/support', [CustomerSupportTicketController::class, 'index'])->name('support.index');
+    Route::get('/support/create', [CustomerSupportTicketController::class, 'create'])->name('support.create');
+    Route::post('/support', [CustomerSupportTicketController::class, 'store'])->name('support.store');
+    Route::get('/support/{ticket}', [CustomerSupportTicketController::class, 'show'])->name('support.show');
+});
 
 // Compatibility & Power Estimation Engine JSON Endpoints (Module 3: compatibility-engine)
 Route::prefix('api/compatibility')->name('api.compatibility.')->group(function () {
@@ -134,10 +147,13 @@ Route::prefix('erp')->name('erp.')->middleware(['auth', 'role:staff'])->group(fu
         });
     });
 
-    // Tech & Admin: Support Placeholder
+    // Tech & Admin: Support & Workshop Dispatch (Module 6: warranty-techsupport)
     Route::prefix('support')->name('support.')->middleware('role:Admin,Staff_Tech')->group(function () {
-        Route::get('/', function () {
-            return "Tech Support & Scheduling (Tech & Admin)";
-        })->name('index');
+        Route::get('/', [ErpSupportTicketController::class, 'index'])->name('index');
+        Route::get('/tickets/{ticket}', [ErpSupportTicketController::class, 'show'])->name('show');
+        Route::post('/tickets/{ticket}/status', [ErpSupportTicketController::class, 'updateStatus'])->name('status');
+        Route::post('/tickets/{ticket}/assign', [ErpSupportTicketController::class, 'assignSchedule'])->name('assign');
+        Route::get('/schedules', [ErpTechScheduleController::class, 'index'])->name('schedules');
+        Route::get('/warranties', [ErpSupportTicketController::class, 'warranties'])->name('warranties');
     });
 });
