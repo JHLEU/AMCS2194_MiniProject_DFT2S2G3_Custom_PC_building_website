@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Api\CompatibilityController as ApiCompatibilityController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CalculatorController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Customer\SupportTicketController as CustomerSupportTicketController;
 use App\Http\Controllers\Customer\WarrantyController as CustomerWarrantyController;
 use App\Http\Controllers\Erp\CompatibilityController as ErpCompatibilityController;
@@ -15,7 +17,9 @@ use App\Http\Controllers\Erp\RestockController;
 use App\Http\Controllers\Erp\SupplierController;
 use App\Http\Controllers\Erp\SupportTicketController as ErpSupportTicketController;
 use App\Http\Controllers\Erp\TechScheduleController as ErpTechScheduleController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderTrackingController;
+use App\Http\Controllers\PcBuilderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,10 +28,13 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Public Storefront (Placeholder for module 7)
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+// Public Storefront (Module 7: frontend-storefront)
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/builder', [PcBuilderController::class, 'index'])->name('builder.index');
+Route::post('/builder/checkout', [PcBuilderController::class, 'buildToCart'])->name('builder.checkout');
+Route::get('/calculator', [CalculatorController::class, 'index'])->name('calculator.index');
+Route::post('/calculator/evaluate', [CalculatorController::class, 'calculate'])->name('calculator.calculate');
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 
 // Checkout & Dummy/Sandbox Payment Gateway (Module 4: order-checkout)
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');

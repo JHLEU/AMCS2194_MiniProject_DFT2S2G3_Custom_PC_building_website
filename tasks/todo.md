@@ -1,137 +1,154 @@
-# Tasks: warranty-techsupport
+# Tasks: frontend-storefront
 
-## Task 1: Models & Core Service Layer (`Warranty`, `SupportTicket`, `TechSchedule`, `WarrantyService`, `SupportTicketService`)
+## Task 1: Storefront Controllers & Routing
 **Description:**
-- Implement Eloquent models: `App\Models\Warranty`, `App\Models\SupportTicket`, `App\Models\TechSchedule` with proper relationships and status constants.
-- Implement `App\Services\WarrantyService` for auto-registering warranties on order completion (`registerWarrantiesForOrder`), checking expiry, and searching by serial number.
-- Connect `registerWarrantiesForOrder()` in `CheckoutService::completeOrder()`.
-- Implement `App\Services\SupportTicketService` for ticket creation, status progression, and technician workshop dispatch scheduling.
+- Implement `HomeController`: loads featured pre-built PCs, category summaries, and reviews.
+- Implement `PcBuilderController`: renders interactive configurator (`index`) and packages custom build into checkout session (`buildToCart`).
+- Implement `CalculatorController`: renders bottleneck calculator view (`index`) and handles AJAX calculations (`calculate`).
+- Implement `ContactController`: renders store location, WhatsApp hotline, and workshop hours (`index`).
+- Register storefront routes in `routes/web.php` and update header navigation in `layouts/app.blade.php`.
 
 **Acceptance criteria:**
-- [x] Models defined with casting, fillable fields, and relationships (`belongsTo`, `hasMany`).
-- [x] `WarrantyService::registerWarrantiesForOrder($order)` creates 24-month active warranties for order serials.
-- [x] `SupportTicketService::createTicket()` validates customer ownership and creates initial `Open` ticket.
-- [x] `SupportTicketService::assignTechnician()` creates/updates `TechSchedule` records.
+- [x] `GET /` routed to `HomeController@index`.
+- [x] `GET /builder` and `POST /builder/checkout` routed to `PcBuilderController`.
+- [x] `GET /calculator` and `POST /calculator/evaluate` routed to `CalculatorController`.
+- [x] `GET /contact` routed to `ContactController@index`.
+- [x] Header links point to active routes.
 
 **Verification:**
-- [x] Unit / service test verification.
+- [x] `php artisan route:list` shows all storefront routes.
 
 **Dependencies:** None
 
 **Files likely touched:**
-- `app/Models/Warranty.php`
-- `app/Models/SupportTicket.php`
-- `app/Models/TechSchedule.php`
-- `app/Models/Order.php`
-- `app/Models/SerialNumber.php`
-- `app/Services/WarrantyService.php`
-- `app/Services/SupportTicketService.php`
-- `app/Services/CheckoutService.php`
+- `app/Http/Controllers/HomeController.php`
+- `app/Http/Controllers/PcBuilderController.php`
+- `app/Http/Controllers/CalculatorController.php`
+- `app/Http/Controllers/ContactController.php`
+- `routes/web.php`
+- `resources/views/layouts/app.blade.php`
 
-**Estimated scope:** Medium (8 files)
+**Estimated scope:** Medium (6 files)
 
 ---
 
-## Task 2: Customer Portal Warranty & Ticket System
+## Task 2: Homepage & Contact Views (`home.blade.php`, `contact.blade.php`)
 **Description:**
-- Implement `Customer\WarrantyController` (`index`) and `Customer\SupportTicketController` (`index`, `create`, `store`, `show`).
-- Implement Blade views in `resources/views/customer/`:
-  - `warranties/index.blade.php`: Customer's active/expired hardware warranties with expiry days and "File RMA Claim" action.
-  - `support/index.blade.php`: Customer's tickets list with status badges.
-  - `support/create.blade.php`: Ticket submission form with option to attach an active warranty/order.
-  - `support/show.blade.php`: Ticket status tracking, diagnostic description, and technician dispatch info.
-- Register routes in `routes/web.php` under `middleware: ['auth']`.
+- Update `resources/views/home.blade.php`:
+  - Hero banner with CTA to PC Builder.
+  - Featured Gaming & Workstation pre-built rigs.
+  - Hardware categories grid with live product count badges.
+  - Interactive Google customer reviews carousel (Plain JS / jQuery).
+  - Value proposition & store trust badges (2-year warranty, genuine parts, stress testing).
+- Create `resources/views/contact.blade.php`:
+  - WhatsApp direct chat link, hotline, workshop address, and business hours.
+- Add modern styling classes to `public/css/style.css`.
 
 **Acceptance criteria:**
-- [x] `GET /customer/warranties` lists only the logged-in customer's hardware warranties.
-- [x] `GET /customer/support` lists tickets; `POST /customer/support` submits new ticket.
-- [x] Customer cannot view tickets belonging to another user (403/404).
+- [x] Homepage renders hero, featured builds, categories, and reviews carousel.
+- [x] Reviews carousel rotates smoothly with next/prev buttons.
+- [x] Contact page displays store location and clickable WhatsApp link.
 
 **Verification:**
-- [x] Routes registered and verified via browser/feature tests.
+- [x] Browser rendering and feature test assertions.
 
 **Dependencies:** Task 1
 
 **Files likely touched:**
-- `app/Http/Controllers/Customer/WarrantyController.php`
-- `app/Http/Controllers/Customer/SupportTicketController.php`
-- `resources/views/customer/warranties/index.blade.php`
-- `resources/views/customer/support/index.blade.php`
-- `resources/views/customer/support/create.blade.php`
-- `resources/views/customer/support/show.blade.php`
-- `routes/web.php`
+- `resources/views/home.blade.php`
+- `resources/views/contact.blade.php`
+- `public/css/style.css`
 
-**Estimated scope:** Medium (7 files)
+**Estimated scope:** Medium (3 files)
 
 ---
 
-## Task 3: ERP Technician Support Workbench & Workshop Dispatch
+## Task 3: Interactive PC Builder UI & Dynamic Compatibility Integration
 **Description:**
-- Implement `Erp\SupportTicketController` (`index`, `show`, `updateStatus`, `assignSchedule`, `warranties`) and `Erp\TechScheduleController` (`index`).
-- Implement Blade views in `resources/views/erp/support/`:
-  - `index.blade.php`: Ticket triage dashboard with KPI count cards (`Open`, `Diagnosing`, `WaitingForParts`, `Resolved`, `Closed`) and filterable ticket queue.
-  - `show.blade.php`: Detailed ticket workbench showing customer details, serial number, warranty badge, status transition buttons, and appointment dispatch form.
-  - `schedules.blade.php`: Workshop timeline calendar / dispatch schedule for technicians.
-  - `warranties.blade.php`: Searchable warranty registry across all sold serials.
-- Register ERP routes in `routes/web.php` under `middleware: ['auth', 'role:staff', 'role:Admin,Staff_Tech']`.
-- Update navigation links in `resources/views/layouts/erp.blade.php`.
+- Implement `resources/views/builder/index.blade.php`:
+  - 8 component selection slots (CPU, Motherboard, RAM, GPU, Storage, PSU, Cooler, Case).
+  - Component selection modals or dropdowns with filtered compatible parts.
+  - Sticky build summary panel: live subtotal, dynamic compatibility badge, live wattage headroom bar, and bottleneck synergy preview.
+  - "Proceed to Checkout" button that posts selected items to `/builder/checkout` and redirects to `/checkout`.
+- Add client-side builder script in `public/js/builder.js`:
+  - Handles item selection/removal.
+  - Debounced AJAX calls to `/api/compatibility/evaluate` to update compatibility, wattage headroom, and warnings in real-time.
+  - Updates running price tally.
 
 **Acceptance criteria:**
-- [x] `GET /erp/support` renders ticket triage dashboard with correct status counts.
-- [x] `POST /erp/support/tickets/{ticket}/status` transitions status (`Open` -> `Diagnosing` -> `Resolved` -> `Closed`).
-- [x] `POST /erp/support/tickets/{ticket}/assign` schedules inspection slot with technician.
-- [x] `GET /erp/support/schedules` lists workshop appointments.
-- [x] `Staff_Warehouse` and `Customer` are blocked with 403 Forbidden.
+- [x] Builder renders all 8 hardware slots.
+- [x] Selecting an incompatible part triggers live visual warning and disables checkout until resolved.
+- [x] Wattage meter updates dynamically with color-coded headroom bar.
+- [x] "Proceed to Checkout" carries chosen parts directly to the cashier.
 
 **Verification:**
-- [x] Routes registered and verified via feature test assertions.
+- [x] Feature tests verifying checkout payload formulation and API response bindings.
 
 **Dependencies:** Task 1, Task 2
 
 **Files likely touched:**
-- `app/Http/Controllers/Erp/SupportTicketController.php`
-- `app/Http/Controllers/Erp/TechScheduleController.php`
-- `resources/views/erp/support/index.blade.php`
-- `resources/views/erp/support/show.blade.php`
-- `resources/views/erp/support/schedules.blade.php`
-- `resources/views/erp/support/warranties.blade.php`
-- `resources/views/layouts/erp.blade.php`
-- `routes/web.php`
+- `resources/views/builder/index.blade.php`
+- `public/js/builder.js`
+- `public/css/style.css`
 
-**Estimated scope:** Large (8 files)
+**Estimated scope:** Large (3 files)
 
 ---
 
-## Task 4: Automated Feature Tests (`WarrantyTechSupportTest`) & Seeding
+## Task 4: Interactive Bottleneck & Game FPS Calculator
 **Description:**
-- Update `Database\Seeders\InventorySupplySeeder.php` to seed initial warranties, support tickets, and technician schedules for realistic test data.
-- Implement `tests/Feature/WarrantyTechSupportTest.php` testing:
-  - Automatic warranty provisioning on order completion.
-  - Customer warranty list and ticket submission.
-  - Customer ticket isolation (no viewing others' tickets).
-  - Technician/Admin triage workflow, status updates, and dispatch scheduling.
-  - RBAC verification (`Staff_Tech` and `Admin` allowed; `Staff_Warehouse` and `Customer` blocked from `/erp/support`).
-- Run `php artisan test` and verify all tests pass 100%.
+- Implement `resources/views/calculator/index.blade.php`:
+  - Visual selector for CPU and GPU with search filter.
+  - Resolution selector pills: 1080p (FHD), 1440p (2K), 2160p (4K).
+  - Dynamic synergy score dial/meter (e.g. 95% Optimal Balance).
+  - Game FPS estimate cards (Cyberpunk 2077, Call of Duty, Valorant, Apex Legends).
+  - Direct "Build with this Combo" button leading into the PC Builder with CPU/GPU pre-selected.
+- Connect AJAX calculation to `/api/compatibility/bottleneck`.
 
 **Acceptance criteria:**
-- [x] All warranty & tech support tests pass.
-- [x] Zero regressions across existing test suites (`php artisan test`).
-- [x] `php artisan migrate:fresh --seed` runs cleanly.
+- [x] Calculator renders CPU and GPU selection.
+- [x] Switching resolution or hardware updates synergy score and FPS estimates.
+- [x] "Build with this Combo" links directly into builder.
 
 **Verification:**
-- [x] `php artisan test` completes with 0 errors.
+- [x] Feature tests and AJAX endpoint assertions.
 
-**Dependencies:** Task 1, Task 2, Task 3
+**Dependencies:** Task 1, Task 2
 
 **Files likely touched:**
-- `database/seeders/InventorySupplySeeder.php`
-- `tests/Feature/WarrantyTechSupportTest.php`
+- `resources/views/calculator/index.blade.php`
 
-**Estimated scope:** Medium (2 files)
+**Estimated scope:** Medium (1 file)
 
 ---
 
-## Checkpoint: Complete (`warranty-techsupport`)
-- [x] All acceptance criteria in `SPEC-warranty-techsupport.md` met
+## Task 5: Automated Feature Tests (`FrontendStorefrontTest`)
+**Description:**
+- Create `tests/Feature/FrontendStorefrontTest.php` covering:
+  - Homepage render with featured builds and review data.
+  - PC Builder loading catalog items.
+  - Builder submission transferring cart to checkout.
+  - Bottleneck calculator view and calculation endpoint.
+  - Contact page rendering.
+- Run `php artisan test` across all test suites to confirm 100% pass rate.
+
+**Acceptance criteria:**
+- [x] All storefront tests pass.
+- [x] Zero regressions across existing modules (54+ tests passing).
+
+**Verification:**
+- [x] `php artisan test` passes with 0 errors.
+
+**Dependencies:** Task 1, Task 2, Task 3, Task 4
+
+**Files likely touched:**
+- `tests/Feature/FrontendStorefrontTest.php`
+
+**Estimated scope:** Medium (1 file)
+
+---
+
+## Checkpoint: Complete (`frontend-storefront`)
+- [x] All acceptance criteria in `SPEC-frontend-storefront.md` met
 - [x] `php artisan migrate:fresh --seed` and `php artisan test` pass 100%
 - [x] Ready for human review
