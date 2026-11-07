@@ -58,6 +58,15 @@ a:hover {
     color: var(--accent);
 }
 
+.container {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    width: 100%;
+}
+
 /* --------------------------------------------------------------------------
    ERP Layout: Dark Sidebar + Main Workspace
    -------------------------------------------------------------------------- */
