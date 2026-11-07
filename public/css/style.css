@@ -638,3 +638,129 @@ a:hover {
     background: rgba(16, 185, 129, 0.08);
 }
 
+/* ==============================================================================
+   Site Footer Styles (Compact Version)
+   ============================================================================== */
+.site-footer {
+    background-color: var(--bg-darker);
+    border-top: 1px solid var(--border-color);
+    padding: 28px 24px 20px;
+    margin-top: 48px;
+    color: var(--text-light);
+    font-size: 0.85rem;
+}
+
+.site-footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.site-footer-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1.3fr;
+    gap: 32px;
+    align-items: start;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+@media (max-width: 900px) {
+    .site-footer-grid {
+        grid-template-columns: 1fr;
+        gap: 22px;
+    }
+}
+
+.footer-col-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+
+.footer-brand-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    margin-bottom: 6px;
+}
+
+.footer-desc {
+    color: var(--text-muted);
+    font-size: 0.815rem;
+    line-height: 1.55;
+    margin: 0;
+}
+
+.footer-compact-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.815rem;
+}
+
+.footer-compact-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    color: var(--text-light);
+    line-height: 1.45;
+}
+
+.footer-compact-list .icon {
+    flex-shrink: 0;
+    font-size: 0.875rem;
+}
+
+.footer-compact-list a {
+    color: var(--text-light);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.footer-compact-list a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.footer-bottom-bar {
+    padding-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 0.775rem;
+    color: var(--text-muted);
+}
+
+.footer-bottom-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.footer-bottom-link {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.footer-bottom-link:hover {
+    color: #fff;
+}
+
+.footer-bottom-link.staff-link {
+    color: var(--accent);
+}
+
+
