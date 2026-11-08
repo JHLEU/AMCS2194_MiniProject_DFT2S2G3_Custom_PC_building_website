@@ -3,7 +3,7 @@
 @section('title', 'Contact Us & Workshop Location')
 
 @section('content')
-<div class="container" style="padding-top: 40px; padding-bottom: 60px; max-width: 1000px;">
+<div class="container" style="padding-top: 40px; padding-bottom: 60px; max-width: 1000px; margin: 0 auto;">
     <!-- Breadcrumb & Title -->
     <div style="text-align: center; margin-bottom: 40px;">
         <span class="badge badge-primary" style="margin-bottom: 8px;">Support & Customer Service</span>
