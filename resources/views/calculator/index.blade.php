@@ -8,7 +8,7 @@
     <div style="text-align: center; margin-bottom: 36px;">
         <span class="badge badge-primary" style="margin-bottom: 8px;">Hardware Performance Rating Calculator</span>
         <h1 style="font-size: 2.2rem; font-weight: 800; color: #fff; margin-bottom: 10px;">
-            🎯 PC Performance Calculator
+            PC Performance Calculator
         </h1>
         <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 640px; margin: 0 auto;">
             Evaluate your build across 4 core performance parameters: CPU Processing Power, GPU Performance, Memory, and Storage.
@@ -21,7 +21,7 @@
             <!-- 1. CPU Dropdown -->
             <div class="form-group">
                 <label for="calc-cpu" class="form-label" style="font-weight: 700; color: #fff;">
-                    🔲 1. CPU Processing Power (Processor)
+                    1. CPU Processing Power (Processor)
                 </label>
                 <select id="calc-cpu" class="form-control" style="font-size: 0.95rem;">
                     @foreach($cpus as $cpu)
@@ -35,7 +35,7 @@
             <!-- 2. GPU Dropdown -->
             <div class="form-group">
                 <label for="calc-gpu" class="form-label" style="font-weight: 700; color: #fff;">
-                    🎮 2. GPU Performance (Graphics Card)
+                    2. GPU Performance (Graphics Card)
                 </label>
                 <select id="calc-gpu" class="form-control" style="font-size: 0.95rem;">
                     @foreach($gpus as $gpu)
@@ -49,7 +49,7 @@
             <!-- 3. Memory (RAM) Dropdown -->
             <div class="form-group">
                 <label for="calc-ram" class="form-label" style="font-weight: 700; color: #fff;">
-                    ⚡ 3. Memory (RAM)
+                    3. Memory (RAM)
                 </label>
                 <select id="calc-ram" class="form-control" style="font-size: 0.95rem;">
                     @foreach($rams as $ram)
@@ -63,7 +63,7 @@
             <!-- 4. Storage Dropdown -->
             <div class="form-group">
                 <label for="calc-storage" class="form-label" style="font-weight: 700; color: #fff;">
-                    💾 4. Storage (SSD)
+                    4. Storage (SSD)
                 </label>
                 <select id="calc-storage" class="form-control" style="font-size: 0.95rem;">
                     @foreach($storages as $storage)
@@ -75,9 +75,11 @@
             </div>
         </div>
 
-        <button type="button" id="evaluate-calc-btn" class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 700; font-size: 1rem;">
-            Calculate Performance Rating Scores →
-        </button>
+        <div style="display: flex; justify-content: flex-end; margin-top: 8px;">
+            <button type="button" id="evaluate-calc-btn" class="btn btn-primary" style="padding: 12px 32px; font-weight: 600; font-size: 0.95rem; box-shadow: 0 4px 14px rgba(34,197,94,0.25);">
+                Calculate Benchmark Scores &rarr;
+            </button>
+        </div>
     </div>
 
     <!-- Results Display: 4 Parameters -->
@@ -99,7 +101,7 @@
         <!-- 4 Core Performance Parameters -->
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
             <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin: 0;">
-                📊 4 Core Component Performance Parameters
+                4 Core Component Performance Parameters
             </h3>
             <div style="display: flex; gap: 12px; font-size: 0.78rem;">
                 <span style="color: #ef4444; font-weight: 700;">● Poor (Red)</span>
@@ -113,7 +115,7 @@
             <!-- Parameter 1: CPU Processing Power -->
             <div style="background: rgba(0,0,0,0.28); border: 1px solid var(--border-color); border-radius: 10px; padding: 18px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <span style="font-weight: 700; color: #fff; font-size: 1rem;">🔲 CPU Processing Power</span>
+                    <span style="font-weight: 700; color: #fff; font-size: 1rem;">CPU Processing Power</span>
                     <span>
                         <span id="param-cpu-score" style="font-size: 1.25rem; font-weight: 800; color: #06b6d4;">0 / 100</span>
                         <span id="param-cpu-tier" style="font-size: 0.75rem; font-weight: 700; margin-left: 6px; padding: 2px 8px; border-radius: 4px;"></span>
@@ -128,7 +130,7 @@
             <!-- Parameter 2: GPU Performance -->
             <div style="background: rgba(0,0,0,0.28); border: 1px solid var(--border-color); border-radius: 10px; padding: 18px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <span style="font-weight: 700; color: #fff; font-size: 1rem;">🎮 GPU Performance</span>
+                    <span style="font-weight: 700; color: #fff; font-size: 1rem;">GPU Performance</span>
                     <span>
                         <span id="param-gpu-score" style="font-size: 1.25rem; font-weight: 800; color: #06b6d4;">0 / 100</span>
                         <span id="param-gpu-tier" style="font-size: 0.75rem; font-weight: 700; margin-left: 6px; padding: 2px 8px; border-radius: 4px;"></span>
@@ -143,7 +145,7 @@
             <!-- Parameter 3: Memory -->
             <div style="background: rgba(0,0,0,0.28); border: 1px solid var(--border-color); border-radius: 10px; padding: 18px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <span style="font-weight: 700; color: #fff; font-size: 1rem;">⚡ Memory</span>
+                    <span style="font-weight: 700; color: #fff; font-size: 1rem;">Memory</span>
                     <span>
                         <span id="param-ram-score" style="font-size: 1.25rem; font-weight: 800; color: #06b6d4;">0 / 100</span>
                         <span id="param-ram-tier" style="font-size: 0.75rem; font-weight: 700; margin-left: 6px; padding: 2px 8px; border-radius: 4px;"></span>
@@ -158,7 +160,7 @@
             <!-- Parameter 4: Storage -->
             <div style="background: rgba(0,0,0,0.28); border: 1px solid var(--border-color); border-radius: 10px; padding: 18px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <span style="font-weight: 700; color: #fff; font-size: 1rem;">💾 Storage</span>
+                    <span style="font-weight: 700; color: #fff; font-size: 1rem;">Storage</span>
                     <span>
                         <span id="param-storage-score" style="font-size: 1.25rem; font-weight: 800; color: #06b6d4;">0 / 100</span>
                         <span id="param-storage-tier" style="font-size: 0.75rem; font-weight: 700; margin-left: 6px; padding: 2px 8px; border-radius: 4px;"></span>
@@ -180,7 +182,7 @@
                 </p>
             </div>
             <a id="build-with-combo-btn" href="{{ route('builder.index') }}" class="btn btn-primary" style="padding: 10px 24px; font-weight: 600;">
-                ⚡ Launch Builder with this Combo →
+                Launch Builder with this Combo →
             </a>
         </div>
     </div>

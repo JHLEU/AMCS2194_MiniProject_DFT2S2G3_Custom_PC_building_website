@@ -7,7 +7,7 @@
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
     <div>
         <h1 style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 4px;">
-            🛒 Custom PC Orders Queue
+            Custom PC Orders Queue
         </h1>
         <p style="color: var(--text-muted); font-size: 0.9rem;">
             Track customer orders across assembly pipeline: Paid &rarr; Assembling &rarr; Testing &rarr; Shipped &rarr; Completed.
@@ -27,7 +27,7 @@
             <div class="stat-label">Total Orders</div>
             <div class="stat-val">{{ number_format($metrics['total']) }}</div>
         </div>
-        <div class="stat-icon" style="color: var(--info);">📋</div>
+        <div class="stat-icon" style="color: var(--info);"></div>
     </div>
 
     <div class="stat-card">
@@ -35,7 +35,7 @@
             <div class="stat-label">Paid (Awaiting Assembly)</div>
             <div class="stat-val" style="color: var(--accent);">{{ number_format($metrics['paid']) }}</div>
         </div>
-        <div class="stat-icon" style="color: var(--accent);">💳</div>
+        <div class="stat-icon" style="color: var(--accent);"></div>
     </div>
 
     <div class="stat-card">
@@ -43,7 +43,7 @@
             <div class="stat-label">In Bench Assembly</div>
             <div class="stat-val" style="color: var(--warning);">{{ number_format($metrics['assembling']) }}</div>
         </div>
-        <div class="stat-icon" style="color: var(--warning);">🔧</div>
+        <div class="stat-icon" style="color: var(--warning);"></div>
     </div>
 
     <div class="stat-card">
@@ -51,7 +51,7 @@
             <div class="stat-label">In Testing / QC</div>
             <div class="stat-val" style="color: #c084fc;">{{ number_format($metrics['testing']) }}</div>
         </div>
-        <div class="stat-icon" style="color: #c084fc;">⚡</div>
+        <div class="stat-icon" style="color: #c084fc;"></div>
     </div>
 
     <div class="stat-card">
@@ -59,7 +59,7 @@
             <div class="stat-label">Dispatched / Shipped</div>
             <div class="stat-val" style="color: var(--success);">{{ number_format($metrics['shipped']) }}</div>
         </div>
-        <div class="stat-icon" style="color: var(--success);">🚚</div>
+        <div class="stat-icon" style="color: var(--success);"></div>
     </div>
 
     <div class="stat-card">
@@ -67,7 +67,7 @@
             <div class="stat-label">Total Valid Revenue</div>
             <div class="stat-val" style="color: #34d399; font-size: 1.25rem;">RM {{ number_format($metrics['revenue'], 2) }}</div>
         </div>
-        <div class="stat-icon" style="color: #34d399;">💰</div>
+        <div class="stat-icon" style="color: #34d399;"></div>
     </div>
 </div>
 

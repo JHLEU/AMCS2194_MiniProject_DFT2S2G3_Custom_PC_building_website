@@ -7,14 +7,14 @@
     <!-- Top Action / Nav -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
         <div>
-            <h1 style="font-size: 1.6rem; font-weight: 700; margin-bottom: 4px;">🛡️ Hardware Warranty Registry</h1>
+            <h1 style="font-size: 1.6rem; font-weight: 700; margin-bottom: 4px;">Hardware Warranty Registry</h1>
             <p style="color: var(--text-muted); font-size: 0.875rem;">
                 Official store & manufacturer serial coverage lookup for warranty verification and RMA validation.
             </p>
         </div>
         <div style="display: flex; gap: 10px;">
-            <a href="{{ route('erp.support.index') }}" class="btn btn-secondary btn-sm">🛠️ Ticket Queue</a>
-            <a href="{{ route('erp.support.schedules') }}" class="btn btn-secondary btn-sm">📅 Workshop Schedules</a>
+            <a href="{{ route('erp.support.index') }}" class="btn btn-secondary btn-sm">Ticket Queue</a>
+            <a href="{{ route('erp.support.schedules') }}" class="btn btn-secondary btn-sm">Workshop Schedules</a>
         </div>
     </div>
 
@@ -51,7 +51,7 @@
 
         @if($warranties->isEmpty())
             <div style="text-align: center; padding: 50px 20px; color: var(--text-muted);">
-                <div style="font-size: 2.5rem; margin-bottom: 8px;">🛡️</div>
+                <div style="font-size: 2.5rem; margin-bottom: 8px;"></div>
                 <h4 style="font-weight: 600; color: var(--text-light);">No warranties match your query</h4>
                 <p style="font-size: 0.875rem;">Try searching with a partial serial number (e.g. "SN-") or order number.</p>
             </div>

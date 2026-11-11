@@ -14,7 +14,7 @@
 
 <div class="card" style="padding: 0; overflow: hidden;">
     <div class="card-header">
-        <span class="card-title" style="margin: 0;">🏢 Supplier Directory & Verified Vendors</span>
+        <span class="card-title" style="margin: 0;">Supplier Directory & Verified Vendors</span>
         <span style="font-size: 0.85rem; color: var(--text-muted);">{{ $suppliers->count() }} Registered Suppliers</span>
     </div>
 

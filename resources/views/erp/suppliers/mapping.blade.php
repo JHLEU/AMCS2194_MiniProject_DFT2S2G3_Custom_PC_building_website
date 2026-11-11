@@ -29,7 +29,7 @@
     <!-- Active Mappings Table -->
     <div class="card" style="padding: 0; overflow: hidden;">
         <div class="card-header">
-            <span class="card-title" style="margin: 0;">📦 Mapped Hardware Components</span>
+            <span class="card-title" style="margin: 0;">Mapped Hardware Components</span>
             <span class="badge badge-info">{{ $mappedProducts->count() }} Products</span>
         </div>
 

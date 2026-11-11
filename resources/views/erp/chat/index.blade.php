@@ -45,9 +45,9 @@
                         <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
                             <span style="font-weight: 600; font-size: 0.9rem; color: {{ $isActive ? '#60a5fa' : '#f8fafc' }};">
                                 @if($sess->customer)
-                                    👤 {{ $sess->customer->name }}
+                                    {{ $sess->customer->name }}
                                 @else
-                                    🌐 Guest ({{ substr($sess->session_id, 0, 10) }}...)
+                                    Guest ({{ substr($sess->session_id, 0, 10) }}...)
                                 @endif
                             </span>
                             <span style="font-size: 0.72rem; color: #94a3b8;">
@@ -71,7 +71,7 @@
                     </a>
                 @empty
                     <div style="text-align: center; padding: 40px 16px; color: #64748b;">
-                        <div style="font-size: 2rem; margin-bottom: 8px;">💬</div>
+                        <div style="font-size: 2rem; margin-bottom: 8px;"></div>
                         <p style="font-size: 0.9rem; margin: 0;">No customer inquiries yet.</p>
                         <p style="font-size: 0.8rem; margin-top: 4px;">Inquiries sent via the storefront widget will appear here in real time.</p>
                     </div>
@@ -99,11 +99,11 @@
                         </div>
                         <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 4px; display: flex; gap: 16px;">
                             @if($activeCustomer)
-                                <span>📧 {{ $activeCustomer->email }}</span>
-                                <span>🛒 {{ $activeCustomer->orders_count ?? 0 }} Orders</span>
-                                <span>🛡️ {{ $activeCustomer->support_tickets_count ?? 0 }} RMA Tickets</span>
+                                <span>{{ $activeCustomer->email }}</span>
+                                <span>{{ $activeCustomer->orders_count ?? 0 }} Orders</span>
+                                <span>{{ $activeCustomer->support_tickets_count ?? 0 }} RMA Tickets</span>
                             @else
-                                <span>🌐 Unauthenticated visitor from public storefront</span>
+                                <span>Unauthenticated visitor from public storefront</span>
                             @endif
                         </div>
                     </div>
@@ -118,10 +118,10 @@
                         <div style="display: flex; flex-direction: column; align-items: {{ $isStaff ? 'flex-end' : 'flex-start' }};">
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 0.75rem; color: #94a3b8;">
                                 @if($isStaff)
-                                    <span style="color: #10b981; font-weight: 600;">👨‍💼 Staff Specialist (You)</span>
+                                    <span style="color: #10b981; font-weight: 600;">‍Staff Specialist (You)</span>
                                 @else
                                     <span style="color: #60a5fa; font-weight: 600;">
-                                        👤 {{ $activeCustomer ? $activeCustomer->name : 'Customer' }}
+                                        {{ $activeCustomer ? $activeCustomer->name : 'Customer' }}
                                     </span>
                                 @endif
                                 <span>{{ $msg->created_at ? $msg->created_at->format('M d, g:i A') : '' }}</span>
@@ -150,7 +150,7 @@
             @else
                 <!-- No active session selected -->
                 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #64748b; padding: 40px; text-align: center;">
-                    <div style="font-size: 3rem; margin-bottom: 12px;">💬</div>
+                    <div style="font-size: 3rem; margin-bottom: 12px;"></div>
                     <h3 style="color: #cbd5e1; margin-bottom: 8px;">No Thread Selected</h3>
                     <p style="max-width: 420px; margin: 0; font-size: 0.9rem;">
                         Select a conversation thread from the left queue to review chat transcripts and send live replies to customers.

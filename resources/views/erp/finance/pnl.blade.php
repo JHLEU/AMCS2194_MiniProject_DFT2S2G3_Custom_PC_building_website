@@ -10,7 +10,7 @@
             <a href="{{ route('erp.finance.index') }}" class="btn btn-outline btn-sm">&larr; Financial Dashboard</a>
         </div>
         <h1 style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 6px;">
-            📊 {{ $selectedYear }} Annual & Monthly Profit/Loss Statement
+            {{ $selectedYear }} Annual & Monthly Profit/Loss Statement
         </h1>
         <p style="color: var(--text-muted); font-size: 0.9rem;">
             Formal 12-month accounting breakdown of Sales Revenue, Cost of Goods Sold (COGS), Gross Profit, and Operating Cashflow.
@@ -44,7 +44,7 @@
                 {{ $pnlReport['totals']['orders_count'] }} orders fulfilled
             </div>
         </div>
-        <div class="stat-icon" style="color: var(--accent);">💵</div>
+        <div class="stat-icon" style="color: var(--accent);"></div>
     </div>
 
     <div class="stat-card">
@@ -57,7 +57,7 @@
                 Allocated component batch costs
             </div>
         </div>
-        <div class="stat-icon" style="color: var(--warning);">📦</div>
+        <div class="stat-icon" style="color: var(--warning);"></div>
     </div>
 
     <div class="stat-card">
@@ -70,7 +70,7 @@
                 ● {{ $pnlReport['totals']['gross_margin_pct'] }}% Net Gross Margin
             </div>
         </div>
-        <div class="stat-icon" style="color: var(--success);">📈</div>
+        <div class="stat-icon" style="color: var(--success);"></div>
     </div>
 
     <div class="stat-card">
@@ -83,14 +83,14 @@
                 Vendor Purchase Orders settled
             </div>
         </div>
-        <div class="stat-icon" style="color: var(--danger);">🚚</div>
+        <div class="stat-icon" style="color: var(--danger);"></div>
     </div>
 </div>
 
 <!-- 12-Month Detailed P&L Table -->
 <div class="card">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <h3 class="card-title" style="margin: 0;">📋 Calendar Month-by-Month Statement ({{ $selectedYear }})</h3>
+        <h3 class="card-title" style="margin: 0;">Calendar Month-by-Month Statement ({{ $selectedYear }})</h3>
         <span style="font-size: 0.75rem; color: var(--text-muted);">Amounts in MYR (Ringgit Malaysia)</span>
     </div>
 

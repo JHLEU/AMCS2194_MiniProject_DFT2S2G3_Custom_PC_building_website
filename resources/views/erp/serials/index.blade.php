@@ -37,7 +37,7 @@
 
 <div class="card" style="padding: 0; overflow: hidden;">
     <div class="card-header">
-        <span class="card-title" style="margin: 0;">🏷️ Physical Item Serial Number Ledger</span>
+        <span class="card-title" style="margin: 0;">Physical Item Serial Number Ledger</span>
         <span style="font-size: 0.85rem; color: var(--text-muted);">{{ $serials->count() }} Records</span>
     </div>
 

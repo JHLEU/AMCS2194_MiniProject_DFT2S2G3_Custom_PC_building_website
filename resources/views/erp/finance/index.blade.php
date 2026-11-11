@@ -7,7 +7,7 @@
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
     <div>
         <h1 style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 4px;">
-            💵 Financial Health & Cashflow Dashboard
+            Financial Health & Cashflow Dashboard
         </h1>
         <p style="color: var(--text-muted); font-size: 0.9rem;">
             Real-time Profit & Loss accounting, gross margins tracked from physical batch costs, and capital expenditure.
@@ -15,10 +15,10 @@
     </div>
     <div style="display: flex; gap: 10px;">
         <a href="{{ route('erp.finance.pnl') }}" class="btn btn-outline btn-sm">
-            📊 Monthly P&L Statement
+            Monthly P&L Statement
         </a>
         <a href="{{ route('erp.finance.cashflow') }}" class="btn btn-primary btn-sm">
-            📋 Cashflow Ledger Stream
+            Cashflow Ledger Stream
         </a>
     </div>
 </div>
@@ -35,7 +35,7 @@
                 {{ $metrics['total_orders_count'] }} orders (Avg: RM {{ number_format($metrics['average_order_value'], 2) }})
             </div>
         </div>
-        <div class="stat-icon" style="color: var(--accent);">💵</div>
+        <div class="stat-icon" style="color: var(--accent);"></div>
     </div>
 
     <div class="stat-card">
@@ -48,7 +48,7 @@
                 Hardware batch unit allocation
             </div>
         </div>
-        <div class="stat-icon" style="color: var(--warning);">📦</div>
+        <div class="stat-icon" style="color: var(--warning);"></div>
     </div>
 
     <div class="stat-card">
@@ -61,7 +61,7 @@
                 ● {{ $metrics['gross_margin_pct'] }}% Gross Margin
             </div>
         </div>
-        <div class="stat-icon" style="color: var(--success);">📈</div>
+        <div class="stat-icon" style="color: var(--success);"></div>
     </div>
 
     <div class="stat-card">
@@ -74,7 +74,7 @@
                 Completed Restock Orders
             </div>
         </div>
-        <div class="stat-icon" style="color: var(--danger);">🚚</div>
+        <div class="stat-icon" style="color: var(--danger);"></div>
     </div>
 
     <div class="stat-card">
@@ -87,7 +87,7 @@
                 Warehouse Physical Inventory
             </div>
         </div>
-        <div class="stat-icon" style="color: var(--info);">🏷️</div>
+        <div class="stat-icon" style="color: var(--info);"></div>
     </div>
 
     <div class="stat-card">
@@ -100,7 +100,7 @@
                 Inflow (RM {{ number_format($metrics['payments_collected'], 0) }}) - Outflow
             </div>
         </div>
-        <div class="stat-icon" style="color: #34d399;">⚖️</div>
+        <div class="stat-icon" style="color: #34d399;"></div>
     </div>
 </div>
 
@@ -108,7 +108,7 @@
     <!-- Left Column: Category Performance & Gross Margin Ranking -->
     <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <h3 class="card-title" style="margin: 0;">🏆 Category Revenue & Margin Ranking</h3>
+            <h3 class="card-title" style="margin: 0;">Category Revenue & Margin Ranking</h3>
             <span style="font-size: 0.75rem; color: var(--text-muted);">Ranked by gross sales volume</span>
         </div>
 
@@ -162,7 +162,7 @@
     <div style="display: flex; flex-direction: column; gap: 24px;">
         <div class="card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <h3 class="card-title" style="margin: 0;">⚡ Recent Cash Movements</h3>
+                <h3 class="card-title" style="margin: 0;">Recent Cash Movements</h3>
                 <a href="{{ route('erp.finance.cashflow') }}" style="font-size: 0.8rem; color: var(--info); text-decoration: none;">
                     View All &rarr;
                 </a>
@@ -202,7 +202,7 @@
         <!-- Annual Summary Teaser Card -->
         <div class="card" style="border: 1px solid rgba(0, 242, 254, 0.25);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <h3 class="card-title" style="margin: 0;">📅 {{ $currentYearPnL['year'] }} Fiscal Year Summary</h3>
+                <h3 class="card-title" style="margin: 0;">{{ $currentYearPnL['year'] }} Fiscal Year Summary</h3>
                 <a href="{{ route('erp.finance.pnl', ['year' => $currentYearPnL['year']]) }}" class="btn btn-outline btn-sm">
                     Detailed P&L
                 </a>

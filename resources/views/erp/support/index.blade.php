@@ -64,8 +64,8 @@
                 <input type="text" name="search" class="form-control form-control-sm" placeholder="Search ticket, customer, SN..." value="{{ $search ?? '' }}" style="width: 220px;">
                 <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
             </form>
-            <a href="{{ route('erp.support.schedules') }}" class="btn btn-outline btn-sm">📅 Tech Schedules</a>
-            <a href="{{ route('erp.support.warranties') }}" class="btn btn-outline btn-sm">🛡️ Warranties</a>
+            <a href="{{ route('erp.support.schedules') }}" class="btn btn-outline btn-sm">Tech Schedules</a>
+            <a href="{{ route('erp.support.warranties') }}" class="btn btn-outline btn-sm">Warranties</a>
         </div>
     </div>
 
@@ -78,7 +78,7 @@
 
         @if($tickets->isEmpty())
             <div style="text-align: center; padding: 50px 20px; color: var(--text-muted);">
-                <div style="font-size: 2.5rem; margin-bottom: 8px;">🎉</div>
+                <div style="font-size: 2.5rem; margin-bottom: 8px;"></div>
                 <h4 style="font-weight: 600; color: var(--text-light);">No tickets found in this queue</h4>
                 <p style="font-size: 0.875rem;">All technical support tickets are currently triaged or no tickets match the filters.</p>
             </div>
@@ -130,7 +130,7 @@
                                 </td>
                                 <td>
                                     @if($schedule && $schedule->technician)
-                                        <span style="color: #10b981; font-weight: 600;">👨‍🔧 {{ $schedule->technician->name }}</span>
+                                        <span style="color: #10b981; font-weight: 600;">‍{{ $schedule->technician->name }}</span>
                                     @else
                                         <span style="color: var(--text-muted);">Unassigned</span>
                                     @endif

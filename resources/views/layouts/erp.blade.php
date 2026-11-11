@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'ERP Dashboard') | Custom PC Enterprise</title>
+    <title>@yield('title', 'Console') | GOPC Operations</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     @yield('styles')
 </head>
@@ -13,74 +13,74 @@
         <!-- Sidebar Navigation -->
         <aside class="erp-sidebar">
             <div class="erp-brand">
-                <span style="font-size: 1.4rem;">🖥️</span>
-                <h2>CUSTOM PC <span class="badge-tag">ERP</span></h2>
+                <span class="gopc-dot"></span>
+                <h2>GOPC <span class="badge-tag">CONSOLE</span></h2>
             </div>
 
             <nav class="erp-nav">
-                <div class="erp-nav-group-title">Executive & Operations</div>
+                <div class="erp-nav-group-title">Executive &amp; Operations</div>
                 <a href="{{ route('erp.dashboard') }}" class="{{ request()->routeIs('erp.dashboard') ? 'active' : '' }}">
-                    <span>📊</span> Dashboard
+                    <span>Dashboard</span>
                 </a>
                 <a href="{{ route('erp.compatibility.index') }}" class="{{ request()->routeIs('erp.compatibility.*') ? 'active' : '' }}">
-                    <span>⚡</span> Compatibility Engine
+                    <span>Compatibility engine</span>
                 </a>
 
                 @if(Auth::user()->isAdmin() || Auth::user()->isWarehouse())
-                    <div class="erp-nav-group-title">Supply Chain & Warehouse</div>
+                    <div class="erp-nav-group-title">Supply Chain &amp; Warehouse</div>
                     <a href="{{ route('erp.inventory.index') }}" class="{{ request()->routeIs('erp.inventory.index') ? 'active' : '' }}">
-                        <span>📦</span> Inventory Dashboard
+                        <span>Inventory status</span>
                     </a>
                     <a href="{{ route('erp.products.index') }}" class="{{ request()->routeIs('erp.products.*') ? 'active' : '' }}">
-                        <span>💻</span> Hardware Catalog
+                        <span>Hardware catalog</span>
                     </a>
                     <a href="{{ route('erp.inventory.low-stock') }}" class="{{ request()->routeIs('erp.inventory.low-stock') ? 'active' : '' }}">
-                        <span>⚠️</span> Low Stock Alerts
+                        <span>Low stock alerts</span>
                     </a>
                     <a href="{{ route('erp.inventory.costing') }}" class="{{ request()->routeIs('erp.inventory.costing') ? 'active' : '' }}">
-                        <span>📊</span> Costing & Valuation
+                        <span>Costing &amp; valuation</span>
                     </a>
                     <a href="{{ route('erp.suppliers.index') }}" class="{{ request()->routeIs('erp.suppliers.*') ? 'active' : '' }}">
-                        <span>🏭</span> Suppliers & Mapping
+                        <span>Suppliers &amp; mapping</span>
                     </a>
                     <a href="{{ route('erp.restock.index') }}" class="{{ request()->routeIs('erp.restock.*') ? 'active' : '' }}">
-                        <span>🚚</span> Restock Purchase Orders
+                        <span>Restock purchase orders</span>
                     </a>
                     <a href="{{ route('erp.serials.index') }}" class="{{ request()->routeIs('erp.serials.*') ? 'active' : '' }}">
-                        <span>🏷️</span> Serial Numbers
+                        <span>Component serials</span>
                     </a>
                 @endif
 
-                <div class="erp-nav-group-title">Sales & Fulfillment</div>
+                <div class="erp-nav-group-title">Fulfillment &amp; Finance</div>
                 <a href="{{ route('erp.orders.index') }}" class="{{ request()->routeIs('erp.orders.*') ? 'active' : '' }}">
-                    <span>🛒</span> Orders Management
+                    <span>Orders queue</span>
                 </a>
                 @if(Auth::user()->isAdmin())
                     <a href="{{ route('erp.finance.index') }}" class="{{ request()->routeIs('erp.finance.*') ? 'active' : '' }}">
-                        <span>💵</span> Financials & Cashflow
+                        <span>Financial ledger</span>
                     </a>
                 @endif
 
                 @if(Auth::user()->isAdmin() || Auth::user()->isTech())
-                    <div class="erp-nav-group-title">Support & Service</div>
+                    <div class="erp-nav-group-title">Technical Lab &amp; RMA</div>
                     <a href="{{ route('erp.support.index') }}" class="{{ request()->routeIs('erp.support.index') || request()->routeIs('erp.support.show') ? 'active' : '' }}">
-                        <span>🛠️</span> Tech Support & RMA
+                        <span>Support tickets</span>
                     </a>
                     <a href="{{ route('erp.support.schedules') }}" class="{{ request()->routeIs('erp.support.schedules') ? 'active' : '' }}">
-                        <span>📅</span> Technician Dispatch
+                        <span>Bench dispatch</span>
                     </a>
                     <a href="{{ route('erp.support.warranties') }}" class="{{ request()->routeIs('erp.support.warranties') ? 'active' : '' }}">
-                        <span>🛡️</span> Warranty Registry
+                        <span>Warranty registry</span>
                     </a>
                     <a href="{{ route('erp.chat.index') }}" class="{{ request()->routeIs('erp.chat.*') ? 'active' : '' }}">
-                        <span>💬</span> Customer Live Chat
+                        <span>Customer live chat</span>
                     </a>
                 @endif
 
                 @if(Auth::user()->isAdmin())
                     <div class="erp-nav-group-title">Administration</div>
                     <a href="{{ route('erp.users.index') }}" class="{{ request()->is('erp/users*') ? 'active' : '' }}">
-                        <span>👥</span> User & Role Management
+                        <span>Staff accounts</span>
                     </a>
                 @endif
             </nav>
@@ -101,18 +101,18 @@
         <!-- Main Workspace -->
         <div class="erp-main">
             <header class="erp-topbar">
-                <div style="font-weight: 600; font-size: 1rem; color: #fff;">
+                <div style="font-weight: 600; font-size: 0.9375rem; color: var(--text-primary);">
                     @yield('page-title', 'Overview')
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 16px;">
-                    <a href="{{ route('home') }}" class="btn btn-outline btn-sm" target="_blank">
-                        🌐 View Storefront
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <a href="{{ route('home') }}" class="btn btn-secondary btn-sm" target="_blank">
+                        Storefront &rarr;
                     </a>
-                    <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                    <form action="{{ route('logout') }}" method="POST" style="display: inline; margin: 0;">
                         @csrf
-                        <button type="submit" class="btn btn-outline btn-sm" style="color: #f87171;">
-                            Logout
+                        <button type="submit" class="btn btn-outline btn-sm" style="color: var(--danger);">
+                            Sign out
                         </button>
                     </form>
                 </div>
@@ -120,10 +120,10 @@
 
             <div class="erp-content">
                 @if(session('success'))
-                    <div class="alert alert-success alert-dismissible">{{ session('success') }}</div>
+                    <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
                 @if(session('error'))
-                    <div class="alert alert-danger alert-dismissible">{{ session('error') }}</div>
+                    <div class="alert alert-danger">{{ session('error') }}</div>
                 @endif
 
                 @yield('content')

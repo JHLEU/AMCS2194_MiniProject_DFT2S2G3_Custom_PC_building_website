@@ -26,7 +26,7 @@
 
 <div class="card" style="padding: 0; overflow: hidden;">
     <div class="card-header">
-        <span class="card-title" style="margin: 0;">💻 Hardware Catalog & Compatibility Specs</span>
+        <span class="card-title" style="margin: 0;">Hardware Catalog & Compatibility Specs</span>
         <span style="font-size: 0.85rem; color: var(--text-muted);">{{ $products->count() }} Total Products</span>
     </div>
 
@@ -98,7 +98,7 @@
                             </td>
                             <td>
                                 @if($p->is_low_stock)
-                                    <span class="badge badge-lowstock">⚠️ Low (&le; {{ $p->low_stock_threshold }})</span>
+                                    <span class="badge badge-lowstock">Low (&le; {{ $p->low_stock_threshold }})</span>
                                 @else
                                     <span class="badge badge-instock">OK (Min: {{ $p->low_stock_threshold }})</span>
                                 @endif

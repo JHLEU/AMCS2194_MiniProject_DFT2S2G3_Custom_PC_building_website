@@ -1,56 +1,64 @@
 @extends('layouts.app')
 
-@section('title', 'My Hardware Warranties')
+@section('title', 'My Hardware Warranties — GOPC')
 
 @section('content')
-<div class="container" style="padding-top: 40px; padding-bottom: 60px;">
+<div class="container" style="padding-top: 36px; padding-bottom: 60px;">
     <!-- Breadcrumb & Nav -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 28px; flex-wrap: wrap; gap: 16px;">
         <div>
-            <h1 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 6px;">🛡️ My Hardware Warranties</h1>
-            <p style="color: var(--text-muted); font-size: 0.95rem;">
-                Official store & manufacturer warranty coverage registered to your purchased hardware.
+            <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--primary);"></span>
+                Hardware Protection & Warranty Registry
+            </div>
+            <h1 style="font-size: 2rem; font-weight: 700; color: #fff; margin: 0; letter-spacing: -0.5px;">My Hardware Warranties</h1>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 6px 0 0;">
+                Official store and manufacturer warranty coverage tied to your purchased hardware serial numbers.
             </p>
         </div>
-        <div style="display: flex; gap: 10px;">
-            <a href="{{ route('customer.orders') }}" class="btn btn-secondary">📦 My Orders</a>
-            <a href="{{ route('customer.support.index') }}" class="btn btn-primary">🛠️ Support Tickets</a>
+        <div style="display: flex; gap: 12px;">
+            <a href="{{ route('customer.orders') }}" class="btn btn-outline btn-sm" style="border-color: rgba(255,255,255,0.15); padding: 8px 16px;">My Order History</a>
+            <a href="{{ route('customer.support.index') }}" class="btn btn-primary btn-sm" style="padding: 8px 18px; font-weight: 600;">Support & Claims</a>
         </div>
     </div>
 
     @if(session('success'))
-        <div class="alert alert-success" style="margin-bottom: 20px;">
+        <div class="alert alert-success" style="margin-bottom: 24px; border-radius: 8px;">
             {{ session('success') }}
         </div>
     @endif
 
-    <div class="card">
-        <div class="card-header">
-            <h3 style="font-size: 1.1rem; font-weight: 600;">Active Hardware Coverage</h3>
-            <span class="badge badge-info">{{ $warranties->total() }} Units Registered</span>
+    <div class="card" style="padding: 0; overflow: hidden; border-color: rgba(255,255,255,0.08);">
+        <div class="card-header" style="padding: 18px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="font-size: 1.05rem; font-weight: 700; margin: 0; color: #fff;">Active Hardware Coverage</h3>
+            <span class="badge badge-secondary" style="font-family: monospace; font-size: 0.75rem;">{{ $warranties->total() }} Units Registered</span>
         </div>
 
         @if($warranties->isEmpty())
-            <div style="text-align: center; padding: 60px 20px;">
-                <div style="font-size: 3rem; margin-bottom: 12px;">🛡️</div>
-                <h4 style="font-weight: 600; margin-bottom: 8px;">No hardware warranties registered yet</h4>
-                <p style="color: var(--text-muted); max-width: 450px; margin: 0 auto 20px;">
-                    When your custom PC or component orders are fulfilled, your hardware serial numbers and 2-year warranty protections will appear here automatically.
+            <div style="text-align: center; padding: 72px 24px;">
+                <div style="width: 56px; height: 56px; margin: 0 auto 16px; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                </div>
+                <h4 style="font-weight: 700; color: #fff; margin-bottom: 8px; font-size: 1.1rem;">No Hardware Warranties Registered Yet</h4>
+                <p style="color: var(--text-muted); max-width: 440px; margin: 0 auto 24px; font-size: 0.9rem; line-height: 1.5;">
+                    When your custom PC or component orders are fulfilled, your hardware serial numbers and 3-year warranty protections will appear here automatically.
                 </p>
-                <a href="{{ route('customer.orders') }}" class="btn btn-primary">Track My Orders</a>
+                <a href="{{ route('customer.orders') }}" class="btn btn-primary" style="padding: 10px 24px; font-weight: 600;">Track My Orders</a>
             </div>
         @else
             <div class="table-responsive">
-                <table class="table">
+                <table class="table" style="margin-bottom: 0;">
                     <thead>
                         <tr>
-                            <th>Hardware Product</th>
-                            <th>Serial Number</th>
-                            <th>Order #</th>
+                            <th style="padding-left: 24px;">Hardware Component</th>
+                            <th>Serial Number (SN)</th>
+                            <th>Origin Order</th>
                             <th>Coverage Period</th>
-                            <th>Remaining</th>
-                            <th>Status</th>
-                            <th class="text-right">Action</th>
+                            <th>Remaining Protection</th>
+                            <th>Warranty State</th>
+                            <th style="text-align: right; padding-right: 24px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -60,48 +68,50 @@
                                 $product = $warranty->serialNumber->product ?? null;
                             @endphp
                             <tr>
-                                <td>
-                                    <div style="font-weight: 600;">{{ $product->name ?? 'Hardware Component' }}</div>
-                                    <small style="color: var(--text-muted);">{{ $product->category->name ?? 'Hardware' }}</small>
+                                <td style="padding-left: 24px;">
+                                    <div style="font-weight: 700; color: #fff; font-size: 0.95rem;">{{ $product->name ?? 'Hardware Component' }}</div>
+                                    <small style="color: var(--text-muted); font-size: 0.8rem;">{{ $product->category->name ?? ($product->category ?? 'Hardware') }}</small>
                                 </td>
                                 <td>
-                                    <span class="font-mono" style="background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 4px;">
+                                    <span style="font-family: monospace; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 6px; font-size: 0.82rem; color: #e2e8f0;">
                                         {{ $warranty->serialNumber->sn_code ?? 'N/A' }}
                                     </span>
                                 </td>
                                 <td>
                                     @if($warranty->order)
-                                        <span class="font-mono">{{ $warranty->order->order_number }}</span>
+                                        <a href="{{ route('orders.track', ['query' => $warranty->order->order_number]) }}" style="font-family: monospace; color: var(--primary); font-weight: 600; text-decoration: none;">
+                                            {{ $warranty->order->order_number }}
+                                        </a>
                                     @else
-                                        <span style="color: var(--text-muted);">-</span>
+                                        <span style="color: var(--text-muted); font-family: monospace;">—</span>
                                     @endif
                                 </td>
                                 <td>
-                                    <div>{{ $warranty->start_date ? $warranty->start_date->format('M d, Y') : '-' }}</div>
-                                    <small style="color: var(--text-muted);">to {{ $warranty->end_date ? $warranty->end_date->format('M d, Y') : '-' }}</small>
+                                    <div style="font-family: monospace; font-size: 0.85rem; color: #fff;">{{ $warranty->start_date ? $warranty->start_date->format('Y-m-d') : '—' }}</div>
+                                    <small style="color: var(--text-muted); font-family: monospace; font-size: 0.75rem;">to {{ $warranty->end_date ? $warranty->end_date->format('Y-m-d') : '—' }}</small>
                                 </td>
                                 <td>
                                     @if($warranty->status === 'Active' && $remaining > 0)
-                                        <span style="color: #10b981; font-weight: 600;">{{ $remaining }} days</span>
+                                        <span style="color: var(--primary); font-weight: 700; font-family: monospace; font-size: 0.9rem;">{{ $remaining }} days</span>
                                     @else
-                                        <span style="color: var(--text-muted);">0 days</span>
+                                        <span style="color: var(--text-muted); font-family: monospace;">0 days</span>
                                     @endif
                                 </td>
                                 <td>
                                     @if($warranty->status === 'Active' && !$warranty->isExpired())
-                                        <span class="badge badge-success">Active</span>
+                                        <span class="badge badge-success" style="font-size: 0.75rem; font-family: monospace;">● ACTIVE</span>
                                     @else
-                                        <span class="badge badge-secondary">Expired</span>
+                                        <span class="badge badge-secondary" style="font-size: 0.75rem; font-family: monospace;">EXPIRED</span>
                                     @endif
                                 </td>
-                                <td class="text-right">
+                                <td style="text-align: right; padding-right: 24px;">
                                     @if($warranty->status === 'Active' && !$warranty->isExpired())
-                                        <a href="{{ route('customer.support.create', ['warranty_id' => $warranty->id]) }}" class="btn btn-secondary btn-sm" style="color: #60a5fa;">
-                                            Claim RMA
+                                        <a href="{{ route('customer.support.create', ['warranty_id' => $warranty->id]) }}" class="btn btn-outline btn-sm" style="border-color: rgba(34,197,94,0.3); color: var(--primary); padding: 5px 14px;">
+                                            Claim RMA &rarr;
                                         </a>
                                     @else
-                                        <a href="{{ route('customer.support.create') }}" class="btn btn-secondary btn-sm">
-                                            Request Help
+                                        <a href="{{ route('customer.support.create') }}" class="btn btn-outline btn-sm" style="border-color: rgba(255,255,255,0.15); color: var(--text-muted); padding: 5px 14px;">
+                                            Consult Desk
                                         </a>
                                     @endif
                                 </td>

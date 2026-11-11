@@ -21,7 +21,7 @@
     </div>
     <div style="display: flex; gap: 10px;">
         <a href="{{ route('orders.track', ['query' => $order->order_number]) }}" class="btn btn-outline btn-sm" target="_blank">
-            🌐 View Public Tracker
+            View Public Tracker
         </a>
     </div>
 </div>
@@ -31,7 +31,7 @@
     <div style="display: flex; flex-direction: column; gap: 24px;">
         <!-- Ordered Items Table -->
         <div class="card">
-            <h3 class="card-title" style="margin-bottom: 16px;">📋 Hardware Components Manifest</h3>
+            <h3 class="card-title" style="margin-bottom: 16px;">Hardware Components Manifest</h3>
 
             <div class="table-responsive">
                 <table class="table">
@@ -76,14 +76,14 @@
 
         <!-- Physical Serial Numbers Allocated -->
         <div class="card">
-            <h3 class="card-title" style="margin-bottom: 14px;">🏷️ Allocated Physical Serial Numbers</h3>
+            <h3 class="card-title" style="margin-bottom: 14px;">Allocated Physical Serial Numbers</h3>
             <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 14px;">
                 Physical units allocated from warehouse stock. Marked <strong>Reserved</strong> while in production, and automatically updated to <strong>Sold</strong> once order is completed.
             </p>
 
             @if($order->serialNumbers->isEmpty())
                 <div class="alert alert-warning" style="font-size: 0.85rem;">
-                    ⚠️ No physical serial numbers currently tied to this order. (They will be automatically allocated upon payment confirmation).
+                    No physical serial numbers currently tied to this order. (They will be automatically allocated upon payment confirmation).
                 </div>
             @else
                 <div class="table-responsive">
@@ -121,7 +121,7 @@
 
         <!-- Profit & Loss Summary -->
         <div class="card">
-            <h3 class="card-title" style="margin-bottom: 14px;">📊 Financials & Margin Breakdown</h3>
+            <h3 class="card-title" style="margin-bottom: 14px;">Financials & Margin Breakdown</h3>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; text-align: center;">
                 <div style="background: rgba(255,255,255,0.02); padding: 14px; border-radius: 8px;">
                     <div style="font-size: 0.75rem; color: var(--text-muted);">Total Selling Revenue</div>
@@ -155,7 +155,7 @@
     <div style="display: flex; flex-direction: column; gap: 24px;">
         <!-- Workflow Actions Card -->
         <div class="card" style="border: 1px solid rgba(0, 242, 254, 0.25);">
-            <h3 class="card-title" style="margin-bottom: 14px;">⚡ Order Progression Actions</h3>
+            <h3 class="card-title" style="margin-bottom: 14px;">Order Progression Actions</h3>
 
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 @if($order->order_status === \App\Models\Order::STATUS_PENDING)
@@ -163,7 +163,7 @@
                         @csrf
                         <input type="hidden" name="order_status" value="{{ \App\Models\Order::STATUS_PAID }}">
                         <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
-                            ✔ Confirm Payment & Allocate Serials
+                            Confirm Payment & Allocate Serials
                         </button>
                     </form>
                 @endif
@@ -173,7 +173,7 @@
                         @csrf
                         <input type="hidden" name="order_status" value="{{ \App\Models\Order::STATUS_ASSEMBLING }}">
                         <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; background: #fbbf24; color: #000;">
-                            🔧 Start Bench Assembly & Cable Routing &rarr;
+                            Start Bench Assembly & Cable Routing &rarr;
                         </button>
                     </form>
                 @endif
@@ -183,7 +183,7 @@
                         @csrf
                         <input type="hidden" name="order_status" value="{{ \App\Models\Order::STATUS_TESTING }}">
                         <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; background: #c084fc; color: #000;">
-                            ⚡ Move to QC, Thermal & BIOS Testing &rarr;
+                            Move to QC, Thermal & BIOS Testing &rarr;
                         </button>
                     </form>
                 @endif
@@ -193,7 +193,7 @@
                         @csrf
                         <input type="hidden" name="order_status" value="{{ \App\Models\Order::STATUS_SHIPPED }}">
                         <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; background: #10b981; color: #fff;">
-                            🚚 Hand Over to Courier & Dispatch &rarr;
+                            Hand Over to Courier & Dispatch &rarr;
                         </button>
                     </form>
                 @endif
@@ -203,7 +203,7 @@
                         @csrf
                         <input type="hidden" name="order_status" value="{{ \App\Models\Order::STATUS_COMPLETED }}">
                         <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; background: #34d399; color: #000;">
-                            🎉 Mark Delivered & Sold &rarr;
+                            Mark Delivered & Sold &rarr;
                         </button>
                     </form>
                 @endif
@@ -213,7 +213,7 @@
                         @csrf
                         <input type="hidden" name="order_status" value="{{ \App\Models\Order::STATUS_CANCELLED }}">
                         <button type="submit" class="btn btn-outline" style="width: 100%; justify-content: center; color: var(--danger); border-color: rgba(255,51,75,0.3); margin-top: 6px;">
-                            ✖ Cancel Order & Release Stock
+                            Cancel Order & Release Stock
                         </button>
                     </form>
                 @endif
@@ -222,7 +222,7 @@
 
         <!-- Logistics & Courier Dispatch Card -->
         <div class="card">
-            <h3 class="card-title" style="margin-bottom: 14px;">🚚 Courier Consignment</h3>
+            <h3 class="card-title" style="margin-bottom: 14px;">Courier Consignment</h3>
 
             <form action="{{ route('erp.orders.shipping', $order) }}" method="POST">
                 @csrf
@@ -246,7 +246,7 @@
 
         <!-- Customer & Delivery Card -->
         <div class="card">
-            <h3 class="card-title" style="margin-bottom: 14px;">👤 Customer & Address</h3>
+            <h3 class="card-title" style="margin-bottom: 14px;">Customer & Address</h3>
 
             <div style="font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px;">
                 <div>
@@ -270,7 +270,7 @@
 
         <!-- Payment Record Card -->
         <div class="card">
-            <h3 class="card-title" style="margin-bottom: 14px;">💳 Payment Record</h3>
+            <h3 class="card-title" style="margin-bottom: 14px;">Payment Record</h3>
 
             <div style="font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px;">
                 <div>
