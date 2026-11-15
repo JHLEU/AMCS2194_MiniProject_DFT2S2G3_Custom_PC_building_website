@@ -29,14 +29,14 @@
     </form>
 
     <div style="display: flex; gap: 8px;">
-        <a href="{{ route('erp.restock.history') }}" class="btn btn-outline">📜 Purchasing History</a>
+        <a href="{{ route('erp.restock.history') }}" class="btn btn-outline">Purchasing History</a>
         <a href="{{ route('erp.restock.create') }}" class="btn btn-primary">+ Create Restock PO</a>
     </div>
 </div>
 
 <div class="card" style="padding: 0; overflow: hidden;">
     <div class="card-header">
-        <span class="card-title" style="margin: 0;">📦 Restock Purchase Orders & Approval Pipeline</span>
+        <span class="card-title" style="margin: 0;">Restock Purchase Orders & Approval Pipeline</span>
         <span style="font-size: 0.85rem; color: var(--text-muted);">{{ $orders->count() }} Total Orders</span>
     </div>
 

@@ -13,13 +13,13 @@
 
 <div class="card" style="padding: 0; overflow: hidden;">
     <div class="card-header">
-        <span class="card-title" style="margin: 0;">⚠️ Hardware Items Falling Below Safety Thresholds</span>
+        <span class="card-title" style="margin: 0;">Hardware Items Falling Below Safety Thresholds</span>
         <a href="{{ route('erp.restock.create') }}" class="btn btn-primary btn-sm">+ Draft Restock Order</a>
     </div>
 
     @if($lowStockItems->isEmpty())
         <div style="padding: 40px; text-align: center; color: var(--text-muted);">
-            <div style="font-size: 2.5rem; margin-bottom: 8px;">✅</div>
+            <div style="font-size: 2.5rem; margin-bottom: 8px;"></div>
             <h3>Stock Levels Healthy</h3>
             <p style="margin-top: 6px;">No products are currently under their configured low-stock thresholds.</p>
         </div>

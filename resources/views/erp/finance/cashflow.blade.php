@@ -10,7 +10,7 @@
             <a href="{{ route('erp.finance.index') }}" class="btn btn-outline btn-sm">&larr; Financial Dashboard</a>
         </div>
         <h1 style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 6px;">
-            📋 Unified Cash Inflow & Outflow Ledger
+            Unified Cash Inflow & Outflow Ledger
         </h1>
         <p style="color: var(--text-muted); font-size: 0.9rem;">
             Chronological audit stream of customer order payments (+) and supplier restock disbursements (-).
@@ -18,7 +18,7 @@
     </div>
     <div style="display: flex; gap: 10px;">
         <a href="{{ route('erp.finance.pnl') }}" class="btn btn-outline btn-sm">
-            📊 P&L Statement
+            P&L Statement
         </a>
     </div>
 </div>
@@ -35,7 +35,7 @@
                 Customer sales & payment settlements
             </div>
         </div>
-        <div class="stat-icon" style="color: var(--success);">📥</div>
+        <div class="stat-icon" style="color: var(--success);"></div>
     </div>
 
     <div class="stat-card">
@@ -48,7 +48,7 @@
                 Completed vendor purchase orders
             </div>
         </div>
-        <div class="stat-icon" style="color: var(--danger);">📤</div>
+        <div class="stat-icon" style="color: var(--danger);"></div>
     </div>
 
     <div class="stat-card">
@@ -61,7 +61,7 @@
                 Net liquid cash balance
             </div>
         </div>
-        <div class="stat-icon" style="color: #34d399;">⚖️</div>
+        <div class="stat-icon" style="color: #34d399;"></div>
     </div>
 </div>
 
@@ -74,12 +74,12 @@
     <a href="{{ route('erp.finance.cashflow', ['type' => 'Inflow']) }}"
        class="btn btn-sm {{ $typeFilter === 'Inflow' ? 'btn-primary' : 'btn-outline' }}"
        style="{{ $typeFilter === 'Inflow' ? 'background: #10b981; color: #fff;' : '' }}">
-        📥 Customer Inflows (+)
+        Customer Inflows (+)
     </a>
     <a href="{{ route('erp.finance.cashflow', ['type' => 'Outflow']) }}"
        class="btn btn-sm {{ $typeFilter === 'Outflow' ? 'btn-primary' : 'btn-outline' }}"
        style="{{ $typeFilter === 'Outflow' ? 'background: #ff334b; color: #fff;' : '' }}">
-        📤 Supplier Outflows (-)
+        Supplier Outflows (-)
     </a>
 </div>
 

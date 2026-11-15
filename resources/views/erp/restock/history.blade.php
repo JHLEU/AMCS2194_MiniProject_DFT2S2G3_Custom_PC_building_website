@@ -12,7 +12,7 @@
                 RM {{ number_format((float) ($metrics['total_spent'] ?? 0), 2) }}
             </div>
         </div>
-        <div class="stat-icon">💵</div>
+        <div class="stat-icon"></div>
     </div>
     <div class="stat-card">
         <div>
@@ -21,7 +21,7 @@
                 {{ (int) ($metrics['total_completed_orders'] ?? 0) }}
             </div>
         </div>
-        <div class="stat-icon">✅</div>
+        <div class="stat-icon"></div>
     </div>
     <div class="stat-card">
         <div>
@@ -30,7 +30,7 @@
                 {{ (int) ($metrics['total_items_procured'] ?? 0) }}
             </div>
         </div>
-        <div class="stat-icon">📦</div>
+        <div class="stat-icon"></div>
     </div>
 </div>
 
@@ -70,7 +70,7 @@
 
 <div class="card" style="padding: 0; overflow: hidden;">
     <div class="card-header">
-        <span class="card-title" style="margin: 0;">📜 Fulfilled Purchasing Archive</span>
+        <span class="card-title" style="margin: 0;">Fulfilled Purchasing Archive</span>
         <span style="font-size: 0.85rem; color: var(--text-muted);">{{ $history->count() }} Completed Records</span>
     </div>
 
@@ -108,7 +108,7 @@
                             <td>{{ $h->order_date?->format('Y-m-d') }}</td>
                             <td>
                                 <span class="badge badge-instock">
-                                    ✓ {{ $h->completed_at ? $h->completed_at->format('M d, Y H:i') : 'Completed' }}
+                                    {{ $h->completed_at ? $h->completed_at->format('M d, Y H:i') : 'Completed' }}
                                 </span>
                             </td>
                             <td>
