@@ -148,50 +148,7 @@
         </div>
     </div>
 
-    <!-- 5. Interactive Customer Reviews & Testimonials Carousel -->
-    <div style="margin-bottom: 56px;">
-        <div style="text-align: center; margin-bottom: 28px;">
-            <span class="badge badge-warning" style="margin-bottom: 8px;">⭐ 4.9 / 5.0 Average Rating</span>
-            <h2 style="font-size: 1.8rem; font-weight: 700; color: #fff; margin: 0;">Verified Customer Experiences</h2>
-            <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 4px;">
-                Read real reviews from gamers, content creators, and corporate clients across Malaysia.
-            </p>
-        </div>
-
-        <div style="position: relative; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 36px 48px;">
-            <div id="reviews-carousel">
-                @foreach($testimonials as $index => $review)
-                    <div class="review-slide" style="{{ $index === 0 ? 'display: block;' : 'display: none;' }}" data-slide="{{ $index }}">
-                        <div style="color: #f59e0b; font-size: 1.2rem; margin-bottom: 12px;">
-                            ★★★★★
-                        </div>
-                        <blockquote style="font-size: 1.1rem; line-height: 1.7; color: var(--text-light); margin: 0 0 20px 0; font-style: italic;">
-                            "{{ $review['comment'] }}"
-                        </blockquote>
-                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 14px;">
-                            <div>
-                                <strong style="color: #fff; font-size: 1rem;">{{ $review['name'] }}</strong>
-                                <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 8px;">• {{ $review['role'] }}</span>
-                            </div>
-                            <small style="color: var(--text-muted);">{{ $review['date'] }}</small>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-
-            <!-- Carousel Controls -->
-            <div style="display: flex; justify-content: center; gap: 12px; margin-top: 24px;">
-                <button type="button" id="prev-review-btn" class="btn btn-secondary btn-sm" style="padding: 6px 14px;">
-                    ← Previous Review
-                </button>
-                <button type="button" id="next-review-btn" class="btn btn-secondary btn-sm" style="padding: 6px 14px;">
-                    Next Review →
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 6. Bottom Call to Action Strip -->
+    <!-- 5. Bottom Call to Action Strip -->
     <div style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(30, 41, 59, 0.8)); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: var(--radius-lg); padding: 40px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
         <div>
             <h3 style="font-size: 1.4rem; font-weight: 700; color: #fff; margin-bottom: 6px;">
@@ -211,42 +168,4 @@
         </div>
     </div>
 </div>
-@endsection
-
-@section('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const slides = document.querySelectorAll('.review-slide');
-        let currentSlide = 0;
-
-        function showSlide(index) {
-            slides.forEach((s, i) => {
-                s.style.display = (i === index) ? 'block' : 'none';
-            });
-            currentSlide = index;
-        }
-
-        const prevBtn = document.getElementById('prev-review-btn');
-        const nextBtn = document.getElementById('next-review-btn');
-
-        if (prevBtn && nextBtn) {
-            prevBtn.addEventListener('click', function () {
-                let next = currentSlide - 1;
-                if (next < 0) next = slides.length - 1;
-                showSlide(next);
-            });
-
-            nextBtn.addEventListener('click', function () {
-                let next = (currentSlide + 1) % slides.length;
-                showSlide(next);
-            });
-
-            // Auto-rotate every 6 seconds
-            setInterval(function () {
-                let next = (currentSlide + 1) % slides.length;
-                showSlide(next);
-            }, 6000);
-        }
-    });
-</script>
 @endsection
