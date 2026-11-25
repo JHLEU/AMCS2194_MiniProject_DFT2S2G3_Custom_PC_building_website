@@ -1,0 +1,233 @@
+.gopc-home {
+    --home-line: #343438;
+    --home-muted: #a8a8b0;
+}
+
+.gopc-home :where(h1, h2, h3, p, figure, dl, dd, ul) {
+    margin: 0;
+}
+
+.gopc-home a:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 4px;
+}
+
+.home-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    align-items: center;
+    gap: clamp(32px, 5vw, 72px);
+    padding-block: clamp(40px, 6vw, 88px);
+}
+
+.home-intro h1 {
+    max-width: 14ch;
+    font-size: clamp(2.25rem, 4.6vw, 4.5rem);
+    font-weight: 600;
+    line-height: 1.04;
+    letter-spacing: -.04em;
+}
+
+.home-intro > p {
+    max-width: 43ch;
+    margin-top: 24px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+}
+
+.home-actions,
+.home-section-head,
+.home-build-footer,
+.home-consult {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+}
+
+.home-intro .home-actions {
+    margin-top: 28px;
+}
+
+.home-actions > a:not(.btn),
+.home-section-head > a,
+.home-track {
+    color: var(--text-secondary);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.home-bench {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    border-top: 1px solid var(--home-line);
+    padding-top: 20px;
+}
+
+.gopc-home .home-bench {
+    margin-top: 32px;
+}
+
+.home-bench dt,
+.home-case figcaption > span:first-child,
+.home-build-footer span,
+.home-target dt,
+.home-catalog a > span:last-child {
+    color: var(--home-muted);
+    font-size: .8125rem;
+}
+
+.home-bench dd {
+    margin-top: 4px;
+    font-size: .9375rem;
+    font-weight: 500;
+}
+
+.home-track {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: .875rem;
+}
+
+.home-case {
+    overflow: hidden;
+    border: 1px solid var(--home-line);
+    border-radius: 16px;
+    background: var(--bg-card);
+}
+
+.home-case img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 6 / 5;
+    object-fit: contain;
+    background: var(--bg-deep);
+}
+
+.home-case figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 16px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--home-line);
+    font-size: .8125rem;
+}
+
+.home-sections {
+    display: grid;
+    gap: 56px;
+    padding-block: 0 64px;
+}
+
+.home-section-head,
+.home-build-footer,
+.home-consult {
+    justify-content: space-between;
+}
+
+.home-section-head {
+    margin-bottom: 16px;
+}
+
+.gopc-home h2 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.home-build-grid,
+.home-catalog {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: 16px;
+}
+
+.home-build,
+.home-consult {
+    padding: 24px;
+    border: 1px solid var(--home-line);
+    border-radius: 12px;
+    background: var(--bg-card);
+}
+
+.home-build {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.home-build h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.home-build p,
+.home-consult p {
+    color: var(--text-secondary);
+    line-height: 1.55;
+}
+
+.home-target {
+    padding: 8px 12px;
+    border-inline-start: 2px solid var(--primary);
+    background: var(--bg-deep);
+}
+
+.home-target dd {
+    margin-top: 4px;
+    font-size: .875rem;
+}
+
+.home-build-footer {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--home-line);
+}
+
+.home-build-footer strong {
+    display: block;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+}
+
+.home-catalog {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+    gap: 0 16px;
+    padding: 0;
+    list-style: none;
+}
+
+.home-catalog a {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    padding: 12px 4px;
+    border-top: 1px solid var(--home-line);
+    color: var(--text-primary);
+}
+
+.home-catalog a:hover {
+    background: var(--bg-card);
+}
+
+.home-consult p {
+    margin-top: 8px;
+    max-width: 58ch;
+}
+
+@media (max-width: 820px) {
+    .home-hero {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .home-case img {
+        max-height: 520px;
+    }
+
+    .home-sections {
+        gap: 40px;
+    }
+}

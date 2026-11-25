@@ -17,15 +17,15 @@ class FrontendStorefrontTest extends TestCase
         $this->seed(DatabaseSeeder::class);
     }
 
-    public function test_homepage_renders_with_featured_builds_and_reviews(): void
+    public function test_homepage_renders_with_featured_builds_and_hardware_catalog(): void
     {
         $response = $this->get(route('home'));
 
         $response->assertOk();
-        $response->assertSee('Engineered For Performance.', false);
+        $response->assertSee('Custom gaming PCs and workstations');
         $response->assertSee('Esports Champion Build');
-        $response->assertSee('Verified Customer Experiences');
-        $response->assertSee('Marcus Tan');
+        $response->assertSee('Hardware catalog');
+        $response->assertSee(route('orders.track'));
     }
 
     public function test_pc_builder_loads_hardware_slots_and_catalog(): void
