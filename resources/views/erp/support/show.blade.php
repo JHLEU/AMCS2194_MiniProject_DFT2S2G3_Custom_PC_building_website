@@ -69,7 +69,7 @@
 
             <!-- Technician Scheduling & Workshop Dispatch Form -->
             <div class="card" style="padding: 24px; margin-bottom: 24px;">
-                <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 6px;">🛠️ Schedule Workshop Appointment & Assign Tech</h3>
+                <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 6px;">Schedule Workshop Appointment & Assign Tech</h3>
                 <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 18px;">
                     Book a physical workbench slot and assign a certified hardware technician for diagnostic testing or component replacement.
                 </p>
@@ -129,7 +129,7 @@
                                 @foreach($ticket->schedules as $sched)
                                     <tr>
                                         <td>
-                                            <span style="font-weight: 600; color: #10b981;">👨‍🔧 {{ $sched->technician->name ?? 'Staff' }}</span>
+                                            <span style="font-weight: 600; color: #10b981;">‍{{ $sched->technician->name ?? 'Staff' }}</span>
                                         </td>
                                         <td>
                                             <div>{{ $sched->scheduled_datetime->format('M d, Y') }}</div>

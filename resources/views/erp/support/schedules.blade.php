@@ -7,14 +7,14 @@
     <!-- Top Action / Nav -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
         <div>
-            <h1 style="font-size: 1.6rem; font-weight: 700; margin-bottom: 4px;">📅 Technician Dispatch & Workshop Schedules</h1>
+            <h1 style="font-size: 1.6rem; font-weight: 700; margin-bottom: 4px;">Technician Dispatch & Workshop Schedules</h1>
             <p style="color: var(--text-muted); font-size: 0.875rem;">
                 Upcoming physical hardware inspection slots and repair timeline across all workshop benches.
             </p>
         </div>
         <div style="display: flex; gap: 10px;">
-            <a href="{{ route('erp.support.index') }}" class="btn btn-secondary btn-sm">🛠️ Ticket Queue</a>
-            <a href="{{ route('erp.support.warranties') }}" class="btn btn-secondary btn-sm">🛡️ Warranty Registry</a>
+            <a href="{{ route('erp.support.index') }}" class="btn btn-secondary btn-sm">Ticket Queue</a>
+            <a href="{{ route('erp.support.warranties') }}" class="btn btn-secondary btn-sm">Warranty Registry</a>
         </div>
     </div>
 
@@ -54,7 +54,7 @@
 
         @if($schedules->isEmpty())
             <div style="text-align: center; padding: 50px 20px; color: var(--text-muted);">
-                <div style="font-size: 2.5rem; margin-bottom: 8px;">🗓️</div>
+                <div style="font-size: 2.5rem; margin-bottom: 8px;"></div>
                 <h4 style="font-weight: 600; color: var(--text-light);">No scheduled appointments found</h4>
                 <p style="font-size: 0.875rem;">Assign tickets to technicians from the ticket workbench to populate the dispatch calendar.</p>
             </div>
@@ -82,7 +82,7 @@
                             <tr>
                                 <td>
                                     <div style="font-weight: 600; color: #10b981;">
-                                        📅 {{ $sched->scheduled_datetime->format('M d, Y') }}
+                                        {{ $sched->scheduled_datetime->format('M d, Y') }}
                                     </div>
                                     <small style="color: var(--text-muted);">
                                         {{ $sched->scheduled_datetime->format('h:i A') }} ({{ $sched->estimated_duration_hours }} hr slot)
@@ -90,7 +90,7 @@
                                 </td>
                                 <td>
                                     <span style="font-weight: 600; color: var(--text-light);">
-                                        👨‍🔧 {{ $sched->technician->name ?? 'Staff' }}
+                                       ‍{{ $sched->technician->name ?? 'Staff' }}
                                     </span>
                                 </td>
                                 <td>

@@ -118,7 +118,7 @@
 
 <div class="card" style="max-width: 860px; margin: 24px auto 0; padding: 0; overflow: hidden;">
     <div class="card-header">
-        <span class="card-title" style="margin: 0;">🏢 Qualified Suppliers for this Component</span>
+        <span class="card-title" style="margin: 0;">Qualified Suppliers for this Component</span>
         <a href="{{ route('erp.suppliers.index') }}" class="btn btn-outline btn-sm">Manage Suppliers</a>
     </div>
 

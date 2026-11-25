@@ -12,7 +12,7 @@
                 RM {{ number_format((float) ($costingData['overall']['total_valuation'] ?? 0), 2) }}
             </div>
         </div>
-        <div class="stat-icon">💼</div>
+        <div class="stat-icon"></div>
     </div>
     <div class="stat-card">
         <div>
@@ -21,7 +21,7 @@
                 {{ (int) ($costingData['overall']['total_units'] ?? 0) }}
             </div>
         </div>
-        <div class="stat-icon">📦</div>
+        <div class="stat-icon"></div>
     </div>
     <div class="stat-card">
         <div>
@@ -30,14 +30,14 @@
                 RM {{ number_format((float) ($costingData['overall']['avg_unit_cost'] ?? 0), 2) }}
             </div>
         </div>
-        <div class="stat-icon">📊</div>
+        <div class="stat-icon"></div>
     </div>
 </div>
 
 <!-- Category Breakdown -->
 <div class="card" style="padding: 0; overflow: hidden;">
     <div class="card-header">
-        <span class="card-title" style="margin: 0;">💼 Category Asset Distribution</span>
+        <span class="card-title" style="margin: 0;">Category Asset Distribution</span>
     </div>
     <div class="table-responsive">
         <table class="table">
@@ -86,7 +86,7 @@
 <!-- Product-Level Cost Breakdown -->
 <div class="card" style="padding: 0; overflow: hidden;">
     <div class="card-header">
-        <span class="card-title" style="margin: 0;">📊 Granular Hardware Item Cost Breakdown</span>
+        <span class="card-title" style="margin: 0;">Granular Hardware Item Cost Breakdown</span>
         <input type="text" data-table-search="#costing-table" class="form-input" placeholder="Filter items..." style="max-width: 240px; padding: 6px 12px; font-size: 0.82rem;">
     </div>
     <div class="table-responsive">

@@ -23,7 +23,7 @@
     <div>
         <div class="card" style="padding: 0; overflow: hidden;">
             <div class="card-header">
-                <span class="card-title" style="margin: 0;">📦 Order Line Items & Received Components</span>
+                <span class="card-title" style="margin: 0;">Order Line Items & Received Components</span>
             </div>
             <div class="table-responsive">
                 <table class="table">
@@ -66,7 +66,7 @@
         @if($order->serialNumbers->isNotEmpty())
             <div class="card" style="padding: 0; overflow: hidden;">
                 <div class="card-header">
-                    <span class="card-title" style="margin: 0;">🏷️ Provisioned Serial Numbers ({{ $order->serialNumbers->count() }} Units)</span>
+                    <span class="card-title" style="margin: 0;">Provisioned Serial Numbers ({{ $order->serialNumbers->count() }} Units)</span>
                     <a href="{{ route('erp.serials.index') }}" class="btn btn-outline btn-sm">View All Serials</a>
                 </div>
                 <div class="table-responsive">
@@ -122,7 +122,7 @@
                     @csrf
                     <input type="hidden" name="status" value="Approved">
                     <button type="submit" class="btn btn-primary" style="width: 100%;">
-                        ✓ Approve Purchase Order
+                        Approve Purchase Order
                     </button>
                 </form>
                 <form action="{{ route('erp.restock.status', $order) }}" method="POST" onsubmit="return confirm('Cancel this purchase order?');">
@@ -145,7 +145,7 @@
                     </div>
 
                     <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 10px; background: var(--success);">
-                        ✓ Receive Stock & Complete Order
+                        Receive Stock & Complete Order
                     </button>
                 </form>
                 <form action="{{ route('erp.restock.status', $order) }}" method="POST" onsubmit="return confirm('Cancel this approved order?');">
@@ -157,7 +157,7 @@
                 </form>
             @elseif($order->status === 'Completed')
                 <div class="alert alert-success" style="margin-bottom: 0;">
-                    ✅ This transaction is finalized. Stock has been received into inventory.
+                    This transaction is finalized. Stock has been received into inventory.
                 </div>
             @else
                 <div style="background: rgba(148, 163, 184, 0.15); color: var(--text-muted); padding: 12px; border-radius: 6px; font-size: 0.85rem;">
