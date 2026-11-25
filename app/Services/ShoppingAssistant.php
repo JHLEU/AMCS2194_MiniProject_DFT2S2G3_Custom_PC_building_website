@@ -19,6 +19,9 @@ class ShoppingAssistant
 
     public function __construct(private GeminiClient $gemini) {}
 
+    /**
+     * @param  Collection<int, ChatLog>  $history
+     */
     public function reply(string $message, Collection $history): string
     {
         $tools = [];
@@ -112,7 +115,7 @@ class ShoppingAssistant
                     "{$product->name} | RM {$product->selling_price}",
                     implode(' | ', array_filter([$product->brand, $product->category])),
                     $product->specs,
-                    $product->warranty_months === null ? null : "Warranty: {$product->warranty_months} months",
+                    $product->warranty_months > 0 ? "Warranty: {$product->warranty_months} months" : null,
                 ])),
                 default => "{$product->name} | RM {$product->selling_price}",
             };
