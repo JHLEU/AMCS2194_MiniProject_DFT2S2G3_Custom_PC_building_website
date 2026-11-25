@@ -36,7 +36,7 @@ class OrderCheckoutTest extends TestCase
         $response = $this->get(route('checkout.index'));
 
         $response->assertOk()
-            ->assertSee('Secure Cashier & Payment Gateway', false)
+            ->assertSee('<h1 class="storefront-title">', false)
             ->assertSee('Instant Sandbox (1-Click Test)')
             ->assertSee('Stripe Live API Gateway')
             ->assertSee('Coming Soon');
@@ -92,7 +92,7 @@ class OrderCheckoutTest extends TestCase
         $receiptResponse = $this->get(route('checkout.success', $order->order_number));
         $receiptResponse->assertOk()
             ->assertSee($order->order_number)
-            ->assertSee('Order Placed & Payment Verified!', false)
+            ->assertSee('Order confirmed')
             ->assertSee('Marcus Sterling');
     }
 
@@ -210,7 +210,7 @@ class OrderCheckoutTest extends TestCase
         // 3. Search non-existent
         $respNotFound = $this->get(route('orders.track', ['query' => 'NON-EXISTENT-CODE']));
         $respNotFound->assertOk()
-            ->assertSee('No active or archived order found matching');
+            ->assertSee('No orders match');
     }
 
     public function test_customer_can_view_order_history_and_guest_is_redirected(): void
@@ -221,7 +221,7 @@ class OrderCheckoutTest extends TestCase
         // Customer sees orders
         $response = $this->actingAs($this->customer)->get(route('customer.orders'));
         $response->assertOk()
-            ->assertSee('My Custom PC Orders History')
+            ->assertSee('My orders')
             ->assertSee('ORD-20261102-001');
     }
 
@@ -291,10 +291,10 @@ class OrderCheckoutTest extends TestCase
     {
         // Short queries with < 8 digits must not match arbitrary phone numbers
         $respSingleDigit = $this->get(route('orders.track', ['query' => '0']));
-        $respSingleDigit->assertOk()->assertSee('No active or archived order found matching');
+        $respSingleDigit->assertOk()->assertSee('No orders match');
 
         $respCountryCode = $this->get(route('orders.track', ['query' => '60']));
-        $respCountryCode->assertOk()->assertSee('No active or archived order found matching');
+        $respCountryCode->assertOk()->assertSee('No orders match');
     }
 
     public function test_reserve_serial_numbers_is_idempotent(): void

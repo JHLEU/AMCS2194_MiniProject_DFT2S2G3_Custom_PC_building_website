@@ -22,14 +22,14 @@ class AuthTest extends TestCase
     {
         $response = $this->get(route('login'));
         $response->assertStatus(200);
-        $response->assertSee('Account Login');
+        $response->assertSee('Sign in');
     }
 
     public function test_can_view_register_page(): void
     {
         $response = $this->get(route('register'));
         $response->assertStatus(200);
-        $response->assertSee('Create Customer Account');
+        $response->assertSee('Create an account');
     }
 
     public function test_customer_can_register(): void

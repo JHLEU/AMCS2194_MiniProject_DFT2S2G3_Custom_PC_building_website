@@ -97,7 +97,7 @@ class WarrantyTechSupportTest extends TestCase
         // Customer visits ticket creation form
         $formResponse = $this->actingAs($this->customer)->get(route('customer.support.create', ['warranty_id' => $warranty->id]));
         $formResponse->assertOk();
-        $formResponse->assertSee('Submit Support & RMA Claim', false);
+        $formResponse->assertSee('Open a support ticket');
 
         // Customer posts ticket
         $postResponse = $this->actingAs($this->customer)->post(route('customer.support.store'), [

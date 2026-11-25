@@ -3,15 +3,11 @@
 @section('title', 'Sign In — GOPC')
 
 @section('content')
-<div style="min-height: calc(100vh - 180px); display: flex; align-items: center; justify-content: center; padding: 48px 24px;">
-    <div class="card" style="width: 100%; max-width: 420px; padding: 32px; margin-bottom: 0;">
+<div class="storefront-auth">
+    <div class="card storefront-auth-card">
         <div style="text-align: center; margin-bottom: 24px;">
-            <div style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.6875rem; color: var(--primary); font-family: 'Geist Mono', monospace; margin-bottom: 12px;">
-                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--primary);"></span>
-                Authentication Gateway
-            </div>
-            <h1 style="font-size: 1.5rem; font-weight: 600; color: var(--text-primary); letter-spacing: -0.02em; margin: 0 0 6px;">
-                Account sign in
+            <h1 class="storefront-title">
+                Sign in
             </h1>
             <p style="color: var(--text-muted); font-size: 0.8125rem; margin: 0;">
                 Access customer order tracking or staff operations portal

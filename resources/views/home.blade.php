@@ -15,7 +15,7 @@
 
             <div class="home-actions">
                 <a href="{{ route('builder.index') }}" class="btn btn-primary">Start a build</a>
-                <a href="{{ route('calculator.index') }}">Estimate wattage and FPS</a>
+                <a href="{{ route('calculator.index') }}">Compare component performance</a>
             </div>
 
             <dl class="home-bench">

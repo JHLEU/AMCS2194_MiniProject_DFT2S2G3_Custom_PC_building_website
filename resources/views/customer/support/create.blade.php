@@ -3,17 +3,17 @@
 @section('title', 'Submit Support & RMA Claim — GOPC')
 
 @section('content')
-<div class="container" style="padding-top: 36px; padding-bottom: 60px; max-width: 820px;">
+<div class="container storefront-page" style="padding-top: 36px; padding-bottom: 60px; max-width: 820px;">
     <!-- Breadcrumb & Header -->
     <div style="margin-bottom: 28px;">
         <a href="{{ route('customer.support.index') }}" class="btn btn-outline btn-sm" style="border-color: rgba(255,255,255,0.15); margin-bottom: 16px;">
             &larr; Back to Support Tickets
         </a>
-        <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">
+        <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--primary); font-weight: 600;  display: block; margin-bottom: 6px;">
             Workshop Service & RMA Claim
         </div>
-        <h1 style="font-size: 2rem; font-weight: 700; color: #fff; margin: 0; letter-spacing: -0.5px;">
-            Submit Support & RMA Claim
+        <h1 class="storefront-title">
+            Open a support ticket
         </h1>
         <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">
             Describe the hardware issue you are experiencing. Our certified workshop technicians will diagnose and contact you.
@@ -77,7 +77,7 @@
             <!-- Action buttons -->
             <div style="display: flex; justify-content: flex-end; align-items: center; gap: 14px; border-top: 1px solid var(--border-color); padding-top: 24px;">
                 <a href="{{ route('customer.support.index') }}" class="btn btn-outline" style="border-color: rgba(255,255,255,0.15);">Cancel</a>
-                <button type="submit" class="btn btn-primary" style="padding: 10px 28px; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 16px rgba(34,197,94,0.3);">
+                <button type="submit" class="btn btn-primary" style="padding: 10px 28px; font-weight: 700; border-radius: 8px; ">
                     Submit Support Ticket &rarr;
                 </button>
             </div>

@@ -3,23 +3,23 @@
 @section('title', 'Contact Us & Technical Workshop — GOPC')
 
 @section('content')
-<div class="container" style="padding-top: 40px; padding-bottom: 70px; max-width: 1080px; margin: 0 auto;">
+<div class="container storefront-page" style="padding-top: 40px; padding-bottom: 70px; max-width: 1080px; margin: 0 auto;">
     <!-- Title & Subtitle -->
-    <div style="text-align: center; margin-bottom: 44px;">
+    <div class="storefront-page-header storefront-intro">
         <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; font-family: monospace;">
             <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 8px var(--primary);"></span>
             Service Desk & Support Channels
         </div>
-        <h1 style="font-size: 2.2rem; font-weight: 800; color: #fff; margin: 0 0 10px; letter-spacing: -0.5px;">
-            Get in Touch With Our Hardware Specialists
+        <h1 class="storefront-title">
+            Contact the workshop
         </h1>
-        <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 620px; margin: 0 auto; line-height: 1.5;">
+        <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 620px; line-height: 1.5;">
             Need help configuring components, inspecting build compatibility, or scheduling a walk-in workbench diagnostic? We are at your service.
         </p>
     </div>
 
     <!-- Quick Action Channels Grid -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 20px; margin-bottom: 36px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); gap: 20px; margin-bottom: 36px;">
         <!-- WhatsApp Direct -->
         <div class="card" style="margin-bottom: 0; padding: 28px 24px; text-align: center; border-color: rgba(37, 211, 102, 0.25); background: var(--bg-card); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
             <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: #25D366;"></div>
@@ -72,14 +72,14 @@
                     Need hardware replacement or workbench repairs? File an official RMA claim ticket online with rapid turnaround.
                 </p>
             </div>
-            <a href="{{ route('customer.support.create') }}" class="btn btn-primary" style="width: 100%; font-weight: 700; border-radius: 8px; padding: 10px 16px; font-size: 0.9rem; box-shadow: 0 4px 16px rgba(34,197,94,0.3);">
+            <a href="{{ route('customer.support.create') }}" class="btn btn-primary" style="width: 100%; font-weight: 700; border-radius: 8px; padding: 10px 16px; font-size: 0.9rem; ">
                 Open RMA Ticket &rarr;
             </a>
         </div>
     </div>
 
     <!-- Store & Workshop Details Grid -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 24px;">
         <!-- Location & Hours -->
         <div class="card" style="padding: 28px; background: var(--bg-card); border-color: rgba(255,255,255,0.08);">
             <h3 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 8px;">
@@ -88,21 +88,21 @@
             </h3>
 
             <div style="margin-bottom: 18px;">
-                <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; font-family: monospace;">Storefront Address</span>
+                <span style="color: var(--text-muted); font-size: 0.8rem;  font-family: monospace;">Storefront Address</span>
                 <strong style="color: #fff; font-size: 0.95rem; line-height: 1.6; display: block; margin-top: 4px;">
                     {{ $contactInfo['address'] }}
                 </strong>
             </div>
 
             <div style="margin-bottom: 18px;">
-                <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; font-family: monospace;">Operating Hours</span>
+                <span style="color: var(--text-muted); font-size: 0.8rem;  font-family: monospace;">Operating Hours</span>
                 <span style="color: var(--primary); font-weight: 600; font-size: 0.95rem; display: block; margin-top: 4px; font-family: monospace;">
                     {{ $contactInfo['operating_hours'] }}
                 </span>
             </div>
 
             <div style="border-top: 1px solid var(--border-color); padding-top: 16px;">
-                <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; font-family: monospace;">On-Site Workbench Services</span>
+                <span style="color: var(--text-muted); font-size: 0.8rem;  font-family: monospace;">On-Site Workbench Services</span>
                 <p style="color: #cbd5e1; font-size: 0.88rem; margin-top: 6px; line-height: 1.5;">
                     {{ $contactInfo['workshop_service'] }}
                 </p>
@@ -118,7 +118,7 @@
                 </h3>
 
                 <div style="margin-bottom: 16px;">
-                    <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; font-family: monospace;">Sales & Custom PC Build Inquiries</span>
+                    <span style="color: var(--text-muted); font-size: 0.8rem;  font-family: monospace;">Sales & Custom PC Build Inquiries</span>
                     <div style="margin-top: 4px;">
                         <a href="mailto:{{ $contactInfo['sales_email'] }}" style="color: var(--primary); font-weight: 600; text-decoration: none; font-size: 0.95rem; font-family: monospace;">
                             {{ $contactInfo['sales_email'] }}
@@ -127,7 +127,7 @@
                 </div>
 
                 <div style="margin-bottom: 16px;">
-                    <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; font-family: monospace;">Technical Diagnostics & Warranty RMA</span>
+                    <span style="color: var(--text-muted); font-size: 0.8rem;  font-family: monospace;">Technical Diagnostics & Warranty RMA</span>
                     <div style="margin-top: 4px;">
                         <a href="mailto:{{ $contactInfo['support_email'] }}" style="color: var(--primary); font-weight: 600; text-decoration: none; font-size: 0.95rem; font-family: monospace;">
                             {{ $contactInfo['support_email'] }}
@@ -136,7 +136,7 @@
                 </div>
 
                 <div style="margin-bottom: 16px;">
-                    <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; font-family: monospace;">Real-time Assembly & Dispatch Tracking</span>
+                    <span style="color: var(--text-muted); font-size: 0.8rem;  font-family: monospace;">Real-time Assembly & Dispatch Tracking</span>
                     <div style="margin-top: 4px;">
                         <a href="{{ route('orders.track') }}" style="color: #60a5fa; font-weight: 600; text-decoration: none; font-size: 0.95rem;">
                             Live Order Tracking Portal &rarr;

@@ -3,15 +3,14 @@
 @section('title', 'Custom Rig Configurator — GOPC')
 
 @section('content')
-<div class="container" style="padding-top: 36px; padding-bottom: 64px;">
+<div class="container storefront-page" style="padding-top: 36px; padding-bottom: 64px;">
     <!-- Page Header -->
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 28px; flex-wrap: wrap; gap: 16px;">
+    <div class="storefront-page-header">
         <div>
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-                <h1 style="font-size: 1.75rem; font-weight: 600; color: var(--text-primary); margin: 0; letter-spacing: -0.02em;">
-                    Custom Rig Configurator
+                <h1 class="storefront-title">
+                    Build your PC
                 </h1>
-                <span class="badge badge-primary font-mono">v2.4 Engine</span>
             </div>
             <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">
                 Select hardware components. Live engine verifies CPU socket compatibility, memory channel generation, and PSU power headroom.
@@ -50,7 +49,7 @@
                     <!-- State 1: Empty Slot -->
                     <div class="empty-slot-state" style="@if($preselectedId) display: none; @else display: block; @endif">
                         <div style="border: 1px dashed var(--border-color); border-radius: var(--radius-sm); padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; background: var(--bg-deep); flex-wrap: wrap; gap: 12px;">
-                            <span style="color: var(--text-muted); font-size: 0.8125rem;">Slot unpopulated</span>
+                            <span style="color: var(--text-muted); font-size: 0.8125rem;">No part selected</span>
                             <button type="button" class="btn btn-secondary btn-sm open-picker-btn">
                                 + Choose {{ $catInfo['name'] }}
                             </button>
@@ -89,7 +88,7 @@
         </div>
 
         <!-- Right: Build Summary & Real-time Power Metrics -->
-        <div style="position: sticky; top: 80px;">
+        <div class="storefront-summary">
             <div class="card" style="padding: 20px; margin-bottom: 0;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                     <h3 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin: 0;">

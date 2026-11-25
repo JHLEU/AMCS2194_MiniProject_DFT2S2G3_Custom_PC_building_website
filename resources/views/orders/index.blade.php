@@ -3,23 +3,23 @@
 @section('title', 'My Build Orders — GOPC')
 
 @section('content')
-<div class="container" style="max-width: 1140px; padding-top: 36px; padding-bottom: 60px;">
+<div class="container storefront-page" style="max-width: 1140px; padding-top: 36px; padding-bottom: 60px;">
     <!-- Page Header & Action Bar -->
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 28px; flex-wrap: wrap; gap: 16px;">
+    <div class="storefront-page-header">
         <div>
-            <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--primary); font-weight: 600;  margin-bottom: 6px;">
                 <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--primary);"></span>
                 Client Order Management
             </div>
-            <h1 style="font-size: 2rem; font-weight: 700; color: #fff; margin: 0; letter-spacing: -0.5px;">
-                My Custom PC Orders History
+            <h1 class="storefront-title">
+                My orders
             </h1>
         </div>
         <div style="display: flex; gap: 10px;">
             <a href="{{ route('orders.track') }}" class="btn btn-outline btn-sm" style="border-color: rgba(255,255,255,0.15);">
                 Track by Serial / Phone
             </a>
-            <a href="{{ route('builder.index') }}" class="btn btn-primary btn-sm" style="box-shadow: 0 4px 12px rgba(34,197,94,0.25);">
+            <a href="{{ route('builder.index') }}" class="btn btn-primary btn-sm" style="">
                 + Start New Build
             </a>
         </div>

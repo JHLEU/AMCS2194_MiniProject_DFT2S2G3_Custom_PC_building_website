@@ -1,0 +1,97 @@
+#pc-live-chat-wrapper {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+}
+
+#chat-widget-window {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    right: 0;
+    width: min(380px, calc(100vw - 48px));
+    height: min(510px, calc(100dvh - 100px));
+    overflow: auto;
+    padding: 16px;
+    color: var(--text-primary);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+}
+
+#chat-widget-window:not([hidden]) {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#chat-widget-window header,
+#shopping-assistant-form > div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#chat-widget-window header {
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+}
+
+#chat-widget-title {
+    margin: 0;
+    font-size: 1rem;
+}
+
+#chat-widget-channel,
+#shopping-assistant-status {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: .875rem;
+}
+
+#shopping-assistant-messages {
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    flex: 1 1 auto;
+    min-height: 64px;
+    overflow-y: auto;
+}
+
+#shopping-assistant-messages p {
+    margin: 0;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--bg-raised);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+#shopping-assistant-messages p[data-customer] {
+    justify-self: end;
+    background: var(--bg-deep);
+}
+
+#shopping-assistant-form label {
+    display: block;
+    margin-bottom: 4px;
+}
+
+#shopping-assistant-form input {
+    flex: 1;
+    min-width: 0;
+    padding: 8px;
+    color: inherit;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+#chat-handoff-btn:not([hidden]) {
+    align-self: flex-start;
+}
+
+#chat-handoff-btn[hidden] {
+    display: none;
+}

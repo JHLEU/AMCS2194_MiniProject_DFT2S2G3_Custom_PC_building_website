@@ -3,28 +3,28 @@
 @section('title', 'Order Confirmed — GOPC')
 
 @section('content')
-<div class="container" style="max-width: 880px; padding-top: 40px; padding-bottom: 70px;">
+<div class="container storefront-page" style="max-width: 880px; padding-top: 40px; padding-bottom: 70px;">
     <!-- Confirmation Banner -->
-    <div class="card" style="text-align: center; padding: 40px 28px; margin-bottom: 24px; border: 1px solid rgba(34, 197, 94, 0.4); box-shadow: 0 10px 40px rgba(34, 197, 94, 0.12); position: relative; overflow: hidden;">
+    <div class="card" style="text-align: center; padding: 40px 28px; margin-bottom: 24px; border: 1px solid rgba(34, 197, 94, 0.4);  position: relative; overflow: hidden;">
         <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(34, 197, 94, 0.12); border: 2px solid var(--primary); color: var(--primary); font-size: 1.8rem; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
             ✓
         </div>
-        <h1 style="font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 8px; letter-spacing: -0.5px;">
-            Order Placed & Payment Verified
+        <h1 class="storefront-title">
+            Order confirmed
         </h1>
         <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px; max-width: 540px; margin-left: auto; margin-right: auto;">
             Thank you, <strong style="color: #fff;">{{ $order->customer_name }}</strong>. Your custom rig order has been securely logged and assigned to our assembly workshop.
         </p>
 
         <div style="display: inline-flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 12px 28px; border-radius: 10px; margin-bottom: 28px;">
-            <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Order Tracking Reference</span>
+            <span style="font-size: 0.75rem; color: var(--text-muted); ">Order Tracking Reference</span>
             <div style="font-size: 1.4rem; font-weight: 700; color: var(--primary); font-family: monospace; letter-spacing: 0.05em; margin-top: 2px;">
                 {{ $order->order_number }}
             </div>
         </div>
 
         <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
-            <a href="{{ route('orders.track', ['query' => $order->order_number]) }}" class="btn btn-primary" style="padding: 12px 28px; font-weight: 600; box-shadow: 0 4px 14px rgba(34,197,94,0.3);">
+            <a href="{{ route('orders.track', ['query' => $order->order_number]) }}" class="btn btn-primary" style="padding: 12px 28px; font-weight: 600; ">
                 Track Assembly Staging &rarr;
             </a>
             <a href="{{ route('home') }}" class="btn btn-outline" style="padding: 12px 24px; border-color: rgba(255,255,255,0.15);">
@@ -40,7 +40,7 @@
             <span class="badge badge-success" style="font-family: monospace;">{{ $order->payment?->payment_status ?? 'Paid' }}</span>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; font-size: 0.85rem; background: rgba(255,255,255,0.02); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 16px; margin-bottom: 24px; font-size: 0.85rem; background: rgba(255,255,255,0.02); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
             <div>
                 <span style="color: var(--text-muted); display: block; margin-bottom: 2px;">Payment Gateway:</span>
                 <div style="font-weight: 600; color: #fff;">{{ $order->payment?->payment_method ?? 'Sandbox Instant' }}</div>
@@ -61,7 +61,7 @@
 
         <!-- Ordered Items Table -->
         <div class="table-responsive" style="margin-bottom: 20px;">
-            <table class="table">
+            <div class="storefront-table-scroll" tabindex="0" role="region" aria-label="Order items"><table class="table">
                 <thead>
                     <tr>
                         <th>Hardware Component</th>
@@ -103,7 +103,7 @@
                         </td>
                     </tr>
                 </tfoot>
-            </table>
+            </table></div>
         </div>
 
         @if($order->serialNumbers->isNotEmpty())

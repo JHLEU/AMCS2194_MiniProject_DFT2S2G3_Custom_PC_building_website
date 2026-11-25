@@ -25,7 +25,8 @@ class LiveChatController extends Controller
             ]);
         }
 
-        $logs = ChatLog::forSession((string) $sessionId)->get();
+        $logs = ChatLog::forSession((string) $sessionId)
+            ->where('session_id', 'not like', ChatLog::SHOPPING_PREFIX . '%')->get();
 
         $messages = $logs->map(function (ChatLog $log) {
             return [
@@ -57,6 +58,8 @@ class LiveChatController extends Controller
         $sessionId = !empty($validated['session_id']) 
             ? (string) $validated['session_id'] 
             : 'chat_' . Str::random(20);
+
+        abort_if(str_starts_with(strtolower($sessionId), ChatLog::SHOPPING_PREFIX), 403);
 
         $cleanMessage = trim(strip_tags($validated['message']));
 

@@ -9,6 +9,9 @@ $(document).ready(function () {
     const $chatForm = $('#chat-widget-form');
     const $chatInput = $('#chat-input-text');
     const $submitBtn = $('#chat-submit-btn');
+    const $channels = $chatWindow.find('[data-chat-panel]');
+    const $panels = $chatWindow.find('.live-support-panel');
+    let activePanel = 'human-support-panel';
 
     const STORAGE_KEY = 'pc_chat_session_id';
     let pollInterval = null;
@@ -131,24 +134,57 @@ $(document).ready(function () {
         });
     }
 
-    function openChat() {
-        $chatWindow.css('display', 'flex');
+    function activateChannel() {
+        if (activePanel === 'shopping-assistant-panel') {
+            stopPolling();
+            document.getElementById(activePanel).dispatchEvent(new Event('support:open'));
+            return;
+        }
+
         fetchMessages();
         scrollToBottom();
-        $chatInput.focus();
 
         if (!pollInterval) {
             pollInterval = setInterval(fetchMessages, 4000);
         }
     }
 
-    function closeChat() {
-        $chatWindow.hide();
+    function stopPolling() {
         if (pollInterval) {
             clearInterval(pollInterval);
             pollInterval = null;
         }
     }
+
+    function openChat() {
+        $chatWindow.css('display', 'flex');
+        $launcherBtn.attr('aria-expanded', 'true');
+        activateChannel();
+        $channels.filter('[aria-pressed="true"]').focus();
+    }
+
+    function closeChat() {
+        $chatWindow.hide();
+        stopPolling();
+        $launcherBtn.attr('aria-expanded', 'false').focus();
+    }
+
+    $channels.on('click', function () {
+        const nextPanel = this.dataset.chatPanel;
+        if (nextPanel === activePanel) return;
+
+        activePanel = nextPanel;
+        $channels.attr('aria-pressed', 'false');
+        $(this).attr('aria-pressed', 'true');
+        $panels.each(function () {
+            this.hidden = this.id !== activePanel;
+        });
+        activateChannel();
+    });
+
+    $chatWindow.on('keydown', function (event) {
+        if (event.key === 'Escape') closeChat();
+    });
 
     $launcherBtn.on('click', function () {
         if ($chatWindow.is(':visible')) {
@@ -200,7 +236,9 @@ $(document).ready(function () {
             },
             complete: function () {
                 $submitBtn.prop('disabled', false).text('Send');
-                $chatInput.focus();
+                if ($chatWindow.is(':visible') && activePanel === 'human-support-panel') {
+                    $chatInput.focus();
+                }
             }
         });
     });

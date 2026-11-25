@@ -3,15 +3,15 @@
 @section('title', 'My Support & RMA Tickets — GOPC')
 
 @section('content')
-<div class="container" style="padding-top: 36px; padding-bottom: 60px;">
+<div class="container storefront-page" style="padding-top: 36px; padding-bottom: 60px;">
     <!-- Breadcrumb & Nav -->
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 28px; flex-wrap: wrap; gap: 16px;">
+    <div class="storefront-page-header">
         <div>
-            <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--primary); font-weight: 600;  margin-bottom: 6px;">
                 <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--primary);"></span>
                 Technical Service & Workshop
             </div>
-            <h1 style="font-size: 2rem; font-weight: 700; color: #fff; margin: 0; letter-spacing: -0.5px;">Support & RMA Claims</h1>
+            <h1 class="storefront-title">Support and warranty claims</h1>
             <p style="color: var(--text-muted); font-size: 0.9rem; margin: 6px 0 0;">
                 Track hardware diagnostics, RMA replacements, and technician workshop appointments.
             </p>

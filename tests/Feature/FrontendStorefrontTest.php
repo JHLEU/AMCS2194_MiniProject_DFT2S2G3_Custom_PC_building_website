@@ -33,21 +33,18 @@ class FrontendStorefrontTest extends TestCase
         $response = $this->get(route('builder.index'));
 
         $response->assertOk();
-        $response->assertSee('Interactive PC Builder');
+        $response->assertSee('Build your PC');
         $response->assertSee('Processor (CPU)');
         $response->assertSee('Motherboard');
         $response->assertSee('Memory (RAM)');
         $response->assertSee('Graphics Card (GPU)');
         $response->assertSee('Power Supply Unit (PSU)');
-        $response->assertSee('Build Summary');
-        $response->assertSee('CPU Processing Power');
-        $response->assertSee('GPU Performance');
-        $response->assertSee('Memory');
-        $response->assertSee('Storage');
-        $response->assertSee('Poor');
-        $response->assertSee('Average');
-        $response->assertSee('Good');
-        $response->assertSee('Excellent');
+        $response->assertSee('Build specifications');
+        $response->assertSee('id="component-picker-modal"', false);
+        $response->assertSee('id="summary-score-cpu"', false);
+        $response->assertSee('id="summary-score-gpu"', false);
+        $response->assertSee('id="summary-score-ram"', false);
+        $response->assertSee('id="summary-score-storage"', false);
     }
 
     public function test_pc_builder_preselects_from_query_parameters(): void
@@ -139,6 +136,6 @@ class FrontendStorefrontTest extends TestCase
         $response->assertSee('Plaza Low Yat');
         $response->assertSee('+60 3-8888 1234');
         $response->assertSee('+60 16-888 2345');
-        $response->assertSee('WhatsApp Instant Chat');
+        $response->assertSee('Chat on WhatsApp');
     }
 }

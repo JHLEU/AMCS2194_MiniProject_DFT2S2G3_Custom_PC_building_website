@@ -3,21 +3,20 @@
 @section('title', 'PC Performance Calculator')
 
 @section('content')
-<div class="container" style="padding-top: 40px; padding-bottom: 60px; max-width: 960px;">
+<div class="container storefront-page" style="padding-top: 40px; padding-bottom: 60px; max-width: 960px;">
     <!-- Title & Header -->
-    <div style="text-align: center; margin-bottom: 36px;">
-        <span class="badge badge-primary" style="margin-bottom: 8px;">Hardware Performance Rating Calculator</span>
-        <h1 style="font-size: 2.2rem; font-weight: 800; color: #fff; margin-bottom: 10px;">
-            PC Performance Calculator
+    <div class="storefront-page-header storefront-intro">
+        <h1 class="storefront-title">
+            PC performance calculator
         </h1>
-        <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 640px; margin: 0 auto;">
+        <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 640px;">
             Evaluate your build across 4 core performance parameters: CPU Processing Power, GPU Performance, Memory, and Storage.
         </p>
     </div>
 
     <!-- Component Selection Card -->
     <div class="card" style="padding: 28px; margin-bottom: 32px;">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 20px; margin-bottom: 24px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 20px; margin-bottom: 24px;">
             <!-- 1. CPU Dropdown -->
             <div class="form-group">
                 <label for="calc-cpu" class="form-label" style="font-weight: 700; color: #fff;">
@@ -76,7 +75,7 @@
         </div>
 
         <div style="display: flex; justify-content: flex-end; margin-top: 8px;">
-            <button type="button" id="evaluate-calc-btn" class="btn btn-primary" style="padding: 12px 32px; font-weight: 600; font-size: 0.95rem; box-shadow: 0 4px 14px rgba(34,197,94,0.25);">
+            <button type="button" id="evaluate-calc-btn" class="btn btn-primary" style="padding: 12px 32px; font-weight: 600; font-size: 0.95rem; ">
                 Calculate Benchmark Scores &rarr;
             </button>
         </div>

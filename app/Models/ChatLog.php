@@ -15,6 +15,24 @@ class ChatLog extends Model
     public const SENDER_AGENT = 'Agent';
     public const SENDER_BOT = 'Bot';
 
+    public const SHOPPING_PREFIX = 'shop-';
+    public const HANDOFF_MESSAGE = 'You requested human support. A specialist can now see this conversation and reply here.';
+
+    public function scopeHumanQueue(Builder $query): Builder
+    {
+        return $query->where(function (Builder $query) {
+            $query->where('session_id', 'not like', self::SHOPPING_PREFIX . '%')
+                ->orWhereIn('session_id', self::query()->select('session_id')
+                    ->where('sender_type', self::SENDER_BOT)->where('message', self::HANDOFF_MESSAGE));
+        });
+    }
+
+    public static function handedOff(string $sessionId): bool
+    {
+        return self::where('session_id', $sessionId)->where('sender_type', self::SENDER_BOT)
+            ->where('message', self::HANDOFF_MESSAGE)->exists();
+    }
+
     public const SENDER_TYPES = [
         self::SENDER_CUSTOMER,
         self::SENDER_AGENT,

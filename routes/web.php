@@ -63,6 +63,15 @@ Route::prefix('api/compatibility')->name('api.compatibility.')->group(function (
     Route::post('/bottleneck', [ApiCompatibilityController::class, 'bottleneck'])->name('bottleneck');
 });
 
+Route::prefix('api/shopping-chat')->name('shopping-chat.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\ChatController::class, 'history'])
+        ->middleware('throttle:60,1,shopping-history')->block(20, 15)->name('history');
+    Route::post('/', [\App\Http\Controllers\ChatController::class, 'send'])
+        ->middleware('throttle:12,1,shopping-send')->block(20, 15)->name('send');
+    Route::post('/handoff', [\App\Http\Controllers\ChatController::class, 'handoff'])
+        ->middleware('throttle:5,1,shopping-handoff')->block(20, 15)->name('handoff');
+});
+
 // Customer Live Chat Service API (Module 8: live-chat-service)
 Route::prefix('api/chat')->name('api.chat.')->group(function () {
     Route::get('/messages', [ApiLiveChatController::class, 'messages'])->name('messages');

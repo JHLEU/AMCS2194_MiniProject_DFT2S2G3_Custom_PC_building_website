@@ -6,37 +6,40 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'GOPC — Custom PC Engineering')</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/shopping-assistant.css') }}">
     @yield('styles')
+    <link rel="stylesheet" href="{{ asset('css/storefront.css') }}">
 </head>
-<body>
+<body class="storefront">
+    <a class="storefront-skip" href="#storefront-content">Skip to content</a>
     <header class="site-header">
-        <div style="display: flex; align-items: center; gap: 24px;">
+        <div class="storefront-header">
             <a href="{{ route('home') }}" class="gopc-brand-logo" title="GOPC">
                 <span class="gopc-text-go">GO</span><span class="gopc-text-pc">PC</span><span class="gopc-dot"></span>
             </a>
-        </div>
+        <button type="button" class="btn btn-outline btn-sm storefront-menu" aria-controls="storefront-navigation" aria-expanded="false">Menu</button>
 
-        <nav class="main-nav">
+        <nav class="main-nav" id="storefront-navigation" aria-label="Storefront">
             <a href="{{ route('home') }}" class="main-nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
             <a href="{{ route('builder.index') }}" class="main-nav-link {{ request()->routeIs('builder.*') ? 'active' : '' }}">PC Builder</a>
-            <a href="{{ route('calculator.index') }}" class="main-nav-link {{ request()->routeIs('calculator.*') ? 'active' : '' }}">Performance Calc</a>
-            <a href="{{ route('orders.track') }}" class="main-nav-link {{ request()->routeIs('orders.track') ? 'active' : '' }}">Track Order</a>
+            <a href="{{ route('calculator.index') }}" class="main-nav-link {{ request()->routeIs('calculator.*') ? 'active' : '' }}">Performance calculator</a>
+            <a href="{{ route('orders.track') }}" class="main-nav-link {{ request()->routeIs('orders.track') ? 'active' : '' }}">Track order</a>
             <a href="{{ route('checkout.index') }}" class="main-nav-link {{ request()->routeIs('checkout.*') ? 'active' : '' }}">Checkout</a>
         </nav>
 
-        <div style="display: flex; align-items: center; gap: 12px;">
+        <div class="storefront-account">
             @auth
                 <!-- Tactical User Profile Dropdown -->
                 <div class="user-menu-wrapper" id="userMenuWrapper">
-                    <div class="user-menu-trigger" id="userMenuTrigger">
-                        <div class="user-menu-avatar">
+                    <button type="button" class="user-menu-trigger" id="userMenuTrigger" aria-expanded="false" aria-controls="userMenuDropdown">
+                        <span class="user-menu-avatar">
                             {{ strtoupper(substr(Auth::user()->name ?? Auth::user()->username ?? 'U', 0, 1)) }}
-                        </div>
+                        </span>
                         <span class="user-menu-name">
                             {{ Auth::user()->name ?? Auth::user()->username }}
                         </span>
                         <span class="user-menu-arrow">▾</span>
-                    </div>
+                    </button>
 
                     <div class="user-menu-dropdown" id="userMenuDropdown">
                         <div class="user-dropdown-header">
@@ -78,9 +81,10 @@
                 <a href="{{ route('register') }}" class="btn btn-primary btn-sm">Register</a>
             @endauth
         </div>
+        </div>
     </header>
 
-    <main>
+    <main id="storefront-content">
         @if(session('success'))
             <div class="container" style="margin-top: 20px;">
                 <div class="alert alert-success">{{ session('success') }}</div>
@@ -165,9 +169,15 @@
     <script src="{{ asset('js/vendor/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('js/app.js') }}"></script>
     @include('partials.chat-widget')
-    <script src="{{ asset('js/chat-widget.js') }}"></script>
+    <script src="{{ asset('js/shopping-assistant.js') }}" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const menu = document.querySelector('.storefront-menu');
+            const navigation = document.getElementById('storefront-navigation');
+            menu.addEventListener('click', function () {
+                menu.setAttribute('aria-expanded', String(navigation.classList.toggle('is-open')));
+            });
+
             const userMenuTrigger = document.getElementById('userMenuTrigger');
             const userMenuDropdown = document.getElementById('userMenuDropdown');
 
@@ -176,12 +186,14 @@
                     e.stopPropagation();
                     userMenuDropdown.classList.toggle('show');
                     userMenuTrigger.classList.toggle('active');
+                    userMenuTrigger.setAttribute('aria-expanded', String(userMenuDropdown.classList.contains('show')));
                 });
 
                 document.addEventListener('click', function (e) {
                     if (!userMenuDropdown.contains(e.target) && !userMenuTrigger.contains(e.target)) {
                         userMenuDropdown.classList.remove('show');
                         userMenuTrigger.classList.remove('active');
+                        userMenuTrigger.setAttribute('aria-expanded', 'false');
                     }
                 });
             }

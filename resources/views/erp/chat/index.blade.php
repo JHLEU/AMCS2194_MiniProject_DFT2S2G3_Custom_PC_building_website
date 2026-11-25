@@ -119,6 +119,8 @@
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 0.75rem; color: #94a3b8;">
                                 @if($isStaff)
                                     <span style="color: #10b981; font-weight: 600;">‍Staff Specialist (You)</span>
+                                @elseif($msg->sender_type === 'Bot')
+                                    <span>GOPC assistant</span>
                                 @else
                                     <span style="color: #60a5fa; font-weight: 600;">
                                         {{ $activeCustomer ? $activeCustomer->name : 'Customer' }}

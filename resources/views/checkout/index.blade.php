@@ -3,16 +3,16 @@
 @section('title', 'Secure Checkout — GOPC')
 
 @section('content')
-<div class="container" style="padding-top: 36px; padding-bottom: 60px;">
+<div class="container storefront-page" style="padding-top: 36px; padding-bottom: 60px;">
     <!-- Section Title & Status Header -->
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 28px; flex-wrap: wrap; gap: 16px;">
+    <div class="storefront-page-header">
         <div>
-            <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--primary); font-weight: 600;  margin-bottom: 6px;">
                 <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--primary);"></span>
                 Hardware Order Cashier
             </div>
-            <h1 style="font-size: 2rem; font-weight: 700; color: #fff; margin: 0; letter-spacing: -0.5px;">
-                Secure Checkout & Payment
+            <h1 class="storefront-title">
+                Checkout
             </h1>
         </div>
         <div>
@@ -24,7 +24,7 @@
 
     <form action="{{ route('checkout.process') }}" method="POST" id="checkoutForm">
         @csrf
-        <div style="display: grid; grid-template-columns: 1fr 420px; gap: 28px; align-items: start;">
+        <div class="storefront-split">
             <!-- Left Column: Shipping & Payment Method -->
             <div style="display: flex; flex-direction: column; gap: 24px;">
                 <!-- 1. Customer Shipping Details -->
@@ -36,7 +36,7 @@
                         <small style="color: var(--text-muted); font-size: 0.8rem;">* Required fields</small>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                    <div class="storefront-form-grid">
                         <div class="form-group" style="margin-bottom: 0;">
                             <label for="customer_name" class="form-label">Full Name *</label>
                             <input type="text" name="customer_name" id="customer_name" class="form-input"
@@ -100,7 +100,7 @@
             </div>
 
             <!-- Right Column: Sticky Order Summary & Action -->
-            <div style="position: sticky; top: 80px;">
+            <div class="storefront-summary">
                 <div class="card" style="box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-color: rgba(34,197,94,0.25);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
                         <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin: 0;">
@@ -151,7 +151,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" id="btnPlaceOrder" style="width: 100%; justify-content: center; padding: 14px; font-size: 1rem; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 16px rgba(34,197,94,0.3);">
+                    <button type="submit" class="btn btn-primary" id="btnPlaceOrder" style="width: 100%; justify-content: center; padding: 14px; font-size: 1rem; font-weight: 700; border-radius: 8px; ">
                         Place & Confirm Order &rarr;
                     </button>
 

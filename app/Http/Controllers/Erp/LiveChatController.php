@@ -25,6 +25,7 @@ class LiveChatController extends Controller
             DB::raw('MAX(created_at) as last_activity'),
             DB::raw('COUNT(id) as total_messages')
         )
+        ->humanQueue()
         ->groupBy('session_id')
         ->orderBy('last_activity', 'desc')
         ->get();
@@ -54,6 +55,9 @@ class LiveChatController extends Controller
 
         // Determine active session
         $activeSessionId = $request->query('session_id');
+        if ($activeSessionId && !$sessions->contains('session_id', $activeSessionId)) {
+            $activeSessionId = null;
+        }
         if (!$activeSessionId && $sessions->isNotEmpty()) {
             $activeSessionId = $sessions->first()->session_id;
         }
@@ -86,7 +90,7 @@ class LiveChatController extends Controller
      */
     public function history(string $sessionId): JsonResponse
     {
-        $logs = ChatLog::forSession($sessionId)->get();
+        $logs = ChatLog::forSession($sessionId)->humanQueue()->get();
 
         $messages = $logs->map(function (ChatLog $log) {
             return [
@@ -110,6 +114,9 @@ class LiveChatController extends Controller
      */
     public function reply(Request $request, string $sessionId): JsonResponse|RedirectResponse
     {
+        abort_if(str_starts_with(strtolower($sessionId), ChatLog::SHOPPING_PREFIX)
+            && !ChatLog::handedOff($sessionId), 404);
+
         $validated = $request->validate([
             'message' => ['required', 'string', 'min:1', 'max:2000'],
         ]);
