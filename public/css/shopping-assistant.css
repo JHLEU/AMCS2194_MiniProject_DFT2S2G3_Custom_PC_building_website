@@ -62,15 +62,28 @@
 #shopping-assistant-messages p {
     margin: 0;
     padding: 8px 12px;
-    border-radius: 8px;
+    border-radius: 10px;
     background: var(--bg-raised);
+    border: 1px solid var(--border-color);
     white-space: pre-wrap;
     overflow-wrap: anywhere;
+    max-width: 85%;
+    width: fit-content;
+    justify-self: start;
+    box-sizing: border-box;
+    line-height: 1.45;
+}
+
+#shopping-assistant-messages p[data-agent] {
+    background: rgba(34, 197, 94, 0.12);
+    border: 1px solid rgba(34, 197, 94, 0.25);
+    color: var(--text-primary);
 }
 
 #shopping-assistant-messages p[data-customer] {
     justify-self: end;
-    background: var(--bg-deep);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
 }
 
 #shopping-assistant-form label {

@@ -50,6 +50,9 @@
     function appendMessage(message, senderType) {
         const row = document.createElement('p');
         row.toggleAttribute('data-customer', senderType === 'Customer');
+        if (senderType === 'Agent') {
+            row.setAttribute('data-agent', '');
+        }
         row.textContent = message;
         messages.append(row);
         messages.scrollTop = messages.scrollHeight;
